@@ -7,8 +7,9 @@ gpgme1.0 (1.1.8-1) unstable; urgency=low
     + Disabled gpgme-config patch as it is now included upstream. 
   * Upstream changelog was moved to src/, change dh_intallchangelog call 
     for it to get it from new location. 
+  * Bump Standards-Version to 3.8.0 
 
- -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Thu, 25 Dec 2008 14:12:37 +0100
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Thu, 25 Dec 2008 14:16:26 +0100
 
 gpgme1.0 (1.1.6-2) unstable; urgency=medium
 

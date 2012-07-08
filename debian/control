@@ -3,7 +3,7 @@ Priority: optional
 Section: libdevel
 Maintainer: Jose Carlos Garcia Sogo <jsogo@debian.org>
 Build-Depends: debhelper (>> 5.0.0), libgpg-error-dev (>= 0.7-1), dpatch (>= 1.11), libpth-dev
-Standards-Version: 3.7.3
+Standards-Version: 3.8.0
 Vcs-Git: git://git.debian.org/git/users/jsogo/gpgme1.0.git
 Vcs-Browser: http://git.debian.org/git/users/jsogo/gpgme1.0.git
 
