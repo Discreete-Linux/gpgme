@@ -1,3 +1,9 @@
+gpgme1.0 (1.1.8-1) unstable; urgency=low
+
+  * New Upstream Version
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Tue, 23 Dec 2008 18:24:49 +0100
+
 gpgme1.0 (1.1.6-2) unstable; urgency=medium
 
   * Bump shlibs info, as this version added some new symbols (Closes: #469534)
