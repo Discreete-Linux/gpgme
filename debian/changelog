@@ -1,3 +1,9 @@
+gpgme1.0 (1.1.8-2) unstable; urgency=low
+
+  * New symbol introduced in version 1.1.7; bumped shlibs info (Closes: #510796)
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Mon, 12 Jan 2009 23:13:23 +0100
+
 gpgme1.0 (1.1.8-1) unstable; urgency=low
 
   * New Upstream Version
