@@ -1,3 +1,10 @@
+gpgme (1.3.2-1) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * New upstream version.
+
+ -- Daniel Leidert <dleidert@debian.org>  Sun, 08 Jul 2012 16:52:59 +0200
+
 gpgme1.0 (1.1.8-2) unstable; urgency=low
 
   * New symbol introduced in version 1.1.7; bumped shlibs info (Closes: #510796)
