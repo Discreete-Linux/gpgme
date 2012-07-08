@@ -33,6 +33,9 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#ifdef HAVE_SYS_UIO_H
+# include <sys/uio.h>
+#endif
 #include <ctype.h>
 #include <sys/resource.h>
 #include <unistd.h>
@@ -301,7 +304,7 @@ _gpgme_io_waitpid (int pid, int hang, int *r_status, int *r_signal)
 
 /* Returns 0 on success, -1 on error.  */
 int
-_gpgme_io_spawn (const char *path, char **argv,
+_gpgme_io_spawn (const char *path, char *const argv[],
 		 struct spawn_fd_item_s *fd_list, pid_t *r_pid)
 {
   pid_t pid;
@@ -424,7 +427,7 @@ _gpgme_io_spawn (const char *path, char **argv,
 		close (fd);
 	    }
     
-	  execv (path, argv);
+	  execv (path, (char *const *) argv);
 	  /* Hmm: in that case we could write a special status code to the
 	     status-pipe.  */
 #if 0

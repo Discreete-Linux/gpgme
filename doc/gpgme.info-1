@@ -20,8 +20,8 @@ General Public License for more details.
 
    This file documents the GPGME library.
 
-   This is Edition 1.1.7, last updated 24 July 2008, of `The `GnuPG
-Made Easy' Reference Manual', for Version 1.1.7.
+   This is Edition 1.1.8, last updated 8 December 2008, of `The `GnuPG
+Made Easy' Reference Manual', for Version 1.1.8.
 
    Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 g10 Code GmbH.
 
@@ -42,8 +42,8 @@ File: gpgme.info,  Node: Top,  Next: Introduction,  Up: (dir)
 Main Menu
 *********
 
-This is Edition 1.1.7, last updated 24 July 2008, of `The `GnuPG Made
-Easy' Reference Manual', for Version 1.1.7 of the GPGME library.
+This is Edition 1.1.8, last updated 8 December 2008, of `The `GnuPG
+Made Easy' Reference Manual', for Version 1.1.8 of the GPGME library.
 
 * Menu:
 
@@ -2693,7 +2693,7 @@ the following function can be used to retrieve a single key.
      for the user.
 
      If the key is not found in the keyring, `gpgme_get_key' returns
-     the error code `GPG_ERR_NO_ERROR' and *R_KEY will be set to `NULL'.
+     the error code `GPG_ERR_EOF' and *R_KEY will be set to `NULL'.
 
      The function returns the error code `GPG_ERR_INV_VALUE' if CTX or
      R_KEY is not a valid pointer or FPR is not a fingerprint or key
@@ -5821,7 +5821,7 @@ do this it uses the Assuan command:
 When doing an operation on a mail, it is useful to let the server know
 the address of the sender:
 
- -- Command: SENDER [--info] EMAIL
+ -- Command: SENDER [--info] [--protocol=NAME] EMAIL
      EMAIL is the plain ASCII encoded address ("addr-spec" as per
      RFC-2822) enclosed in angle brackets.  The address set with this
      command is valid until a successful completion of the operation or
@@ -5833,6 +5833,9 @@ the address of the sender:
      protocol to use for signing.  The client may use this suggested
      protocol on its own discretion.  The same status line as with
      PREP_ENCRYPT is used for this.
+
+     The option `--protocol' may be used to give the server a hint on
+     which signing protocol should be preferred.
 
 To allow the UI-server to visually identify a running operation or to
 associate operations the server MAY support the command:

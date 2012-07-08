@@ -21,7 +21,7 @@
 
 # Note: moc_kdpipeiodevice should actually be a dependcy below.
 EXTRA_DIST = gpgme-config.in gpgme.m4 mkstatus libgpgme.vers \
-	     versioninfo.rc.in gpgme.def moc_kdpipeiodevice.cpp
+	     gpgme.h.in versioninfo.rc.in gpgme.def moc_kdpipeiodevice.cpp
 BUILT_SOURCES = status-table.h
 MOSTLYCLEANFILES = status-table.h
 bin_SCRIPTS = gpgme-config
@@ -226,7 +226,7 @@ libgpgme_qt_la_LIBADD = $(assuan_libobjs) @LTLIBOBJS@ \
 endif
 
 status-table.h : gpgme.h
-	$(srcdir)/mkstatus < $(srcdir)/gpgme.h > status-table.h
+	$(srcdir)/mkstatus < $(builddir)/gpgme.h > status-table.h
 
 install-data-local: install-def-file
 

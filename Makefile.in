@@ -16,7 +16,7 @@
 
 # Makefile.am - Top level Makefile for GPGME.
 # Copyright (C) 2000 Werner Koch (dd9jn)
-# Copyright (C) 2001, 2002, 2004, 2005 g10 Code GmbH
+# Copyright (C) 2001, 2002, 2004, 2005, 2008 g10 Code GmbH
 # 
 # This file is part of GPGME.
 # 
@@ -82,7 +82,7 @@ RECURSIVE_CLEAN_TARGETS = mostlyclean-recursive clean-recursive	\
   distclean-recursive maintainer-clean-recursive
 ETAGS = etags
 CTAGS = ctags
-DIST_SUBDIRS = assuan gpgme tests doc complus lang
+DIST_SUBDIRS = assuan src tests doc complus lang
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 distdir = $(PACKAGE)-$(VERSION)
 top_distdir = $(distdir)
@@ -243,7 +243,7 @@ EXTRA_DIST = gpgme.spec.in autogen.sh
 @BUILD_COMPLUS_TRUE@complus = complus
 @RUN_GPG_TESTS_FALSE@tests = 
 @RUN_GPG_TESTS_TRUE@tests = tests
-SUBDIRS = ${assuan} gpgme ${tests} doc ${complus} lang
+SUBDIRS = ${assuan} src ${tests} doc ${complus} lang
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 

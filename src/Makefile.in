@@ -56,12 +56,12 @@ POST_UNINSTALL = :
 build_triplet = @build@
 host_triplet = @host@
 @HAVE_W32_SYSTEM_TRUE@libexec_PROGRAMS = gpgme-w32spawn$(EXEEXT)
-subdir = gpgme
+subdir = src
 DIST_COMMON = $(include_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/gpgme-config.in \
-	$(srcdir)/versioninfo.rc.in ChangeLog funopen.c isascii.c \
-	memrchr.c putc_unlocked.c setenv.c stpcpy.c ttyname_r.c \
-	vasprintf.c
+	$(srcdir)/gpgme.h.in $(srcdir)/versioninfo.rc.in ChangeLog \
+	funopen.c isascii.c memrchr.c putc_unlocked.c setenv.c \
+	stpcpy.c ttyname_r.c vasprintf.c
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/glib-2.0.m4 \
 	$(top_srcdir)/m4/glibc21.m4 $(top_srcdir)/m4/gpg-error.m4 \
@@ -71,7 +71,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
-CONFIG_CLEAN_FILES = versioninfo.rc gpgme-config
+CONFIG_CLEAN_FILES = versioninfo.rc gpgme.h gpgme-config
 am__vpath_adj_setup = srcdirstrip=`echo "$(srcdir)" | sed 's|.|.|g'`;
 am__vpath_adj = case $$p in \
     $(srcdir)/*) f=`echo "$$p" | sed "s|^$$srcdirstrip/||"`;; \
@@ -380,7 +380,7 @@ top_srcdir = @top_srcdir@
 
 # Note: moc_kdpipeiodevice should actually be a dependcy below.
 EXTRA_DIST = gpgme-config.in gpgme.m4 mkstatus libgpgme.vers \
-	     versioninfo.rc.in gpgme.def moc_kdpipeiodevice.cpp
+	     gpgme.h.in versioninfo.rc.in gpgme.def moc_kdpipeiodevice.cpp
 
 BUILT_SOURCES = status-table.h
 MOSTLYCLEANFILES = status-table.h
@@ -540,9 +540,9 @@ $(srcdir)/Makefile.in: @MAINTAINER_MODE_TRUE@ $(srcdir)/Makefile.am  $(am__confi
 	      exit 1;; \
 	  esac; \
 	done; \
-	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  gpgme/Makefile'; \
+	echo ' cd $(top_srcdir) && $(AUTOMAKE) --gnu  src/Makefile'; \
 	cd $(top_srcdir) && \
-	  $(AUTOMAKE) --gnu  gpgme/Makefile
+	  $(AUTOMAKE) --gnu  src/Makefile
 .PRECIOUS: Makefile
 Makefile: $(srcdir)/Makefile.in $(top_builddir)/config.status
 	@case '$?' in \
@@ -561,6 +561,8 @@ $(top_srcdir)/configure: @MAINTAINER_MODE_TRUE@ $(am__configure_deps)
 $(ACLOCAL_M4): @MAINTAINER_MODE_TRUE@ $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 versioninfo.rc: $(top_builddir)/config.status $(srcdir)/versioninfo.rc.in
+	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
+gpgme.h: $(top_builddir)/config.status $(srcdir)/gpgme.h.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
 gpgme-config: $(top_builddir)/config.status $(srcdir)/gpgme-config.in
 	cd $(top_builddir) && $(SHELL) ./config.status $(subdir)/$@
@@ -1011,7 +1013,7 @@ uninstall-am: uninstall-binSCRIPTS uninstall-includeHEADERS \
 @HAVE_W32_SYSTEM_FALSE@uninstall-def-file:
 
 status-table.h : gpgme.h
-	$(srcdir)/mkstatus < $(srcdir)/gpgme.h > status-table.h
+	$(srcdir)/mkstatus < $(builddir)/gpgme.h > status-table.h
 
 install-data-local: install-def-file
 

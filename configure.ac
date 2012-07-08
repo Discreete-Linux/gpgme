@@ -31,7 +31,7 @@ min_automake_version="1.10"
 # specific feature can already be done under the assumption that the
 # SVN version is the most recent one in a branch.  To disable the SVN
 # version for the real release, set the my_issvn macro to no.
-m4_define(my_version, [1.1.7])
+m4_define(my_version, [1.1.8])
 m4_define(my_issvn, [no])
 
 m4_define([svn_revision], m4_esyscmd([echo -n $( (svn info 2>/dev/null \
@@ -51,7 +51,7 @@ LIBGPGME_LT_CURRENT=17
 # Subtract 2 from this value if you want to make the LFS transition an
 # ABI break.  [Note to self: Remove this comment with the next regular break.]
 LIBGPGME_LT_AGE=6
-LIBGPGME_LT_REVISION=5
+LIBGPGME_LT_REVISION=6
 
 # If the API is changed in an incompatible way: increment the next counter.
 GPGME_CONFIG_API_VERSION=1
@@ -62,7 +62,7 @@ BUILD_REVISION=svn_revision
 PACKAGE=$PACKAGE_NAME
 VERSION=$PACKAGE_VERSION
 
-AC_CONFIG_SRCDIR(gpgme/gpgme.h)
+AC_CONFIG_SRCDIR(src/gpgme.h.in)
 dnl FIXME: Enable this with autoconf 2.59.
 dnl AC_CONFIG_MACRO_DIR(m4)
 AM_CONFIG_HEADER(config.h)
@@ -695,10 +695,6 @@ fi
 
 AM_CONDITIONAL(BUILD_COMPLUS, test "$component_system" = "COM+")
 
-# Make the version number in gpgme/gpgme.h the same as the one here.
-# (this is easier than to have a *.in file just for one substitution)
-GNUPG_FIX_HDR_VERSION(gpgme/gpgme.h, GPGME_VERSION)
-
 # Generate values for the DLL version info
 if test "$have_w32_system" = yes; then
     BUILD_TIMESTAMP=`date --iso-8601=minutes`
@@ -747,11 +743,12 @@ AC_SUBST(LTLIBOBJS)
 #
 # Create config files 
 
-AC_CONFIG_FILES(Makefile assuan/Makefile gpgme/Makefile
+AC_CONFIG_FILES(Makefile assuan/Makefile src/Makefile
 		tests/Makefile tests/gpg/Makefile tests/gpgsm/Makefile
 		doc/Makefile complus/Makefile
-                gpgme/versioninfo.rc)
-AC_CONFIG_FILES(gpgme/gpgme-config, chmod +x gpgme/gpgme-config)
+                src/versioninfo.rc
+                src/gpgme.h)
+AC_CONFIG_FILES(src/gpgme-config, chmod +x src/gpgme-config)
 AC_CONFIG_FILES([lang/Makefile lang/cl/Makefile lang/cl/gpgme.asd])
 AC_OUTPUT
 

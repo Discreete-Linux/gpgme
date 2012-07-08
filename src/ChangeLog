@@ -1,3 +1,54 @@
+2008-12-03  Marcus Brinkmann  <marcus@g10code.de>
+
+	* Makefile.am (status-table.h): Use $(builddir) to find gpgme.h.
+
+2008-11-18  Werner Koch  <wk@g10code.com>
+
+	* version.c (do_subsystem_inits): Always initialize I/O
+	subsystem.  Fixes regression from 2007-08-02.
+
+	* decrypt.c (_gpgme_decrypt_status_handler): Use
+	_gpgme_map_gnupg_error to parse the error code for decrypt.algorithm.
+
+2008-10-30  Marcus Brinkmann  <marcus@g10code.de>
+
+	* wait-private.c (_gpgme_wait_on_condition): Remove unused
+	variable IDX.
+	* wait-global.c: Include ops.h to silence gcc warning.
+	(_gpgme_wait_global_event_cb): Pass error value directly.
+	* wait-user.c: Include ops.h to silence gcc warning.
+
+	* posix-io.c (_gpgme_io_spawn): Make ARGV argument const to
+	silence gcc warning.  Cast argument to execv to silence warning.
+	* w32-io.c (_gpgme_io_spawn): Likewise.
+	* priv-io.h (_gpgme_io_spawn): Likewise for prototype.
+
+2008-10-24  Werner Koch  <wk@g10code.com>
+
+	* rungpg.c (gpg_keylist_preprocess): Escape backslashes too.
+
+2008-10-23  Marcus Brinkmann  <marcus@g10code.de>
+
+	* rungpg.c (gpg_keylist_preprocess): Convert percent escaped
+	string to C coded string.
+
+2008-10-20  Werner Koch  <wk@g10code.com>
+
+	* Makefile.am (EXTRA_DIST): Add gpgme.h.in.
+
+	* gpgme.h: Rename to gpgme.h.in.
+	* gpgme.h.in (GPGME_VERSION): Use autoconf substitution.
+
+	* posix-io.c: Include sys/uio.h.  Fixes bug #818.
+
+2008-10-18  Marcus Brinkmann  <marcus@g10code.com>
+
+	* w32-util.c (find_program_in_registry): Don't define.
+	(_gpgme_get_gpg_path, _gpgme_get_gpgsm_path)
+	(_gpgme_get_gpgconf_path): Do not check for fooProgram in the
+	registry anymore.  It is now no longer possible to overwrite the
+	default location in that way.
+
 2008-10-17  Werner Koch  <wk@g10code.com>
 
 	* w32-glib-io.c (_gpgme_io_fd2str): Use "%d" and not "%ld" to work
@@ -440,9 +491,9 @@
 	* w32-io.c (_gpgme_io_spawn): Ditto.
 	(_gpgme_io_write): Map ERROR_NO_DATA to EPIPE.
 	* debug.c (_gpgme_debug): Enable assuan logging.
-	(_gpgme_debug_subsystem_init): New.  * version.c
-	(do_subsystem_inits): Disable assuan logging and initialize de
-	debug system.
+	(_gpgme_debug_subsystem_init): New.
+	* version.c (do_subsystem_inits): Disable assuan logging and
+	initialize the debug system.
 	(gpgme_check_version): Do not trace before the subsystems are
 	initialized.
 

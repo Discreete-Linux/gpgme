@@ -55,7 +55,8 @@ host_triplet = @host@
 TESTS = t-import$(EXEEXT) t-keylist$(EXEEXT) t-encrypt$(EXEEXT) \
 	t-verify$(EXEEXT) t-decrypt$(EXEEXT) t-sign$(EXEEXT) \
 	t-export$(EXEEXT)
-noinst_PROGRAMS = $(am__EXEEXT_1) t-genkey$(EXEEXT)
+noinst_PROGRAMS = $(am__EXEEXT_1) t-genkey$(EXEEXT) \
+	cms-keylist$(EXEEXT) cms-decrypt$(EXEEXT)
 subdir = tests/gpgsm
 DIST_COMMON = $(noinst_HEADERS) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in
@@ -73,38 +74,46 @@ am__EXEEXT_1 = t-import$(EXEEXT) t-keylist$(EXEEXT) t-encrypt$(EXEEXT) \
 	t-verify$(EXEEXT) t-decrypt$(EXEEXT) t-sign$(EXEEXT) \
 	t-export$(EXEEXT)
 PROGRAMS = $(noinst_PROGRAMS)
+cms_decrypt_SOURCES = cms-decrypt.c
+cms_decrypt_OBJECTS = cms-decrypt.$(OBJEXT)
+cms_decrypt_LDADD = $(LDADD)
+cms_decrypt_DEPENDENCIES = ../../src/libgpgme.la
+cms_keylist_SOURCES = cms-keylist.c
+cms_keylist_OBJECTS = cms-keylist.$(OBJEXT)
+cms_keylist_LDADD = $(LDADD)
+cms_keylist_DEPENDENCIES = ../../src/libgpgme.la
 t_decrypt_SOURCES = t-decrypt.c
 t_decrypt_OBJECTS = t-decrypt.$(OBJEXT)
 t_decrypt_LDADD = $(LDADD)
-t_decrypt_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_decrypt_DEPENDENCIES = ../../src/libgpgme.la
 t_encrypt_SOURCES = t-encrypt.c
 t_encrypt_OBJECTS = t-encrypt.$(OBJEXT)
 t_encrypt_LDADD = $(LDADD)
-t_encrypt_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_encrypt_DEPENDENCIES = ../../src/libgpgme.la
 t_export_SOURCES = t-export.c
 t_export_OBJECTS = t-export.$(OBJEXT)
 t_export_LDADD = $(LDADD)
-t_export_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_export_DEPENDENCIES = ../../src/libgpgme.la
 t_genkey_SOURCES = t-genkey.c
 t_genkey_OBJECTS = t-genkey.$(OBJEXT)
 t_genkey_LDADD = $(LDADD)
-t_genkey_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_genkey_DEPENDENCIES = ../../src/libgpgme.la
 t_import_SOURCES = t-import.c
 t_import_OBJECTS = t-import.$(OBJEXT)
 t_import_LDADD = $(LDADD)
-t_import_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_import_DEPENDENCIES = ../../src/libgpgme.la
 t_keylist_SOURCES = t-keylist.c
 t_keylist_OBJECTS = t-keylist.$(OBJEXT)
 t_keylist_LDADD = $(LDADD)
-t_keylist_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_keylist_DEPENDENCIES = ../../src/libgpgme.la
 t_sign_SOURCES = t-sign.c
 t_sign_OBJECTS = t-sign.$(OBJEXT)
 t_sign_LDADD = $(LDADD)
-t_sign_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_sign_DEPENDENCIES = ../../src/libgpgme.la
 t_verify_SOURCES = t-verify.c
 t_verify_OBJECTS = t-verify.$(OBJEXT)
 t_verify_LDADD = $(LDADD)
-t_verify_DEPENDENCIES = ../../gpgme/libgpgme.la
+t_verify_DEPENDENCIES = ../../src/libgpgme.la
 DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__depfiles_maybe = depfiles
@@ -117,10 +126,12 @@ CCLD = $(CC)
 LINK = $(LIBTOOL) --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) \
 	--mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) \
 	$(LDFLAGS) -o $@
-SOURCES = t-decrypt.c t-encrypt.c t-export.c t-genkey.c t-import.c \
-	t-keylist.c t-sign.c t-verify.c
-DIST_SOURCES = t-decrypt.c t-encrypt.c t-export.c t-genkey.c \
-	t-import.c t-keylist.c t-sign.c t-verify.c
+SOURCES = cms-decrypt.c cms-keylist.c t-decrypt.c t-encrypt.c \
+	t-export.c t-genkey.c t-import.c t-keylist.c t-sign.c \
+	t-verify.c
+DIST_SOURCES = cms-decrypt.c cms-keylist.c t-decrypt.c t-encrypt.c \
+	t-export.c t-genkey.c t-import.c t-keylist.c t-sign.c \
+	t-verify.c
 HEADERS = $(noinst_HEADERS)
 ETAGS = etags
 CTAGS = ctags
@@ -270,9 +281,9 @@ noinst_HEADERS = t-support.h
 EXTRA_DIST = cert_dfn_pca01.der cert_dfn_pca15.der cert_g10code_test1.der \
 	$(key_id)
 
-INCLUDES = -I$(top_srcdir)/gpgme
+INCLUDES = -I$(top_builddir)/src
 AM_CPPFLAGS = @GPG_ERROR_CFLAGS@
-LDADD = ../../gpgme/libgpgme.la
+LDADD = ../../src/libgpgme.la
 key_id = 32100C27173EF6E9C4E9A25D3D69F86D37A4F939
 DISTCLEANFILES = pubring.kbx pubring.kbx~ gpgsm.conf trustlist.txt \
 	private-keys-v1.d/$(key_id).key random_seed
@@ -317,6 +328,12 @@ clean-noinstPROGRAMS:
 	  echo " rm -f $$p $$f"; \
 	  rm -f $$p $$f ; \
 	done
+cms-decrypt$(EXEEXT): $(cms_decrypt_OBJECTS) $(cms_decrypt_DEPENDENCIES) 
+	@rm -f cms-decrypt$(EXEEXT)
+	$(LINK) $(cms_decrypt_OBJECTS) $(cms_decrypt_LDADD) $(LIBS)
+cms-keylist$(EXEEXT): $(cms_keylist_OBJECTS) $(cms_keylist_DEPENDENCIES) 
+	@rm -f cms-keylist$(EXEEXT)
+	$(LINK) $(cms_keylist_OBJECTS) $(cms_keylist_LDADD) $(LIBS)
 t-decrypt$(EXEEXT): $(t_decrypt_OBJECTS) $(t_decrypt_DEPENDENCIES) 
 	@rm -f t-decrypt$(EXEEXT)
 	$(LINK) $(t_decrypt_OBJECTS) $(t_decrypt_LDADD) $(LIBS)
@@ -348,6 +365,8 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cms-decrypt.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cms-keylist.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t-decrypt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t-encrypt.Po@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/t-export.Po@am__quote@

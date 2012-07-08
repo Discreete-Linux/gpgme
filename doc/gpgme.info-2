@@ -20,8 +20,8 @@ General Public License for more details.
 
    This file documents the GPGME library.
 
-   This is Edition 1.1.7, last updated 24 July 2008, of `The `GnuPG
-Made Easy' Reference Manual', for Version 1.1.7.
+   This is Edition 1.1.8, last updated 8 December 2008, of `The `GnuPG
+Made Easy' Reference Manual', for Version 1.1.8.
 
    Copyright (C) 2002, 2003, 2004, 2005, 2006, 2007, 2008 g10 Code GmbH.
 
@@ -1066,7 +1066,7 @@ Function and Data Index
 * SENDER:                                Miscellaneous UI Server Commands.
                                                               (line  51)
 * SESSION:                               Miscellaneous UI Server Commands.
-                                                              (line  67)
+                                                              (line  70)
 * SIGN:                                  UI Server Sign.      (line  33)
 * SIGN_FILES:                            UI Server Sign/Encrypt Files.
                                                               (line  11)

@@ -29,14 +29,14 @@ TESTS = t-import t-keylist t-encrypt t-verify t-decrypt t-sign t-export
 EXTRA_DIST = cert_dfn_pca01.der cert_dfn_pca15.der cert_g10code_test1.der \
 	$(key_id)
 
-INCLUDES = -I$(top_srcdir)/gpgme
+INCLUDES = -I$(top_builddir)/src
 
 AM_CPPFLAGS = @GPG_ERROR_CFLAGS@
-LDADD = ../../gpgme/libgpgme.la
+LDADD = ../../src/libgpgme.la
 
 # We don't run t-genkey in the test suite, because it takes too long
 # and needs a working pinentry.
-noinst_PROGRAMS = $(TESTS) t-genkey
+noinst_PROGRAMS = $(TESTS) t-genkey cms-keylist cms-decrypt
 
 key_id = 32100C27173EF6E9C4E9A25D3D69F86D37A4F939
 
