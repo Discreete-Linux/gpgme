@@ -5,8 +5,10 @@ gpgme1.0 (1.1.8-1) unstable; urgency=low
     + Pthread support is back again.
   * debian/patches:
     + Disabled gpgme-config patch as it is now included upstream. 
+  * Upstream changelog was moved to src/, change dh_intallchangelog call 
+    for it to get it from new location. 
 
- -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Thu, 25 Dec 2008 12:36:25 +0100
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Thu, 25 Dec 2008 14:12:37 +0100
 
 gpgme1.0 (1.1.6-2) unstable; urgency=medium
 

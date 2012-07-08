@@ -90,7 +90,7 @@ binary-arch: build install
 	dh_installdocs
 	dh_installman
 	dh_installinfo
-	dh_installchangelogs gpgme/ChangeLog
+	dh_installchangelogs src/ChangeLog
 	dh_link
 	dh_strip
 	dh_compress
