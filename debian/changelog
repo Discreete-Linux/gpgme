@@ -1,9 +1,12 @@
 gpgme1.0 (1.1.8-1) unstable; urgency=low
 
   * New Upstream Version
-    + Close file descriptors leaked on seahorse-agent (Closes: #492551) 
+    + Close file descriptors leaked on seahorse-agent (Closes: #492551)
+    + Pthread support is back again.
+  * debian/patches:
+    + Disabled gpgme-config patch as it is now included upstream. 
 
- -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Tue, 23 Dec 2008 18:28:20 +0100
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Thu, 25 Dec 2008 12:36:25 +0100
 
 gpgme1.0 (1.1.6-2) unstable; urgency=medium
 
