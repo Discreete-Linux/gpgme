@@ -1,29 +1,47 @@
-Source: gpgme1.0
+Source: gpgme
 Priority: optional
-Section: libdevel
+Section: libs
 Maintainer: Jose Carlos Garcia Sogo <jsogo@debian.org>
-Build-Depends: debhelper (>> 5.0.0), libgpg-error-dev (>= 0.7-1), dpatch (>= 1.11), libpth-dev
-Standards-Version: 3.8.0
-Vcs-Git: git://git.debian.org/git/users/jsogo/gpgme1.0.git
-Vcs-Browser: http://git.debian.org/git/users/jsogo/gpgme1.0.git
+Uploaders: Daniel Leidert <dleidert@debian.org>
+Build-Depends: autotools-dev (>> 20100122.1~),
+               debhelper (>> 7.0.50~),
+               gnupg (>= 1.4.0),
+               gnupg2,
+               gpgsm,
+               libassuan-dev (>> 2.0.2),
+               libgpg-error-dev (>> 1.8),
+               libpth-dev,
+               scdaemon
+Standards-Version: 3.9.3
+Homepage: http://www.gnupg.org/gpgme.html
+Vcs-Browser: http://svn.debian.org/wsvn/pkg-gnupg/gpgme/trunk/
+Vcs-Svn: svn://svn.debian.org/svn/pkg-gnupg/gpgme/trunk/
 
 Package: libgpgme11-dev
 Section: libdevel
 Architecture: any
-Depends: libgpgme11 (= ${binary:Version}), libc6-dev, libgpg-error-dev, libpth-dev
+Depends: libassuan-dev,
+         libc6-dev,
+         libgpg-error-dev,
+         libgpgme11 (= ${binary:Version}),
+         libpth-dev,
+         ${misc:Depends}
 Conflicts: libgpgme-dev, libgpgme10-dev
-Description: GPGME - GnuPG Made Easy
- GPGME is a wrapper library which provides a C API to access some of the 
+Description: GPGME - GnuPG Made Easy (development files)
+ GPGME is a wrapper library which provides a C API to access some of the
  GnuPG functions, such as encrypt, decrypt, sign, verify, ...
  .
-  This package contains the headers and other files needed to compile 
+ This package contains the headers and other files needed to compile
  against this library.
 
 Package: libgpgme11
-Section: libs
 Architecture: any
-Depends: ${shlibs:Depends}, gnupg (>= 1.4.6-2)
-Suggests: gpgsm
-Description: GPGME - GnuPG Made Easy
- GPGME is a wrapper library which provides a C API to access some of the 
+Depends: gnupg (>= 1.4.6-2) | gnupg2 (>> 2.0.4),
+         ${misc:Depends},
+         ${shlibs:Depends}
+Suggests: gpgsm (>> 1.9.6)
+Description: GPGME - GnuPG Made Easy (library)
+ GPGME is a wrapper library which provides a C API to access some of the
  GnuPG functions, such as encrypt, decrypt, sign, verify, ...
+ .
+ This package contains the library.

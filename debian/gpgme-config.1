@@ -1,37 +1,67 @@
-.TH GPGME 1 "12 October 2002"
+.TH "GPGME" "1" "08 July 2012" "gpgme" "User commands"
+
 .SH NAME
-gpgme-config - script to get information about the installed version of GPGME
+gpgme-config \- script to get information about the installed version of GPGME
+
 .SH SYNOPSIS
-.B  gpgme-config [\-\-prefix\fI[=DIR]\fP] [\-\-exec\-prefix\fI[=DIR]\fP] [\-\-version] [\-\-libs] [\-\-cflags]
+.B  gpgme-config
+.RB [ \-\-prefix\fI[=DIR]\fP ]
+.RB [ \-\-exec\-prefix\fI[=DIR]\fP ]
+.RB [ \-\-version ]
+.RB [ \-\-libs ]
+.RB [ \-\-cflags ]
+
 .SH DESCRIPTION
 .PP
-\fIgpgme-config\fP is a tool that is used to configure to determine
+\fBgpgme-config\fP is a tool that is used to configure to determine
 the compiler and linker flags that should be used to compile
 and link programs that use \fIGPGME\fP. It is also used internally
 to the .m4 macros for GNU autoconf that are included with \fIGPGME\fP.
-.
+
 .SH OPTIONS
-.l
-\fIgpgme-config\fP accepts the following options:
-.TP 8
-.B  \-\-version
-Print the currently installed version of \fIGPGME\fP on the standard output.
-.TP 8
-.B  \-\-libs
-Print the linker flags that are necessary to link a \fIGPGME\fP program.
-.TP 8
-.B  \-\-cflags
+.PP
+\fBgpgme-config\fP accepts the following options:
+.TP
+.B \-\-api\-version
+Print the currently installed API version of \fIGPGME\fP to standard output.
+.TP
+.B \-\-cflags
 Print the compiler flags that are necessary to compile a \fIGPGME\fP program.
-.TP 8
-.B  \-\-prefix=PREFIX
-If specified, use PREFIX instead of the installation prefix that \fIGPGME\fP
-was built with when computing the output for the \-\-cflags and
-\-\-libs options. This option is also used for the exec prefix
-if \-\-exec\-prefix was not specified. This option must be specified
-before any \-\-libs or \-\-cflags options.
-.TP 8
-.B  \-\-exec\-prefix=PREFIX
-If specified, use PREFIX instead of the installation exec prefix that
-\fIGpgME\fP was built with when computing the output for the \-\-cflags
-and \-\-libs options.  This option must be specified before any
-\-\-libs or \-\-cflags options.
+.TP
+.B \-\-exec\-prefix
+Print the exec prefix that was used to configure the \fIGPGME\fP build.
+.TP
+.B --get-gpg
+Print the path to the
+.BR gpg (1)
+binary used to configure the \fIGPGME\fP build.
+.TP
+.B --get-gpgsm
+Print the path to the
+.BR gpgsm (1)
+binary used to configure the \fIGPGME\fP build.
+.TP
+.B \-\-host
+Print host information.
+.TP
+.B \-\-libs
+Print the linker flags that are necessary to link a \fIGPGME\fP program.
+.TP
+.B \-\-prefix
+Print the prefix that was used to configure the \fIGPGME\fP build.
+.TP
+.B --thread=pthread
+Switch for the
+.B \-\-cflags
+and
+.B \-\-libs
+options for the thread-enabled \fIGPGME\fP version.
+.TP
+.B \-\-version
+Print the currently installed version of \fIGPGME\fP to standard output.
+
+.SH AUTHORS
+.PP
+This manual page page was written by \fBJose Carlos Garcia Sogo\fR
+\&<\&jsogo@debian.org\&> and \fBDaniel Leidert\fR <\&daniel.leidert@wgdd.de\&>
+for the Debian distribution (but may be used by others).
