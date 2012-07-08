@@ -1,3 +1,11 @@
+gpgme1.0 (1.1.6-2) unstable; urgency=medium
+
+  * Bump shlibs info, as this version added some new symbols (Closes: #469534)
+  * Urgency set to medium, as this package has yet transitioned to lenny.
+  * debian/control: add Vcs-Browser info 
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Sat, 08 Mar 2008 14:06:34 +0100
+
 gpgme1.0 (1.1.6-1) unstable; urgency=low
 
   * New Upstream Version
