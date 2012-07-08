@@ -1,3 +1,214 @@
+2008-10-17  Werner Koch  <wk@g10code.com>
+
+	* w32-glib-io.c (_gpgme_io_fd2str): Use "%d" and not "%ld" to work
+	around a bug in mingw32.
+
+2008-09-23  Marcus Brinkmann  <marcus@g10code.com>
+
+	* gpgme.c (gpgme_sig_notation_clear): Clear CTX->sig_notations.
+	Submitted by "Daniel Mueller" <daniel@danm.de>
+
+2008-09-16  Marcus Brinkmann  <marcus@g10code.com>
+
+	* rungpg.c (gpg_new): Don't use errno with ttyname_r.
+
+2008-08-11  Marcus Brinkmann  <marcus@g10code.com>
+
+	* rungpg.c (gpg_cancel): Remove cmd fd before status fd.
+	* gpgme.c (_gpgme_cancel_with_err): New function.
+	(gpgme_cancel): Reimplement in terms of _gpgme_cancel_with_err.
+	* wait-private.c (_gpgme_wait_on_condition): Use
+	_gpgme_cancel_with_err.
+	* wait-user.c (_gpgme_user_io_cb_handler): Likewise.
+	* wait-global.c (_gpgme_wait_global_event_cb, gpgme_wait): Likewise.
+
+2008-08-08  Marcus Brinkmann  <marcus@g10code.com>
+
+	* rungpg.c (command_handler): Remove I/O callback on error, too.
+
+2008-06-29  Marcus Brinkmann  <marcus@g10code.com>
+
+	* gpgme.c (gpgme_cancel_async): Remove unused variable.
+
+2008-06-27  Marcus Brinkmann  <marcus@g10code.de>
+
+	* libgpgme.vers: Add gpgme_cancel_async.
+	* gpgme.def: Likewise.
+
+	* context.h: Include "sema.h".
+	(struct gpgme_context): New members lock and canceled.
+	* gpgme.c (gpgme_new): Initialize lock.
+	(gpgme_release): Destroy lock.
+	(gpgme_cancel_async): New function.
+	* op-support.c (_gpgme_op_reset): Reset the canceled flag.
+	* wait-global.c (gpgme_wait): Check cancel flag before processing
+	any I/O callbacks.
+	* wait-private.c (_gpgme_wait_on_condition): Likewise.
+	* wait-user.c (_gpgme_user_io_cb_handler): Likewise.
+
+2008-06-26  Werner Koch  <wk@g10code.com>
+
+	* w32-util.c (_gpgme_mkstemp): Replace sprint by stpcpy.
+	(mkstemp): Need to use GetSystemTimeAsFileTime for better
+	compatibility.
+
+2008-06-25  Marcus Brinkmann  <marcus@g10code.de>
+
+	* gpgme-w32spawn.c: New file.
+	* Makefile.am (libexec_PROGRAMS) [HAVE_W32_SYSTEM]: New variable
+	with gpgme-w32spawn.
+	* engine-gpgsm.c (gpgsm_new): Use server translated handles.
+	(gpgsm_set_locale): Return early if locale value is NULL.
+	* util.h (_gpgme_mkstemp)
+	(_gpgme_get_w32spawn_path) [HAVE_W32_SYSTEM]: New function
+	prototypes.
+	* w32-util.c: Include <stdint.h>, <sys/stat.h> and <unistd.h>.
+	(letters, mkstemp, _gpgme_mkstemp, _gpgme_get_w32spawn_path): New
+	functions.
+	* rungpg.c (gpg_decrypt, gpg_encrypt, gpg_encrypt_sign)
+	(gpg_genkey, gpg_import, gpg_verify, gpg_sign): Pass data over
+	special filename FD rather than stdin.
+	(struct arg_and_data_s): Add member ARG_LOCP.
+	(struct fd_data_map_s): Add member ARG_LOC.
+	(struct engine_gpg): Add member ARG_LOC to status and colon.
+	(_add_arg, add_arg_with_locp): New function.
+	(add_arg_ext): Reimplement in terms of _add_arg.
+	(gpg_new): Remember argument location for status FD.
+	(build_argv): Set argument location if requested.  Also set
+	argument location of fd_data_map for data items.
+	(start): Adjust caller of _gpgme_io_spawn.
+	* priv-io.h (struct spawn_fd_item_s): Add members peer_name and
+	arg_loc.
+	(_gpgme_io_spawn): Remove parent fd list argument.
+	* posix-io.c (get_max_fds): New function.
+	(_gpgme_io_dup): Add tracing.
+	(_gpgme_io_spawn): Remove parent fd list.  Change meaning of child
+	fd list to contain all child fds that should be inherited.  Close
+	all other file descriptors after fork.
+	* w32-io.c, w32-glib-io.c, w32-qt-io.c(_gpgme_io_spawn): Remove
+	parent fd list.  Change meaning of child fd list to contain all
+	child fds that should be inherited.  Do not inherit any file
+	descriptors, but DuplicateHandle them.  Spawn process through
+	wrapper process.  Provide wrapper process with a temporary file
+	containing handle translation data.  Return translated handle
+	names.
+	* w32-io.c (reader): Add more tracing output.
+	(_gpgme_io_read): Likewise.
+	* engine-gpgconf.c (gpgconf_read): Adjust caller of
+	_gpgme_io_spawn.
+	* version.c (_gpgme_get_program_version): Likewise.
+
+2008-06-20  Werner Koch  <wk@g10code.com>
+
+	* engine-gpgconf.c (gpgconf_read): Change ARGV initialization for
+	compatibility with old compilers.  Fix amount of memmove.  Fix
+	CR removal.
+
+2008-06-19  Werner Koch  <wk@g10code.com>
+
+	* gpgme.h (GPGME_CONF_PATHNAME): Replace by GPGME_CONF_FILENAME,
+	change all callers and provide compatibilty macro.
+	(gpgme_conf_type_t): Add complex types 34..37.
+	* engine-gpgconf.c (gpgconf_parse_option, arg_to_data)
+	(_gpgme_conf_arg_new, _gpgme_conf_arg_release): Add new types.
+
+2008-06-19  Marcus Brinkmann  <marcus@g10code.de>
+
+	* engine-gpgconf.c (gpgconf_parse_option): Fix comma detection.
+
+2008-05-09  Werner Koch  <wk@g10code.com>
+
+	* engine-gpgconf.c (gpgconf_read): Do not pass empty lines to the
+	callback.
+
+2008-05-07  Werner Koch  <wk@g10code.com>
+
+	* engine-gpgconf.c (gpgconf_write): Change argv[0] to a
+	self-explaining string.  Needs a proper fix, though.
+
+	* rungpg.c (gpg_keylist, gpg_keylist_ext): Factor common code out
+	to ..
+	(gpg_build_keylist_options): .. new. Allow combination of extern
+	and intern mode.
+	(gpg_new): DFT_TTYNAME is an array, thus check the first character.
+
+2008-05-06  Werner Koch  <wk@g10code.com>
+
+	* version.c (extract_version_string): New.
+	(_gpgme_get_program_version): Use it to allow for suffixes in the
+	version line.
+
+2008-04-28  Werner Koch  <wk@g10code.com>
+
+	* engine-gpgconf.c (gpgconf_read): Fixed segv.  Avoid memmove for
+	each line.
+
+2008-04-22  Marcus Brinkmann  <marcus@g10code.de>
+
+	* w32-qt-io.cpp, kdpipeiodevice.cpp: New versions from Frank
+	Osterfeld, implement blocking select.
+
+2008-03-11  Marcus Brinkmann  <marcus@g10code.de>
+
+	* data.c (gpgme_data_read, gpgme_data_write): Retry on EINTR.
+
+2008-03-06  Marcus Brinkmann  <marcus@g10code.de>
+
+	* key.c (_gpgme_key_add_sig): Terminate UID in case SRC is NULL.
+	Reported by Marc Mutz.
+
+2008-03-05  Marcus Brinkmann  <marcus@g10code.de>
+
+	* decrypt.c (release_op_data): Release OPD->result.recipients.
+	* encrypt.c (release_op_data): Release invalid_recipient.
+
+2008-02-15  Marcus Brinkmann  <marcus@g10code.de>
+
+	* engine-gpgconf.c (gpgconf_read): Fix end-of-line handline.
+
+2008-02-14  Werner Koch  <wk@g10code.com>
+
+	* w32-io.c (_gpgme_io_spawn): Add arg R_PID to return the pid.
+	* posix-io.c (_gpgme_io_spawn): Ditto.
+	* w32-glib-io.c (_gpgme_io_spawn): Ditto.
+	* w32-qt-io.cpp (_gpgme_io_spawn): Ditto.
+	* priv-io.h (_gpgme_io_spawn): Adjust prototyp and change all callers.
+	* rungpg.c (start): Call _gpgme_allow_set_foregound_window.
+
+	* w32-util.c (_gpgme_allow_set_foregound_window): New.
+	* posix-util.c (_gpgme_allow_set_foregound_window): New.
+	* engine-gpgsm.c (default_inq_cb): New.
+	(gpgsm_new) [W32]: Enable pinentry notifications.
+	(status_handler): Handle inquiries.
+
+2008-01-30  Marcus Brinkmann  <marcus@g10code.de>
+
+	* kdpipeiodevice.cpp: New version by Frank Osterfeld, fixes race
+	condition.
+
+2008-01-28  Marcus Brinkmann  <marcus@g10code.de>
+
+	* engine-gpgsm.c (map_input_enc): Rename to ...
+	(map_data_enc): ... this.  Also change all callers.
+	(gpgsm_encrypt, gpgsm_export, gpgsm_export_ext, gpgsm_genkey)
+	(gpgsm_sign): Set encoding for output.
+
+2008-01-28  Werner Koch  <wk@g10code.com>
+
+	* keylist.c (gpgme_get_key): Skip duplicated keys.  Fixes bug 876.
+
+2008-01-14  Marcus Brinkmann  <marcus@g10code.de>
+
+	* engine-gpgconf.c (gpgconf_config_load_cb): Fix program_name
+	field.
+
+2008-01-10  Marcus Brinkmann  <marcus@g10code.de>
+
+	* kdpipeiodevice.cpp: New version from Frank Osterfeld.
+
+	* engine-gpgconf.c (gpgconf_config_load_cb2): Handle the flag
+	NO_ARG_DESC.
+
 2008-01-04  Marcus Brinkmann  <marcus@g10code.de>
 
 	* Makefile.am (gpgconf_components): New variable.

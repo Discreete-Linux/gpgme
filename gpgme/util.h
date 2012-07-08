@@ -33,6 +33,7 @@ const char *_gpgme_get_gpg_path (void);
 const char *_gpgme_get_gpgsm_path (void);
 const char *_gpgme_get_gpgconf_path (void);
 int _gpgme_get_conf_int (const char *key, int *value);
+void _gpgme_allow_set_foregound_window (pid_t pid);
 
 
 /*-- replacement functions in <funcname>.c --*/
@@ -103,5 +104,11 @@ gpgme_error_t _gpgme_map_gnupg_error (char *err);
    malloc()'ed buffer in *VALUE.  If the environment variable is not
    set, return NULL in *VALUE.  */
 gpgme_error_t _gpgme_getenv (const char *name, char **value);
+
+
+#ifdef HAVE_W32_SYSTEM
+int _gpgme_mkstemp (int *fd, char **name);
+const char *_gpgme_get_w32spawn_path (void);
+#endif
 
 #endif /* UTIL_H */

@@ -1,4 +1,5 @@
-()\input texinfo                  @c -*- Texinfo -*-
+\input texinfo                   @c -*- mode: texinfo; coding: latin-1; -*-
+@documentencoding ISO-8859-1
 @setfilename gpgme.info
 @settitle The `GnuPG Made Easy' Reference Manual
 
@@ -7,12 +8,41 @@
 * @acronym{GPGME}: (gpgme).          Adding support for cryptography to your program.
 @end direntry
 
-@include version.texi
-
 @c Unify some of the indices.
 @syncodeindex tp fn
 @syncodeindex pg fn
 
+@copying
+Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007, 2008 g10 Code GmbH.
+
+@quotation
+Permission is granted to copy, distribute and/or modify this document
+under the terms of the GNU General Public License as published by the
+Free Software Foundation; either version 3 of the License, or (at your
+option) any later version. The text of the license can be found in the
+section entitled ``Copying''.
+@end quotation
+
+This document is distributed in the hope that it will be useful, but
+WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+General Public License for more details.
+@end copying
+
+@include version.texi
+
+@c Macros used by the description of the UI server protocol
+@macro clnt
+  @sc{c:} @c
+@end macro
+@macro srvr
+  @sc{s:} @c
+@end macro
+
+
+@c 
+@c  T I T L E  P A G E
+@c
 @ifinfo
 This file documents the @acronym{GPGME} library.
 
@@ -21,27 +51,14 @@ This is Edition @value{EDITION}, last updated @value{UPDATED}, of
 @value{VERSION}.
 
 @c NOTE: Don't forget to update the year for the TeX version, too.
-Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007 g10 Code GmbH.
-
-The GPGME reference manual is free software; you can redistribute it
-and/or modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either version
-2.1 of the License, or (at your option) any later version.
-
-The GPGME reference manual is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+@insertcopying
 
 @end ifinfo
 
-@iftex
-@shorttitlepage The `GnuPG Made Easy' Reference Manual
-@end iftex
+@c We do not want that bastard short titlepage.
+@c @iftex
+@c @shorttitlepage The `GnuPG Made Easy' Reference Manual
+@c @end iftex
 @titlepage
 @center @titlefont{The `GnuPG Made Easy'}
 @sp 1
@@ -54,24 +71,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
 @center for version @value{VERSION}
 @page
 @vskip 0pt plus 1filll
-Copyright @copyright{} 2002, 2003, 2004, 2005, 2006, 2007 g10 Code GmbH.
+Published by g10 Code GmbH@* Hüttenstr. 61@* 40699 Erkrath, Germany
 
-
-The GPGME reference manual is free software; you can redistribute it
-and/or modify it under the terms of the GNU Lesser General Public
-License as published by the Free Software Foundation; either version
-2.1 of the License, or (at your option) any later version.
-
-The GPGME reference manual is distributed in the hope that it will be
-useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public
-License along with this program; if not, write to the Free Software
-Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA
+@insertcopying
 @end titlepage
 @page
+
+@summarycontents
+@contents
 
 @ifnottex
 @node Top
@@ -92,8 +99,12 @@ This is Edition @value{EDITION}, last updated @value{UPDATED}, of
 
 Appendices
 
+* UI Server Protocol::            The GnuPG UI Server Protocol.
+
 * Library Copying::               The GNU Lesser General Public License says
                                   how you can copy and share `GnuPG Made Easy'.
+* Copying::                       The GNU General Public License says how you
+                                  can copy and share this manual.
 
 Indices
 
@@ -608,7 +619,7 @@ pinentry.  Here is an example of a complete initialization:
 #include <gpgme.h>
 
 void
-init_program (void)
+init_gpgme (void)
 @{
   /* Initialize the locale environment.  */
   setlocale (LC_ALL, "");
@@ -943,8 +954,10 @@ The @acronym{CMS} protocol is specified by @code{GPGME_PROTOCOL_CMS}.
 @cindex algorithms
 
 The crypto backends support a variety of algorithms used in public key
-cryptography.  The following sections list the identifiers used to
-denote such an algorithm.
+cryptography.@footnote{Some engines also provide symmetric only
+encryption; see the description of the encryption function on how to use
+this.}  The following sections list the identifiers used to denote such
+an algorithm.
 
 @menu
 * Public Key Algorithms::         A list of all public key algorithms.
@@ -1464,6 +1477,14 @@ The @code{gpgme_data_t} type is a handle for a container for generic
 data, which is used by @acronym{GPGME} to exchange data with the user.
 @end deftp
 
+@code{gpgme_data_t} objects do not provide notifications on events.
+It is assumed that read and write operations are blocking until data
+is available.  If this is undesirable, the application must ensure
+that all GPGME data operations always have data available, for example
+by using memory buffers or files rather than pipes or sockets.  This
+might be relevant, for example, if the external event loop mechanism
+is used.
+
 @menu
 * Creating Data Buffers::         Creating new data buffers.
 * Destroying Data Buffers::       Releasing data buffers.
@@ -1575,6 +1596,10 @@ When using the data object as an input buffer, the function might read
 a bit more from the file descriptor than is actually needed by the
 crypto engine in the desired operation because of internal buffering.
 
+Note that GPGME assumes that the file descriptor is set to blocking
+mode.  Errors during I/O operations, except for EINTR, are usually
+fatal for crypto operations.
+
 The function returns the error code @code{GPG_ERR_NO_ERROR} if the
 data object was successfully created, and @code{GPG_ERR_ENOMEM} if not
 enough memory is available.
@@ -1589,6 +1614,10 @@ output data object).
 When using the data object as an input buffer, the function might read
 a bit more from the stream than is actually needed by the crypto
 engine in the desired operation because of internal buffering.
+
+Note that GPGME assumes that the stream is in blocking mode.  Errors
+during I/O operations, except for EINTR, are usually fatal for crypto
+operations.
 
 The function returns the error code @code{GPG_ERR_NO_ERROR} if the
 data object was successfully created, and @code{GPG_ERR_ENOMEM} if not
@@ -1611,6 +1640,10 @@ data object.  The function should read up to @var{size} bytes from the
 current read position into the space starting at @var{buffer}.  The
 @var{handle} is provided by the user at data object creation time.
 
+Note that GPGME assumes that the read blocks until data is available.
+Errors during I/O operations, except for EINTR, are usually fatal for
+crypto operations.
+
 The function should return the number of bytes read, 0 on EOF, and -1
 on error.  If an error occurs, @var{errno} should be set to describe
 the type of the error.
@@ -1623,6 +1656,10 @@ The @code{gpgme_data_write_cb_t} type is the type of functions which
 data object.  The function should write up to @var{size} bytes to the
 current write position from the space starting at @var{buffer}.  The
 @var{handle} is provided by the user at data object creation time.
+
+Note that GPGME assumes that the write blocks until data is available.
+Errors during I/O operations, except for EINTR, are usually fatal for
+crypto operations.
 
 The function should return the number of bytes written, and -1 on
 error.  If an error occurs, @var{errno} should be set to describe the
@@ -1868,8 +1905,11 @@ enough memory is available.
 @deftp {Data type} {enum gpgme_data_encoding_t}
 @tindex gpgme_data_encoding_t
 The @code{gpgme_data_encoding_t} type specifies the encoding of a
-@code{gpgme_data_t} object.  This encoding is useful to give the backend
-a hint on the type of data.  The following data types are available:
+@code{gpgme_data_t} object.  For input data objects, the encoding is
+useful to give the backend a hint on the type of data.  For output
+data objects, the encoding can specify the output data format on
+certain operations.  Please note that not all backends support all
+encodings on all operations.  The following data types are available:
 
 @table @code
 @item GPGME_DATA_ENCODING_NONE
@@ -2153,10 +2193,10 @@ is the default.
 
 @item GPGME_KEYLIST_MODE_EXTERN
 The @code{GPGME_KEYLIST_MODE_EXTERN} symbol specifies that an external
-source should be searched for keys in the keylisting
-operation.  The type of external source is dependant on the crypto
-engine used.  For example, it can be a remote keyserver or LDAP
-certificate server.
+source should be searched for keys in the keylisting operation.  The
+type of external source is dependant on the crypto engine used and
+whether it is combined with @code{GPGME_KEYLIST_MODE_LOCAL}.  For
+example, it can be a remote keyserver or LDAP certificate server.
 
 @item GPGME_KEYLIST_MODE_SIGS
 The @code{GPGME_KEYLIST_MODE_SIGS} symbol specifies that the key
@@ -2181,7 +2221,7 @@ At least one of @code{GPGME_KEYLIST_MODE_LOCAL} and
 @code{GPGME_KEYLIST_MODE_EXTERN} must be specified.  For future binary
 compatibility, you should get the current mode with
 @code{gpgme_get_keylist_mode} and modify it by setting or clearing the
-appropriate bits, and then using that calulcated value in the
+appropriate bits, and then using that calculated value in the
 @code{gpgme_set_keylisting_mode} operation.  This will leave all other
 bits in the mode value intact (in particular those that are not used
 in the current version of the library).
@@ -2734,6 +2774,7 @@ and e-mail address of the main user ID:
 
 @example
 gpgme_ctx_t ctx;
+gpgme_key_t key;
 gpgme_error_t err = gpgme_new (&ctx);
 
 if (!err)
@@ -2744,15 +2785,19 @@ if (!err)
         err = gpgme_op_keylist_next (ctx, &key);
         if (err)
           break;
-        printf ("%s: %s <%s>\n", key->keyid, key->name, key->email);
+        printf ("%s:", key->subkeys->keyid);
+        if (key->uids && key->uids->name)
+          printf (" %s", key->uids->name);
+        if (key->uids && key->uids->email)
+          printf (" <%s>", key->uids->email);
+        putchar ('\n');
         gpgme_key_release (key);
       @}
     gpgme_release (ctx);
   @}
 if (gpg_err_code (err) != GPG_ERR_EOF)
   @{
-    fprintf (stderr, "%s: can not list keys: %s\n",
-             argv[0], gpgme_strerror (err));
+    fprintf (stderr, "can not list keys: %s\n", gpgme_strerror (err));
     exit (1);
   @}
 @end example
@@ -3264,7 +3309,8 @@ operation is started on the context.
 The function @code{gpgme_op_export} extracts public keys and returns
 them in the data buffer @var{keydata}.  The output format of the key
 data returned is determined by the @acronym{ASCII} armor attribute set
-for the context @var{ctx}.
+for the context @var{ctx}, or, if that is not set, by the encoding
+specified for @var{keydata}.
 
 If @var{pattern} is @code{NULL}, all available keys are returned.
 Otherwise, @var{pattern} contains an engine specific expression that
@@ -3292,7 +3338,8 @@ if @var{keydata} is not a valid empty data buffer.
 The function @code{gpgme_op_export} extracts public keys and returns
 them in the data buffer @var{keydata}.  The output format of the key
 data returned is determined by the @acronym{ASCII} armor attribute set
-for the context @var{ctx}.
+for the context @var{ctx}, or, if that is not set, by the encoding
+specified for @var{keydata}.
 
 If @var{pattern} or @var{*pattern} is @code{NULL}, all available keys
 are returned.  Otherwise, @var{pattern} is a @code{NULL} terminated
@@ -4490,7 +4537,8 @@ mode settings of the context are ignored.
 The function @code{gpgme_op_sign} creates a signature for the text in
 the data object @var{plain} and returns it in the data object
 @var{sig}.  The type of the signature created is determined by the
-@acronym{ASCII} armor and text mode attributes set for the context
+@acronym{ASCII} armor (or, if that is not set, by the encoding
+specified for @var{sig}), the text mode attributes set for the context
 @var{ctx} and the requested signature mode @var{mode}.
 
 After the operation completed successfully, the result can be
@@ -4650,11 +4698,12 @@ and then passed to the encryption operation.
 @subsubsection Encrypting a Plaintext
 
 @deftypefun gpgme_error_t gpgme_op_encrypt (@w{gpgme_ctx_t @var{ctx}}, @w{gpgme_key_t @var{recp}[]}, @w{gpgme_encrypt_flags_t @var{flags}}, @w{gpgme_data_t @var{plain}}, @w{gpgme_data_t @var{cipher}})
-The function @code{gpgme_op_encrypt} encrypts the plaintext in the data
-object @var{plain} for the recipients @var{recp} and stores the
+The function @code{gpgme_op_encrypt} encrypts the plaintext in the
+data object @var{plain} for the recipients @var{recp} and stores the
 ciphertext in the data object @var{cipher}.  The type of the
-ciphertext created is determined by the @acronym{ASCII} armor and text
-mode attributes set for the context @var{ctx}.
+ciphertext created is determined by the @acronym{ASCII} armor (or, if
+that is not set, by the encoding specified for @var{cipher}) and the
+text mode attributes set for the context @var{ctx}.
 
 @var{key} must be a @code{NULL}-terminated array of keys.  The user
 must keep references for all keys during the whole duration of the
@@ -5215,6 +5264,8 @@ main (int argc, char *argv[])
     &result
   @};
 
+  init_gpgme (void);
+
   /* Initialize the loop structure.  */
   loop.lock = PTHREAD_MUTEX_INITIALIZER;
   for (i = 0; i < MAX_FDS; i++)
@@ -5439,13 +5490,15 @@ private:
 @cindex aborting operations
 @cindex cancelling operations
 
-Sometimes you do not want to wait for an operation to finish.  If you
-use external I/O callbacks, you can cancel a pending operation.
-However, you must ensure that no other thread is currently using the
-context in which the operation you want to cancel runs.  This includes
-callback handlers.  So your external event loop must either be halted
-or otherwise it must be guaranteed that no installed I/O callbacks are
-run for this context.
+Sometimes you do not want to wait for an operation to finish.
+@acronym{GPGME} provides two different functions to achieve that.  The
+function @code{gpgme_cancel} takes effect immediately.  When it
+returns, the operation is effectively canceled.  However, it has some
+limitations and can not be used with synchronous operations.  In
+contrast, the function @code{gpgme_cancel_async} can be used with any
+context and from any thread, but it is not guaranteed to take effect
+immediately.  Instead, cancellation occurs at the next possible time
+(typically the next time I/O occurs in the target context).
 
 @deftypefun gpgme_ctx_t gpgme_cancel (@w{gpgme_ctx_t @var{ctx}})
 The function @code{gpgme_cancel} attempts to cancel a pending
@@ -5469,8 +5522,31 @@ case the state of @var{ctx} is not modified).
 @end deftypefun
 
 
+@deftypefun gpgme_ctx_t gpgme_cancel_async (@w{gpgme_ctx_t @var{ctx}})
+The function @code{gpgme_cancel} attempts to cancel a pending
+operation in the context @var{ctx}.  This can be called by any thread
+at any time after starting an operation on the context, but will not
+take effect immediately.  The actual cancellation happens at the next
+time GPGME processes I/O in that context.
+
+The function returns an error code if the cancellation failed (in this
+case the state of @var{ctx} is not modified).
+@end deftypefun
+
+@c **********************************************************
+@c *******************  Appendices  *************************
+@c **********************************************************
+
+@include uiserver.texi
+
 @include lesser.texi
 
+@include gpl.texi
+
+@node Function and Data Index
+@unnumbered Function and Data Index
+
+@printindex fn
 
 @node Concept Index
 @unnumbered Concept Index
@@ -5478,12 +5554,4 @@ case the state of @var{ctx} is not modified).
 @printindex cp
 
 
-@node Function and Data Index
-@unnumbered Function and Data Index
-
-@printindex fn
-
-
-@summarycontents
-@contents
 @bye

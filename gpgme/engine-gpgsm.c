@@ -285,6 +285,20 @@ map_assuan_error (gpg_error_t err)
 }
 
 
+/* This is the default inquiry callback.  We use it to handle the
+   Pinentry notifications.  */
+static gpgme_error_t
+default_inq_cb (engine_gpgsm_t gpgsm, const char *line)
+{
+  if (!strncmp (line, "PINENTRY_LAUNCHED", 17) && (line[17]==' '||!line[17]))
+    {
+      _gpgme_allow_set_foregound_window ((pid_t)strtoul (line+17, NULL, 10));
+    }
+
+  return 0;
+}
+
+
 static gpgme_error_t
 gpgsm_cancel (void *engine)
 {
@@ -391,9 +405,6 @@ gpgsm_new (void **engine, const char *file_name, const char *home_dir)
     }
   gpgsm->input_cb.fd = fds[1];
   gpgsm->input_cb.server_fd = fds[0];
-  _gpgme_io_fd2str (gpgsm->input_cb.server_fd_str, 
-                    sizeof gpgsm->input_cb.server_fd_str,
-                    gpgsm->input_cb.server_fd);
 
   if (_gpgme_io_pipe (fds, 1) < 0)
     {
@@ -402,9 +413,6 @@ gpgsm_new (void **engine, const char *file_name, const char *home_dir)
     }
   gpgsm->output_cb.fd = fds[0];
   gpgsm->output_cb.server_fd = fds[1];
-  _gpgme_io_fd2str (gpgsm->output_cb.server_fd_str, 
-                    sizeof gpgsm->output_cb.server_fd_str,
-                    gpgsm->output_cb.server_fd);
 
   if (_gpgme_io_pipe (fds, 0) < 0)
     {
@@ -413,9 +421,6 @@ gpgsm_new (void **engine, const char *file_name, const char *home_dir)
     }
   gpgsm->message_cb.fd = fds[1];
   gpgsm->message_cb.server_fd = fds[0];
-  _gpgme_io_fd2str (gpgsm->message_cb.server_fd_str, 
-                    sizeof gpgsm->message_cb.server_fd_str,
-                    gpgsm->message_cb.server_fd);
 
   child_fds[0] = gpgsm->input_cb.server_fd;
   child_fds[1] = gpgsm->output_cb.server_fd;
@@ -441,9 +446,34 @@ gpgsm_new (void **engine, const char *file_name, const char *home_dir)
   err = assuan_pipe_connect
     (&gpgsm->assuan_ctx, file_name ? file_name : _gpgme_get_gpgsm_path (),
      argv, child_fds);
+
+  /* On Windows, handles are inserted in the spawned process with
+     DuplicateHandle, and child_fds contains the server-local names
+     for the inserted handles when assuan_pipe_connect returns.  */
+  if (!err)
+    {
+      /* Note: We don't use _gpgme_io_fd2str here.  On W32 the
+	 returned handles are real W32 system handles, not whatever
+	 GPGME uses internally (which may be a system handle, a C
+	 library handle or a GLib/Qt channel.  Confusing, yes, but
+	 remember these are server-local names, so they are not part
+	 of GPGME at all.  */
+      snprintf (gpgsm->input_cb.server_fd_str,
+		sizeof gpgsm->input_cb.server_fd_str, "%d", child_fds[0]);
+      snprintf (gpgsm->output_cb.server_fd_str,
+		sizeof gpgsm->output_cb.server_fd_str, "%d", child_fds[1]);
+      snprintf (gpgsm->message_cb.server_fd_str,
+		sizeof gpgsm->message_cb.server_fd_str, "%d", child_fds[2]);
+    }
 #endif
   if (err)
     goto leave;
+
+  /* assuan_pipe_connect in this case uses _gpgme_io_spawn which
+     closes the child fds for us.  */
+  gpgsm->input_cb.server_fd = -1;
+  gpgsm->output_cb.server_fd = -1;
+  gpgsm->message_cb.server_fd = -1;
 
   err = _gpgme_getenv ("DISPLAY", &dft_display);
   if (err)
@@ -528,6 +558,19 @@ gpgsm_new (void **engine, const char *file_name, const char *home_dir)
         err = 0; /* This is an optional feature of gpgsm.  */
     }
 
+
+#ifdef HAVE_W32_SYSTEM
+  /* Under Windows we need to use AllowSetForegroundWindow.  Tell
+     gpgsm to tell us when it needs it.  */
+  if (!err)
+    {
+      err = assuan_transact (gpgsm->assuan_ctx, "OPTION allow-pinentry-notify",
+                             NULL, NULL, NULL, NULL, NULL, NULL);
+      if (gpg_err_code (err) == GPG_ERR_UNKNOWN_OPTION)
+        err = 0; /* This is a new feature of gpgsm.  */
+    }
+#endif /*HAVE_W32_SYSTEM*/
+
 #if !USE_DESCRIPTOR_PASSING
   if (!err
       && (_gpgme_io_set_close_notify (gpgsm->input_cb.fd,
@@ -596,6 +639,10 @@ gpgsm_set_locale (void *engine, int category, const char *value)
   else
     return gpg_error (GPG_ERR_INV_VALUE);
 
+  /* FIXME: Reset value to default.  */
+  if (!value) 
+    return 0;
+
   if (asprintf (&optstr, "OPTION %s=%s", catstr, value) < 0)
     err = gpg_error_from_errno (errno);
   else
@@ -606,6 +653,7 @@ gpgsm_set_locale (void *engine, int category, const char *value)
       if (err)
 	err = map_assuan_error (err);
     }
+
   return err;
 }
 
@@ -788,7 +836,7 @@ gpgsm_set_fd (engine_gpgsm_t gpgsm, fd_type_t fd_type, const char *opt)
 
 
 static const char *
-map_input_enc (gpgme_data_t d)
+map_data_enc (gpgme_data_t d)
 {
   switch (gpgme_data_get_encoding (d))
     {
@@ -861,7 +909,7 @@ status_handler (void *opaque, int fd)
 		  "fd 0x%x: ERR line - mapped to: %s",
                   fd, err ? gpg_strerror (err) : "ok");
 	  /* Try our best to terminate the connection friendly.  */
-	  //	  assuan_write_line (gpgsm->assuan_ctx, "BYE");
+	  /*	  assuan_write_line (gpgsm->assuan_ctx, "BYE"); */
 	}
       else if (linelen >= 2
 	       && line[0] == 'O' && line[1] == 'K'
@@ -1028,6 +1076,20 @@ status_handler (void *opaque, int fd)
 		  "fd 0x%x: S line (%s) - final status: %s",
                   fd, line+2, err? gpg_strerror (err):"ok");
 	}
+      else if (linelen >= 7
+               && line[0] == 'I' && line[1] == 'N' && line[2] == 'Q'
+               && line[3] == 'U' && line[4] == 'I' && line[5] == 'R'
+               && line[6] == 'E' 
+               && (line[7] == '\0' || line[7] == ' '))
+        {
+          char *keyword = line+7;
+
+          while (*keyword == ' ')
+            keyword++;;
+          default_inq_cb (gpgsm, keyword);
+          assuan_write_line (gpgsm->assuan_ctx, "END");
+        }
+
     }
   while (!err && assuan_pending_line (gpgsm->assuan_ctx));
 	  
@@ -1132,7 +1194,7 @@ gpgsm_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain)
     return gpg_error (GPG_ERR_INV_VALUE);
 
   gpgsm->input_cb.data = ciph;
-  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_input_enc (gpgsm->input_cb.data));
+  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
   if (err)
     return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
   gpgsm->output_cb.data = plain;
@@ -1288,11 +1350,12 @@ gpgsm_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
     return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
 
   gpgsm->input_cb.data = plain;
-  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_input_enc (gpgsm->input_cb.data));
+  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
   if (err)
     return err;
   gpgsm->output_cb.data = ciph;
-  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor" : 0);
+  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor"
+		      : map_data_enc (gpgsm->output_cb.data));
   if (err)
     return err;
   gpgsm_clear_fd (gpgsm, MESSAGE_FD);
@@ -1328,7 +1391,8 @@ gpgsm_export (void *engine, const char *pattern, unsigned int reserved,
   strcpy (&cmd[7], pattern);
 
   gpgsm->output_cb.data = keydata;
-  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor" : 0);
+  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor"
+		      : map_data_enc (gpgsm->output_cb.data));
   if (err)
     return err;
   gpgsm_clear_fd (gpgsm, INPUT_FD);
@@ -1420,7 +1484,8 @@ gpgsm_export_ext (void *engine, const char *pattern[], unsigned int reserved,
   *linep = '\0';
 
   gpgsm->output_cb.data = keydata;
-  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor" : 0);
+  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor"
+		      : map_data_enc (gpgsm->output_cb.data));
   if (err)
     return err;
   gpgsm_clear_fd (gpgsm, INPUT_FD);
@@ -1444,11 +1509,12 @@ gpgsm_genkey (void *engine, gpgme_data_t help_data, int use_armor,
     return gpg_error (GPG_ERR_INV_VALUE);
 
   gpgsm->input_cb.data = help_data;
-  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_input_enc (gpgsm->input_cb.data));
+  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
   if (err)
     return err;
   gpgsm->output_cb.data = pubkey;
-  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor" : 0);
+  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor"
+		      : map_data_enc (gpgsm->output_cb.data));
   if (err)
     return err;
   gpgsm_clear_fd (gpgsm, MESSAGE_FD);
@@ -1469,7 +1535,7 @@ gpgsm_import (void *engine, gpgme_data_t keydata)
     return gpg_error (GPG_ERR_INV_VALUE);
 
   gpgsm->input_cb.data = keydata;
-  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_input_enc (gpgsm->input_cb.data));
+  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
   if (err)
     return err;
   gpgsm_clear_fd (gpgsm, OUTPUT_FD);
@@ -1717,11 +1783,12 @@ gpgsm_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
     }
 
   gpgsm->input_cb.data = in;
-  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_input_enc (gpgsm->input_cb.data));
+  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
   if (err)
     return err;
   gpgsm->output_cb.data = out;
-  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor" : 0);
+  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor"
+		      : map_data_enc (gpgsm->output_cb.data));
   if (err)
     return err;
   gpgsm_clear_fd (gpgsm, MESSAGE_FD);
@@ -1744,7 +1811,7 @@ gpgsm_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
     return gpg_error (GPG_ERR_INV_VALUE);
 
   gpgsm->input_cb.data = sig;
-  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_input_enc (gpgsm->input_cb.data));
+  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
   if (err)
     return err;
   if (plaintext)

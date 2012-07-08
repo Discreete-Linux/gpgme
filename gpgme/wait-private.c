@@ -89,10 +89,7 @@ _gpgme_wait_on_condition (gpgme_ctx_t ctx, volatile int *cond)
 	  unsigned int idx;
 
 	  err = gpg_error_from_errno (errno);
-	  for (idx = 0; idx < ctx->fdt.size; idx++)
-	    if (ctx->fdt.fds[idx].fd != -1)
-	      _gpgme_io_close (ctx->fdt.fds[idx].fd);
-	  _gpgme_engine_io_event (ctx->engine, GPGME_EVENT_DONE, &err);
+          _gpgme_cancel_with_err (ctx, err);
 
 	  return err;
 	}
@@ -105,17 +102,19 @@ _gpgme_wait_on_condition (gpgme_ctx_t ctx, volatile int *cond)
 	      assert (nr);
 	      nr--;
 
-	      err = _gpgme_run_io_cb (&ctx->fdt.fds[i], 0);
+	      LOCK (ctx->lock);
+	      if (ctx->canceled)
+		err = gpg_error (GPG_ERR_CANCELED);
+	      UNLOCK (ctx->lock);
+	      
+	      if (!err)
+		err = _gpgme_run_io_cb (&ctx->fdt.fds[i], 0);
 	      if (err)
 		{
 		  /* An error occured.  Close all fds in this context,
 		     and signal it.  */
-		  unsigned int idx;
-		  
-		  for (idx = 0; idx < ctx->fdt.size; idx++)
-		    if (ctx->fdt.fds[idx].fd != -1)
-		      _gpgme_io_close (ctx->fdt.fds[idx].fd);
-		  _gpgme_engine_io_event (ctx->engine, GPGME_EVENT_DONE, &err);
+		  _gpgme_cancel_with_err (ctx, err);
+
 		  return err;
 		}
 	    }

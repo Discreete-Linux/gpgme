@@ -72,7 +72,7 @@ extern "C" {
    AM_PATH_GPGME macro) check that this header matches the installed
    library.  Warning: Do not edit the next line.  configure will do
    that for you!  */
-#define GPGME_VERSION "1.1.6"
+#define GPGME_VERSION "1.1.7"
 
 
 
@@ -1120,6 +1120,9 @@ unsigned long gpgme_key_sig_get_ulong_attr (gpgme_key_t key, int uid_idx,
 /* Cancel a pending asynchronous operation.  */
 gpgme_error_t gpgme_cancel (gpgme_ctx_t ctx);
 
+/* Cancel a pending operation asynchronously.  */
+gpgme_error_t gpgme_cancel_async (gpgme_ctx_t ctx);
+
 
 struct _gpgme_invalid_key
 {
@@ -1654,10 +1657,10 @@ gpgme_error_t gpgme_op_getauditlog (gpgme_ctx_t ctx, gpgme_data_t output,
                                     unsigned int flags);
 
 
-/* Interface to gpg-conf.  */
+/* Interface to gpgconf(1).  */
 
 /* The expert level at which a configuration option or group of
-   options should be displayed.  See the gpg-conf documentation for
+   options should be displayed.  See the gpgconf(1) documentation for
    more details.  */
 typedef enum
   {
@@ -1670,7 +1673,7 @@ typedef enum
 gpgme_conf_level_t;
 
 
-/* The data type of a configuration option argument.  See the gpg-conf
+/* The data type of a configuration option argument.  See the gpgconf(1)
    documentation for more details.  */
 typedef enum
   {
@@ -1681,10 +1684,17 @@ typedef enum
     GPGME_CONF_UINT32 = 3,
 
     /* Complex types.  */
-    GPGME_CONF_PATHNAME = 32,
-    GPGME_CONF_LDAP_SERVER = 33
+    GPGME_CONF_FILENAME = 32,
+    GPGME_CONF_LDAP_SERVER = 33,
+    GPGME_CONF_KEY_FPR = 34,
+    GPGME_CONF_PUB_KEY = 35,
+    GPGME_CONF_SEC_KEY = 36,
+    GPGME_CONF_ALIAS_LIST = 37
   }
 gpgme_conf_type_t;
+/* Macro for backward compatibility (even though it was undocumented
+   and marked as experimental in 1.1.6 - will be removed after 1.1.7): */
+#define GPGME_CONF_PATHNAME GPGME_CONF_FILENAME
 
 
 /* This represents a single argument for a configuration option.

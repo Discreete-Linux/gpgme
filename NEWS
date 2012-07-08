@@ -1,3 +1,39 @@
+Noteworthy changes in version 1.1.7 (2008-10-177)
+------------------------------------------------
+
+ * Using GPGME_KEYLIST_MODE_LOCAL combined with
+   GPGME_KEYLIST_MODE_EXTERN is now supported; it uses the
+   --locate-keys feature of gpg (>= 2.0.10).
+   
+ * The encoding of gpgme_data_t objects can affect the output encoding
+   of export, sign and encrypt operations now (the same operations
+   that are also affected by the ASCII mode switch).  We believe this
+   change in the ABI is innocent enough not to break existing
+   applications (it only affects the S/MIME backend on certain
+   operations).
+
+ * The reference manual now includes the specification of "The GnuPG
+   UI Server protocol".
+
+ * A new function gpgme_cancel_async can be used to asynchronously
+   cancel any pending operation at any time, from any thread.
+
+ * Interface changes relative to the 1.1.6 release:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+gpgme_op_encrypt		CHANGED: Output encoding can affect result.
+gpgme_op_encrypt_start		CHANGED: Output encoding can affect result.
+gpgme_op_encrypt_sign		CHANGED: Output encoding can affect result.
+gpgme_op_encrypt_sign_start	CHANGED: Output encoding can affect result.
+gpgme_op_sign			CHANGED: Output encoding can affect result.
+gpgme_op_sign_start		CHANGED: Output encoding can affect result.
+gpgme_op_export			CHANGED: Output encoding can affect result.
+gpgme_op_export_start		CHANGED: Output encoding can affect result.
+gpgme_op_export_ext		CHANGED: Output encoding can affect result.
+gpgme_op_export_ext_start	CHANGED: Output encoding can affect result.
+gpgme_cancel_async		NEW
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
 Noteworthy changes in version 1.1.6 (2008-01-04)
 ------------------------------------------------
 
@@ -14,6 +50,7 @@ Noteworthy changes in version 1.1.6 (2008-01-04)
  gpgme_op_getauditlog            NEW.
  GPGME_AUDITLOG_HTML             NEW.
  GPGME_AUDITLOG_WITH_HELP        NEW.
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 
 Noteworthy changes in version 1.1.5 (2007-07-09)
@@ -1200,7 +1237,7 @@ Noteworthy changes in version 0.2.1 (2001-04-02)
  * Made the W32 support more robust.
 
 
- Copyright 2001, 2002, 2003, 2004, 2005, 2007 g10 Code GmbH
+ Copyright 2001, 2002, 2003, 2004, 2005, 2007, 2008 g10 Code GmbH
 
  This file is free software; as a special exception the author gives
  unlimited permission to copy and/or distribute it, with or without

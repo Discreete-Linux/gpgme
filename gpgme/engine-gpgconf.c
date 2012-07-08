@@ -1,9 +1,6 @@
-// Check protocol.
-// IMPLEMENT NO_ARG_DESC!!!!
-
 /* engine-gpgconf.c - gpg-conf engine.
    Copyright (C) 2000 Werner Koch (dd9jn)
-   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2007 g10 Code GmbH
+   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2007, 2008 g10 Code GmbH
  
    This file is part of GPGME.
 
@@ -18,9 +15,8 @@
    Lesser General Public License for more details.
    
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, write to the Free Software
-   Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
-   02111-1307, USA.  */
+   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+ */
 
 #if HAVE_CONFIG_H
 #include <config.h>
@@ -201,15 +197,19 @@ gpgconf_read (void *engine, char *arg1, char *arg2,
   struct engine_gpgconf *gpgconf = engine;
   gpgme_error_t err = 0;
 #define LINELENGTH 1024
-  char line[LINELENGTH] = "";
+  char linebuf[LINELENGTH] = "";
   int linelen = 0;
-  char *argv[] = { NULL /* file_name */, arg1, arg2, 0 };
+  char *argv[4] = { NULL /* file_name */, NULL, NULL, NULL };
   int rp[2];
-  struct spawn_fd_item_s pfd[] = { {0, -1}, {-1, -1} };
-  struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */}, {-1, -1} };
+  struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */, -1, 0},
+				   {-1, -1} };
   int status;
   int nread;
   char *mark = NULL;
+
+  argv[1] = arg1;
+  argv[2] = arg2;
+
 
   /* FIXME: Deal with engine->home_dir.  */
 
@@ -219,10 +219,9 @@ gpgconf_read (void *engine, char *arg1, char *arg2,
   if (_gpgme_io_pipe (rp, 1) < 0)
     return gpg_error_from_syserror ();
 
-  pfd[0].fd = rp[1];
   cfd[0].fd = rp[1];
 
-  status = _gpgme_io_spawn (gpgconf->file_name, argv, cfd, pfd);
+  status = _gpgme_io_spawn (gpgconf->file_name, argv, cfd, NULL);
   if (status < 0)
     {
       _gpgme_io_close (rp[0]);
@@ -232,28 +231,37 @@ gpgconf_read (void *engine, char *arg1, char *arg2,
 
   do
     {
-      nread = _gpgme_io_read (rp[0], &line[linelen], LINELENGTH - linelen - 1);
+      nread = _gpgme_io_read (rp[0], 
+                              linebuf + linelen, LINELENGTH - linelen - 1);
       if (nread > 0)
 	{
-	  line[linelen + nread] = '\0';
-	  linelen += nread;
+          char *line;
+          const char *lastmark = NULL;
+          size_t nused;
 
-	  while ((mark = strchr (line, '\n')))
+	  linelen += nread;
+	  linebuf[linelen] = '\0';
+
+	  for (line=linebuf; (mark = strchr (line, '\n')); line = mark+1 )
 	    {
-	      char *eol = mark;
-	      
-	      if (eol > &line[0] && *eol == '\r')
-		eol--;
-	      *eol = '\0';
-	      
-	      /* Got a full line.  */
-	      err = (*cb) (hook, line);
+              lastmark = mark;
+	      if (mark > line && mark[-1] == '\r')
+		mark[-1] = '\0';
+              else
+                mark[0] = '\0';
+
+	      /* Got a full line.  Due to the CR removal code (which
+                 occurs only on Windows) we might be one-off and thus
+                 would see empty lines.  Don't pass them to the
+                 callback. */
+	      err = *line? (*cb) (hook, line) : 0;
 	      if (err)
-		break;
-	      
-	      linelen -= mark - line;
-	      memmove (line, eol + 1, linelen);
+		goto leave;
 	    }
+
+          nused = lastmark? (lastmark + 1 - linebuf) : 0;
+          memmove (linebuf, linebuf + nused, linelen - nused);
+          linelen -= nused;
 	}
     }
   while (nread > 0 && linelen < LINELENGTH - 1);
@@ -263,6 +271,7 @@ gpgconf_read (void *engine, char *arg1, char *arg2,
   if (!err && nread > 0)
     err = gpg_error (GPG_ERR_LINE_TOO_LONG);
 
+ leave:
   _gpgme_io_close (rp[0]);
 
   return err;
@@ -313,8 +322,8 @@ gpgconf_config_load_cb (void *hook, char *line)
 
   if (fields >= 3)
     {
-      comp->description = strdup (field[2]);
-      if (!comp->description)
+      comp->program_name = strdup (field[2]);
+      if (!comp->program_name)
 	return gpg_error_from_syserror ();
     }
 
@@ -332,13 +341,15 @@ gpgconf_parse_option (gpgme_conf_opt_t opt,
   if (!line[0])
     return 0;
 
-  mark = strchr (line, ',');
-  if (mark)
-    *mark = '\0';
-
   while (line)
     {
-      gpgme_conf_arg_t arg = calloc (1, sizeof (*arg));
+      gpgme_conf_arg_t arg;
+
+      mark = strchr (line, ',');
+      if (mark)
+	*mark = '\0';
+
+      arg = calloc (1, sizeof (*arg));
       if (!arg)
 	return gpg_error_from_syserror ();
       *arg_p = arg;
@@ -361,8 +372,14 @@ gpgconf_parse_option (gpgme_conf_opt_t opt,
 	      break;
 	      
 	    case GPGME_CONF_STRING:
-	    case GPGME_CONF_PATHNAME:
-	    case GPGME_CONF_LDAP_SERVER:
+              /* The complex types below are only here to silent the
+                 compiler warning. */
+            case GPGME_CONF_FILENAME: 
+            case GPGME_CONF_LDAP_SERVER:
+            case GPGME_CONF_KEY_FPR:
+            case GPGME_CONF_PUB_KEY:
+            case GPGME_CONF_SEC_KEY:
+            case GPGME_CONF_ALIAS_LIST:
 	      /* Skip quote character.  */
 	      line++;
 	      
@@ -457,9 +474,18 @@ gpgconf_config_load_cb2 (void *hook, char *line)
 	return gpg_error_from_syserror ();
     }
 
-  err = gpgconf_parse_option (opt, &opt->no_arg_value, field[8]);
-  if (err)
-    return err;
+  if (opt->flags & GPGME_CONF_NO_ARG_DESC)
+    {
+      opt->no_arg_description = strdup (field[8]);
+      if (!opt->no_arg_description)
+	return gpg_error_from_syserror ();
+    }
+  else
+    {
+      err = gpgconf_parse_option (opt, &opt->no_arg_value, field[8]);
+      if (err)
+	return err;
+    }
 
   err = gpgconf_parse_option (opt, &opt->value, field[9]);
   if (err)
@@ -520,6 +546,8 @@ _gpgme_conf_arg_new (gpgme_conf_arg_t *arg_p,
     arg->no_arg = 1;
   else
     {
+      /* We need to switch on type here because the alt-type is not
+         yet known.  */
       switch (type)
 	{
 	case GPGME_CONF_NONE:
@@ -532,8 +560,12 @@ _gpgme_conf_arg_new (gpgme_conf_arg_t *arg_p,
 	  break;
 	  
 	case GPGME_CONF_STRING:
-	case GPGME_CONF_PATHNAME:
+	case GPGME_CONF_FILENAME:
 	case GPGME_CONF_LDAP_SERVER:
+        case GPGME_CONF_KEY_FPR:
+        case GPGME_CONF_PUB_KEY:
+        case GPGME_CONF_SEC_KEY:
+        case GPGME_CONF_ALIAS_LIST:
 	  arg->value.string = strdup (value);
 	  if (!arg->value.string)
 	    {
@@ -556,6 +588,7 @@ _gpgme_conf_arg_new (gpgme_conf_arg_t *arg_p,
 void
 _gpgme_conf_arg_release (gpgme_conf_arg_t arg, gpgme_conf_type_t type)
 {
+  /* Lacking the alt_type we need to switch on type here.  */
   switch (type)
     {
     case GPGME_CONF_NONE:
@@ -565,8 +598,12 @@ _gpgme_conf_arg_release (gpgme_conf_arg_t arg, gpgme_conf_type_t type)
     default:
       break;
        
-    case GPGME_CONF_PATHNAME:
+    case GPGME_CONF_FILENAME:
     case GPGME_CONF_LDAP_SERVER:
+    case GPGME_CONF_KEY_FPR:
+    case GPGME_CONF_PUB_KEY:
+    case GPGME_CONF_SEC_KEY:
+    case GPGME_CONF_ALIAS_LIST:
       type = GPGME_CONF_STRING;
       break;
     }
@@ -607,7 +644,6 @@ gpgconf_write (void *engine, char *arg1, char *arg2, gpgme_data_t conf)
   int buflen = 0;
   char *argv[] = { NULL /* file_name */, arg1, arg2, 0 };
   int rp[2];
-  struct spawn_fd_item_s pfd[] = { {1, -1}, {-1, -1} };
   struct spawn_fd_item_s cfd[] = { {-1, 0 /* STDIN_FILENO */}, {-1, -1} };
   int status;
   int nwrite;
@@ -616,15 +652,14 @@ gpgconf_write (void *engine, char *arg1, char *arg2, gpgme_data_t conf)
 
   /* _gpgme_engine_new guarantees that this is not NULL.  */
   argv[0] = gpgconf->file_name;
-  argv[0] = "/home/marcus/g10/install/bin/gpgconf";
+  argv[0] = "/nowhere/path-needs-to-be-fixed/gpgconf";
 
   if (_gpgme_io_pipe (rp, 0) < 0)
     return gpg_error_from_syserror ();
 
-  pfd[0].fd = rp[0];
   cfd[0].fd = rp[0];
 
-  status = _gpgme_io_spawn (gpgconf->file_name, argv, cfd, pfd);
+  status = _gpgme_io_spawn (gpgconf->file_name, argv, cfd, NULL);
   if (status < 0)
     {
       _gpgme_io_close (rp[0]);
@@ -703,10 +738,17 @@ arg_to_data (gpgme_data_t conf, gpgme_conf_opt_t option, gpgme_conf_arg_t arg)
 	  buf[sizeof (buf) - 1] = '\0';
 	  amt = gpgme_data_write (conf, buf, strlen (buf));
 	  break;
-	  
+	
+          
 	case GPGME_CONF_STRING:
-	case GPGME_CONF_PATHNAME:
-	case GPGME_CONF_LDAP_SERVER:
+          /* The complex types below are only here to silent the
+             compiler warning. */
+        case GPGME_CONF_FILENAME: 
+        case GPGME_CONF_LDAP_SERVER:
+        case GPGME_CONF_KEY_FPR:
+        case GPGME_CONF_PUB_KEY:
+        case GPGME_CONF_SEC_KEY:
+        case GPGME_CONF_ALIAS_LIST:
 	  /* One quote character, and three times to allow
 	     for percent escaping.  */
 	  {

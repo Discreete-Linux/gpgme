@@ -1,6 +1,6 @@
 # configure.ac for GPGME
 # Copyright (C) 2000 Werner Koch (dd9jn)
-# Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007 g10 Code GmbH
+# Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008 g10 Code GmbH
 # 
 # This file is part of GPGME.
 # 
@@ -20,7 +20,7 @@
  
 # (Process this file with autoconf to produce a configure script.)
 AC_PREREQ(2.59)
-min_automake_version="1.9.3"
+min_automake_version="1.10"
 
 # Version number: Remember to change it immediately *after* a release.
 #                 Make sure to run  "svn up" and "./autogen.sh --force"
@@ -31,12 +31,13 @@ min_automake_version="1.9.3"
 # specific feature can already be done under the assumption that the
 # SVN version is the most recent one in a branch.  To disable the SVN
 # version for the real release, set the my_issvn macro to no.
-m4_define(my_version, [1.1.6])
+m4_define(my_version, [1.1.7])
 m4_define(my_issvn, [no])
 
 m4_define([svn_revision], m4_esyscmd([echo -n $( (svn info 2>/dev/null \
             || echo 'Revision: 0')|sed -n '/^Revision:/ {s/[^0-9]//gp;q;}')]))
-AC_INIT([gpgme], my_version[]m4_if(my_issvn,[yes],[-svn[]svn_revision]),
+AC_INIT([gpgme], 
+        [my_version[]m4_if(my_issvn,[yes],[-svn[]svn_revision])],
         [bug-gpgme@gnupg.org])
 
 
@@ -50,7 +51,7 @@ LIBGPGME_LT_CURRENT=17
 # Subtract 2 from this value if you want to make the LFS transition an
 # ABI break.  [Note to self: Remove this comment with the next regular break.]
 LIBGPGME_LT_AGE=6
-LIBGPGME_LT_REVISION=4
+LIBGPGME_LT_REVISION=5
 
 # If the API is changed in an incompatible way: increment the next counter.
 GPGME_CONFIG_API_VERSION=1
@@ -109,7 +110,11 @@ case "${host}" in
     *-*-gnu*)
 	have_ld_version_script=yes
         ;;
+    *-apple-darwin*)
+        AC_DEFINE(_XOPEN_SOURCE, 500, Activate POSIX interface on MacOS X)
+        ;;
 esac
+
 AM_CONDITIONAL(HAVE_LD_VERSION_SCRIPT, test "$have_ld_version_script" = "yes")
 
 GPG_DEFAULT=no

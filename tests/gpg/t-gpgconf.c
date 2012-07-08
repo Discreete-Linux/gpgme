@@ -104,7 +104,11 @@ dump_arg (int type, gpgme_conf_arg_t arg)
 	case GPGME_CONF_STRING:
 	case GPGME_CONF_PATHNAME:
 	case GPGME_CONF_LDAP_SERVER:
-	  printf ("%s", arg->value.string);
+        case GPGME_CONF_KEY_FPR:
+        case GPGME_CONF_PUB_KEY:
+        case GPGME_CONF_SEC_KEY:
+        case GPGME_CONF_ALIAS_LIST:
+	  printf ("`%s'", arg->value.string);
 	  break;
 
 	case GPGME_CONF_UINT32:
@@ -254,6 +258,11 @@ main (int argc, char **argv)
   gpgme_conf_comp_t conf;
   gpgme_conf_comp_t comp;
   int first;
+
+#ifndef ENABLE_GPGCONF
+  return 0;
+#endif
+
   init_gpgme (GPGME_PROTOCOL_GPGCONF);
 
   err = gpgme_new (&ctx);
@@ -287,15 +296,23 @@ main (int argc, char **argv)
     comp = conf;
     while (comp && strcmp (comp->name, "dirmngr"))
       comp = comp->next;
-    opt = comp->options;
-    while (opt && strcmp (opt->name, "verbose"))
-      opt = opt->next;
 
-    err = gpgme_conf_opt_change (opt, 0, arg);
-    fail_if_err (err);
-
-    err = gpgme_op_conf_save (ctx, comp);
-    fail_if_err (err);
+    if (comp)
+      {
+	opt = comp->options;
+	while (opt && strcmp (opt->name, "verbose"))
+	  opt = opt->next;
+	
+	/* Allow for the verbose option not to be there.  */
+	if (opt)
+	  {
+	    err = gpgme_conf_opt_change (opt, 0, arg);
+	    fail_if_err (err);
+	    
+	    err = gpgme_op_conf_save (ctx, comp);
+	    fail_if_err (err);
+	  }
+      }
   }
 #endif
 

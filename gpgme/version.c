@@ -1,6 +1,6 @@
 /* version.c - Version check routines.
    Copyright (C) 2000 Werner Koch (dd9jn)
-   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2007 g10 Code GmbH
+   Copyright (C) 2001, 2002, 2003, 2004, 2005, 2007, 2008 g10 Code GmbH
  
    This file is part of GPGME.
  
@@ -187,6 +187,55 @@ gpgme_check_version (const char *req_version)
 
 #define LINELENGTH 80
 
+/* Extract the version string of a program from STRING.  The version
+   number is expected to be in GNU style format:
+   
+     foo 1.2.3
+     foo (bar system) 1.2.3
+     foo 1.2.3 cruft
+     foo (bar system) 1.2.3 cruft.
+
+  Spaces and tabs are skipped and used as delimiters, a term in
+  (nested) parenthesis before the version string is skipped, the
+  version string may consist of any non-space and non-tab characters
+  but needs to bstart with a digit.
+*/
+static const char *
+extract_version_string (const char *string, size_t *r_len)
+{
+  const char *s;
+  int count, len;
+
+  for (s=string; *s; s++)
+    if (*s == ' ' || *s == '\t')
+        break;
+  while (*s == ' ' || *s == '\t')
+    s++;
+  if (*s == '(')
+    {
+      for (count=1, s++; count && *s; s++)
+        if (*s == '(')
+          count++;
+        else if (*s == ')')
+          count--;
+    }
+  /* For robustness we look for a digit.  */
+  while ( *s && !(*s >= '0' && *s <= '9') )
+    s++;
+  if (*s >= '0' && *s <= '9')
+    {
+      for (len=0; s[len]; len++)
+        if (s[len] == ' ' || s[len] == '\t')
+          break;
+    }
+  else
+    len = 0;
+
+  *r_len = len;
+  return s;
+}
+
+
 /* Retrieve the version number from the --version output of the
    program FILE_NAME.  */
 char *
@@ -198,8 +247,8 @@ _gpgme_get_program_version (const char *const file_name)
   int rp[2];
   int nread;
   char *argv[] = {NULL /* file_name */, "--version", 0};
-  struct spawn_fd_item_s pfd[] = { {0, -1}, {-1, -1} };
-  struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */}, {-1, -1} };
+  struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */, -1, 0},
+				   {-1, -1} };
   int status;
 
   if (!file_name)
@@ -209,10 +258,9 @@ _gpgme_get_program_version (const char *const file_name)
   if (_gpgme_io_pipe (rp, 1) < 0)
     return NULL;
 
-  pfd[0].fd = rp[1];
   cfd[0].fd = rp[1];
 
-  status = _gpgme_io_spawn (file_name, argv, cfd, pfd);
+  status = _gpgme_io_spawn (file_name, argv, cfd, NULL);
   if (status < 0)
     {
       _gpgme_io_close (rp[0]);
@@ -243,10 +291,18 @@ _gpgme_get_program_version (const char *const file_name)
 
   if (mark)
     {
-      mark = strrchr (line, ' ');
+      size_t len;
+      const char *s;
+
+      s = extract_version_string (line, &len);
+      if (!len)
+        return NULL;
+      mark = malloc (len + 1);
       if (!mark)
 	return NULL;
-      return strdup (mark + 1);
+      memcpy (mark, s, len);
+      mark[len] = 0;
+      return mark;
     }
 
   return NULL;
