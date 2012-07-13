@@ -11,7 +11,6 @@ Build-Depends: autotools-dev (>> 20100122.1~),
                gpgsm,
                libassuan-dev (>> 2.0.2),
                libgpg-error-dev (>> 1.8),
-               libpth-dev,
                scdaemon
 Standards-Version: 3.9.3
 Homepage: http://www.gnupg.org/gpgme.html
