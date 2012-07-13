@@ -5,11 +5,16 @@ gpgme-config \- script to get information about the installed version of GPGME
 
 .SH SYNOPSIS
 .B  gpgme-config
-.RB [ \-\-prefix\fI[=DIR]\fP ]
-.RB [ \-\-exec\-prefix\fI[=DIR]\fP ]
-.RB [ \-\-version ]
-.RB [ \-\-libs ]
+.RB [ \-\-api\-version ]
 .RB [ \-\-cflags ]
+.RB [ \-\-exec\-prefix ]
+.RB [ \-\-get\-gpg ]
+.RB [ \-\-get\-gpgsm ]
+.RB [ \-\-host ]
+.RB [ \-\-libs ]
+.RB [ \-\-prefix ]
+.RB [ \-\-thread=pthread ]
+.RB [ \-\-version ]
 
 .SH DESCRIPTION
 .PP
@@ -31,12 +36,12 @@ Print the compiler flags that are necessary to compile a \fIGPGME\fP program.
 .B \-\-exec\-prefix
 Print the exec prefix that was used to configure the \fIGPGME\fP build.
 .TP
-.B --get-gpg
+.B \-\-get\-gpg
 Print the path to the
 .BR gpg (1)
 binary used to configure the \fIGPGME\fP build.
 .TP
-.B --get-gpgsm
+.B \-\-get\-gpgsm
 Print the path to the
 .BR gpgsm (1)
 binary used to configure the \fIGPGME\fP build.
@@ -50,7 +55,7 @@ Print the linker flags that are necessary to link a \fIGPGME\fP program.
 .B \-\-prefix
 Print the prefix that was used to configure the \fIGPGME\fP build.
 .TP
-.B --thread=pthread
+.B \-\-thread=pthread
 Switch for the
 .B \-\-cflags
 and

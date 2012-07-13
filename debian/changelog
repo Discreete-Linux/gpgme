@@ -1,30 +1,85 @@
 gpgme (1.3.2-1) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
-  * New upstream version.
+  * New upstream version (closes: #570804).
+    - Increases size of notify_table to MAX_SLAFD (closes: #513907).
   * debian/compat: Raised compatibility level to 7.
   * debian/control: Added myself to Uploaders.
+    (Priority): Raised to standard (closes: #623353).
     (Section): Changed to libs. Fixed binary-control-field-duplicates-source.
     (Standards-Version): Bumped to 3.9.3.
-    (Vcs-Git, Vcs-Browser): Adjusted to point to subversion tree.
+    (Vcs-Git, Vcs-Browser): Adjusted to point to svn tree (closes: #610737).
     (Build-Depends, Depends): Added new dependencies including libassuan-dev.
     Fixed debhelper-but-no-misc-depends. Dropped dpatch.
     (Description): Fixed several lintian hints.
   * debian/copyright: Fixed copyright-refers-to-versionless-license-file.
-  * debian/gpgme-config.1: Fixed a few errors/warnings.
+  * debian/gpgme-config.1: Fixed a few errors/warnings. Updated.
   * debian/libgpgme11.files: Renamed to debian/libgpgme11.install, adjusted.
   * debian/libgpgme11-dev.files: Likewise.
   * debian/libgpgme11.dirs, debian/libgpgme11-dev.dirs: Dropped useless files.
   * debian/libgpgme11-dev.info: Ditto.
   * debian/libgpgme11-dev.doc-base (Section): Fixed.
+  * debian/libgpgme11.symbols: Updated.
   * debian/rules: Complete rewrite for debhelper 7. Enabled hardening.
-  * debian/watch: Added.
+  * debian/watch: Added (closes: #570802).
+  * debian/patches/ld-no-add-needed.patch: Dropped (not necessary).
   * debian/patches/gpgme-config.dpatch: Dropped (merged upstream).
   * debian/patches/10_relibtoolize.dpatch: Dropped.
   * debian/patches/00list: Ditto.
   * debian/source/format: Added for format 3.0 (quilt).
 
  -- Daniel Leidert <dleidert@debian.org>  Sun, 08 Jul 2012 16:52:59 +0200
+
+gpgme1.0 (1.2.0-1.4) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Remove references to other libraries from dependency_libs field
+    (Closes: #619218).
+
+ -- Luk Claes <luk@debian.org>  Sun, 29 May 2011 23:04:40 +0200
+
+gpgme1.0 (1.2.0-1.3) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Add ld-no-add-needed.dpatch from Matthias Klose to fix FTBFS
+    (Closes: #554735) (Closes: #616682), thanks!
+
+ -- Thorsten Glaser <tg@mirbsd.de>  Sun, 01 May 2011 16:12:11 +0000
+
+gpgme1.0 (1.2.0-1.2) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Enable support for gpgconf (Closes: #510567)
+
+ -- Stefano Zacchiroli <zack@debian.org>  Wed, 02 Dec 2009 11:17:17 +0100
+
+gpgme1.0 (1.2.0-1.1) unstable; urgency=low
+
+  * Non-maintainer upload.
+  * Do not ship with /usr/share/info/dir.gz (Closes: 546015)
+  * do not claim in debian/rules configure-stamp can be run parallel
+    with build-stamp (Closes: 551783)
+  * update symbols file for 1.2.0
+
+ -- Bernhard R. Link <brlink@debian.org>  Mon, 02 Nov 2009 14:16:57 +0100
+
+gpgme1.0 (1.2.0-1) unstable; urgency=low
+
+  * New Upstream Version (Closes: #545671)
+  * As there are new symbols introduced in this version, bump shlibs info. 
+  * Bump Standards-Version to 3.8.3, no changes. 
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Tue, 08 Sep 2009 14:30:11 +0200
+
+gpgme1.0 (1.1.8-3) unstable; urgency=low
+
+  * Add libgpgme11.symbols file as provided by Bernhard R. Link 
+    <brlink@debian.org>, adressing the problem caused by 1.1.8-2 by bumping
+    shlibs info as a new symbol was added (Closes: #512221)
+  * Change section of doc-base from Apps/programming to Programming/C (and make
+    lintian happy) 
+
+ -- Jose Carlos Garcia Sogo <jsogo@debian.org>  Tue, 20 Jan 2009 23:58:45 +0100
 
 gpgme1.0 (1.1.8-2) unstable; urgency=low
 
