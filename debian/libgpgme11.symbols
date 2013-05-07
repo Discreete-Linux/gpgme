@@ -218,6 +218,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_hash_algo_name@GPGME_1.0 1.1.2
  gpgme_io_read@GPGME_1.1 1.2.0
  gpgme_io_write@GPGME_1.1 1.2.0
+ gpgme_io_writen@GPGME_1.1 1.4.1
  gpgme_key_from_uid@GPGME_1.1 1.3.2
  gpgme_key_get_string_attr@GPGME_1.0 1.1.2
  gpgme_key_get_ulong_attr@GPGME_1.0 1.1.2
@@ -291,11 +292,13 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_result_unref@GPGME_1.1 1.2.0
  gpgme_set_armor@GPGME_1.0 1.1.2
  gpgme_set_engine_info@GPGME_1.1 1.1.6
+ gpgme_set_global_flag@GPGME_1.1 1.4.1
  gpgme_set_include_certs@GPGME_1.0 1.1.2
  gpgme_set_io_cbs@GPGME_1.0 1.1.2
  gpgme_set_keylist_mode@GPGME_1.0 1.1.2
  gpgme_set_locale@GPGME_1.0 1.1.2
  gpgme_set_passphrase_cb@GPGME_1.0 1.1.2
+ gpgme_set_pinentry_mode@GPGME_1.1 1.4.1
  gpgme_set_progress_cb@GPGME_1.0 1.1.2
  gpgme_set_protocol@GPGME_1.0 1.1.6
  gpgme_set_sub_protocol@GPGME_1.1 1.3.2
