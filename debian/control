@@ -2,9 +2,9 @@ Source: gpgme
 Priority: standard
 Section: libs
 Maintainer: Jose Carlos Garcia Sogo <jsogo@debian.org>
-Uploaders: Daniel Leidert <dleidert@debian.org>
+Uploaders: Debian GnuPG-Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
 Build-Depends: autotools-dev (>> 20100122.1~),
-               debhelper (>> 7.0.50~),
+               debhelper (>> 9~),
                dirmngr,
                gnupg-agent,
                gnupg2,
@@ -36,6 +36,8 @@ Description: GPGME - GnuPG Made Easy (development files)
 
 Package: libgpgme11
 Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
 Depends: gnupg2 (>> 2.0.4), ${misc:Depends}, ${shlibs:Depends}
 Suggests: gpgsm (>> 1.9.6)
 Description: GPGME - GnuPG Made Easy (library)

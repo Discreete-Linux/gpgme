@@ -1,7 +1,6 @@
 usr/include/
-usr/lib/lib*.a
-usr/lib/lib*.so
-usr/lib/*.la
+usr/lib/*/lib*.a
+usr/lib/*/lib*.so
 usr/bin/gpgme-config
 usr/share/aclocal/
 usr/share/info/*info*
