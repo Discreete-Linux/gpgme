@@ -1,6 +1,7 @@
 gpgme1.0 (1.4.1-0.1) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * NMU
   * New upstream version (closes: #570804).
     - Increases size of notify_table to MAX_SLAFD (closes: #513907).
     - Tests are compatible with newer gnupg versions (closes: #699245).
@@ -17,7 +18,7 @@ gpgme1.0 (1.4.1-0.1) UNRELEASED; urgency=low
   * debian/copyright: Fixed copyright-refers-to-versionless-license-file.
   * debian/gpgme-config.1: Fixed a few errors/warnings. Updated.
   * debian/libgpgme11.files: Renamed to debian/libgpgme11.install, adjusted.
-  * debian/libgpgme11-dev.files: Likewise.
+  * debian/libgpgme11-dev.files: Likewise. Dropped .la (LP: #728497).
   * debian/libgpgme11.dirs, debian/libgpgme11-dev.dirs: Dropped useless files.
   * debian/libgpgme11-dev.info: Ditto.
   * debian/libgpgme11-dev.doc-base (Section): Fixed.
