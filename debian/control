@@ -1,8 +1,7 @@
-Source: gpgme
+Source: gpgme1.0
 Priority: standard
 Section: libs
 Maintainer: Jose Carlos Garcia Sogo <jsogo@debian.org>
-Uploaders: Debian GnuPG-Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
 Build-Depends: autotools-dev (>> 20100122.1~),
                debhelper (>> 9~),
                dirmngr,
@@ -12,7 +11,7 @@ Build-Depends: autotools-dev (>> 20100122.1~),
                libassuan-dev (>> 2.0.2),
                libgpg-error-dev (>> 1.8),
                scdaemon
-Standards-Version: 3.9.3
+Standards-Version: 3.9.4
 Homepage: http://www.gnupg.org/gpgme.html
 Vcs-Browser: http://svn.debian.org/wsvn/pkg-gnupg/gpgme/trunk/
 Vcs-Svn: svn://svn.debian.org/svn/pkg-gnupg/gpgme/trunk/

@@ -1,16 +1,14 @@
-gpgme1.0 (1.4.1-1) UNRELEASED; urgency=low
+gpgme1.0 (1.4.1-0.1) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
-  [ Daniel Leidert ]
   * New upstream version (closes: #570804).
     - Increases size of notify_table to MAX_SLAFD (closes: #513907).
     - Tests are compatible with newer gnupg versions (closes: #699245).
   * debian/compat: Raised compatibility level to 9.
-  * debian/control: Enable multiarch support (closes: #698970). Added gnupg
-    team to uploaders.
+  * debian/control: Enable multiarch support (closes: #698970).
     (Priority): Raised to standard (closes: #623353).
     (Section): Changed to libs. Fixed binary-control-field-duplicates-source.
-    (Standards-Version): Bumped to 3.9.3.
+    (Standards-Version): Bumped to 3.9.4.
     (Vcs-Git, Vcs-Browser): Adjusted to point to svn tree (closes: #610737).
     (Build-Depends, Depends): Added new dependencies including libassuan-dev.
     Fixed debhelper-but-no-misc-depends. Dropped dpatch and obsolete
@@ -33,7 +31,7 @@ gpgme1.0 (1.4.1-1) UNRELEASED; urgency=low
   * debian/patches/00list: Ditto.
   * debian/source/format: Changed to dpkg-source-v3/quilt (closes: #699247).
 
- -- Debian GnuPG-Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>  Sun, 08 Jul 2012 16:52:59 +0200
+ -- Daniel Leidert <dleidert@debian.org>  Sun, 08 Jul 2012 16:52:59 +0200
 
 gpgme1.0 (1.2.0-1.4) unstable; urgency=low
 
