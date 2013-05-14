@@ -1,6 +1,5 @@
-gpgme1.0 (1.4.1-0.1) UNRELEASED; urgency=low
+gpgme1.0 (1.4.1-0.1) unstable; urgency=low
 
-  * NOT RELEASED YET
   * NMU
   * New upstream version (closes: #570804).
     - Increases size of notify_table to MAX_SLAFD (closes: #513907).
@@ -32,7 +31,7 @@ gpgme1.0 (1.4.1-0.1) UNRELEASED; urgency=low
   * debian/patches/00list: Ditto.
   * debian/source/format: Changed to dpkg-source-v3/quilt (closes: #699247).
 
- -- Daniel Leidert <dleidert@debian.org>  Sun, 08 Jul 2012 16:52:59 +0200
+ -- Daniel Leidert <dleidert@debian.org>  Tue, 14 May 2013 20:29:20 +0200
 
 gpgme1.0 (1.2.0-1.4) unstable; urgency=low
 
