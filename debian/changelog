@@ -1,3 +1,10 @@
+gpgme1.0 (1.4.1-0.2) UNRELEASED; urgency=low
+
+  * NOT RELEASED YET
+  * NMU
+
+ -- Daniel Leidert <dleidert@debian.org>  Tue, 14 May 2013 21:03:48 +0200
+
 gpgme1.0 (1.4.1-0.1) unstable; urgency=low
 
   * NMU
