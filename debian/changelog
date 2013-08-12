@@ -1,6 +1,8 @@
-gpgme1.0 (1.4.2-0.2) UNRELEASED; urgency=low
+gpgme1.0 (1.4.3-0.1) UNRELEASED; urgency=low
 
   * NOT RELEASED YET
+  * NMU
+  * New upstream release.
 
  -- Daniel Leidert <dleidert@debian.org>  Wed, 29 May 2013 19:26:42 +0200
 
