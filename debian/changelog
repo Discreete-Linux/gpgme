@@ -5,6 +5,7 @@ gpgme1.0 (1.4.3-0.1) UNRELEASED; urgency=low
   * New upstream release.
   * debian/control (Build-Depends): Dropped dirmngr (closes: #712813). It is
     not necessary for the build.
+  * debian/libgpgme11.symbols: Updated symbols file.
 
  -- Daniel Leidert <dleidert@debian.org>  Wed, 29 May 2013 19:26:42 +0200
 

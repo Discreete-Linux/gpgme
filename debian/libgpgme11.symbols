@@ -14,6 +14,7 @@ libgpgme-pthread.so.11 libgpgme11 #MINVER#
  gpgme_ctx_set_engine_info@GPGME_1.1 1.1.6
  gpgme_data_get_encoding@GPGME_1.0 1.1.2
  gpgme_data_get_file_name@GPGME_1.1 1.1.2
+ gpgme_data_identify@GPGME_1.1 1.4.3-0.1
  gpgme_data_new@GPGME_1.0 1.1.2
  gpgme_data_new_from_cbs@GPGME_1.0 1.1.2
  gpgme_data_new_from_fd@GPGME_1.0 1.1.2
@@ -148,6 +149,7 @@ libgpgme-pthread.so.11 libgpgme11 #MINVER#
  gpgme_sig_notation_get@GPGME_1.1 1.1.2
  gpgme_signers_add@GPGME_1.0 1.1.2
  gpgme_signers_clear@GPGME_1.0 1.1.2
+ gpgme_signers_count@GPGME_1.0 1.4.3-0.1
  gpgme_signers_enum@GPGME_1.0 1.1.2
  gpgme_strerror@GPGME_1.0 1.1.2
  gpgme_strerror_r@GPGME_1.0 1.1.2
@@ -174,6 +176,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_ctx_set_engine_info@GPGME_1.1 1.1.6
  gpgme_data_get_encoding@GPGME_1.0 1.1.2
  gpgme_data_get_file_name@GPGME_1.1 1.1.2
+ gpgme_data_identify@GPGME_1.1 1.4.3-0.1
  gpgme_data_new@GPGME_1.0 1.1.2
  gpgme_data_new_from_cbs@GPGME_1.0 1.1.2
  gpgme_data_new_from_fd@GPGME_1.0 1.1.2
@@ -308,6 +311,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_sig_notation_get@GPGME_1.1 1.1.2
  gpgme_signers_add@GPGME_1.0 1.1.2
  gpgme_signers_clear@GPGME_1.0 1.1.2
+ gpgme_signers_count@GPGME_1.0 1.4.3-0.1
  gpgme_signers_enum@GPGME_1.0 1.1.2
  gpgme_strerror@GPGME_1.0 1.1.2
  gpgme_strerror_r@GPGME_1.0 1.1.2
