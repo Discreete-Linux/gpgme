@@ -4,7 +4,6 @@ Section: libs
 Maintainer: Jose Carlos Garcia Sogo <jsogo@debian.org>
 Build-Depends: autotools-dev (>> 20100122.1~),
                debhelper (>> 9~),
-               dirmngr,
                gnupg-agent,
                gnupg2,
                gpgsm,
