@@ -1,2 +1,2 @@
 version=3
-opts=pasv ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-([\d.]+)\.tar\.bz2
+opts=pasv,pgpsigurlmangle=s/$/.sig/ ftp://ftp.gnupg.org/gcrypt/gpgme/gpgme-([\d.]+)\.tar\.bz2
