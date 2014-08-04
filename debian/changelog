@@ -1,8 +1,11 @@
-gpgme1.0 (1.4.3-0.2) UNRELEASED; urgency=low
+gpgme1.0 (1.5.0-0.1) unstable; urgency=low
 
-  * NOT RELEASED YET
+  * NMU
+  * New upstream release (Closes: #748096, #752683)
+  * check upstream signatures (Closes: #752675)
+  * bumped Standards-Version to 3.9.5 (no changes needed)
 
- -- Daniel Leidert <dleidert@debian.org>  Mon, 12 Aug 2013 23:12:50 +0200
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Wed, 25 Jun 2014 10:27:37 -0400
 
 gpgme1.0 (1.4.3-0.1) unstable; urgency=low
 
@@ -529,6 +532,3 @@ gpgme (0.2.1-1) unstable; urgency=low
 
  -- Jose Carlos Garcia Sogo <jose@jaimedelamo.eu.org>  Mon, 30 Apr 2001 19:34:26 +0200
 
-Local variables:
-mode: debian-changelog
-End:

@@ -10,7 +10,7 @@ Build-Depends: autotools-dev (>> 20100122.1~),
                libassuan-dev (>> 2.0.2),
                libgpg-error-dev (>> 1.8),
                scdaemon
-Standards-Version: 3.9.4
+Standards-Version: 3.9.5
 Homepage: http://www.gnupg.org/gpgme.html
 Vcs-Browser: http://anonscm.debian.org/viewvc/pkg-gnupg/gpgme/trunk/
 Vcs-Svn: svn://anonscm.debian.org/pkg-gnupg/gpgme/trunk/
