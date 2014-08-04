@@ -40,6 +40,7 @@ libgpgme-pthread.so.11 libgpgme11 #MINVER#
  gpgme_error_from_errno@GPGME_1.0 1.1.2
  gpgme_free@GPGME_1.1 1.1.2
  gpgme_get_armor@GPGME_1.0 1.1.2
+ gpgme_get_dirinfo@GPGME_1.1 1.5.0
  gpgme_get_engine_info@GPGME_1.0 1.1.2
  gpgme_get_include_certs@GPGME_1.0 1.1.2
  gpgme_get_io_cbs@GPGME_1.0 1.1.2
@@ -118,6 +119,8 @@ libgpgme-pthread.so.11 libgpgme11 #MINVER#
  gpgme_op_sign@GPGME_1.0 1.1.2
  gpgme_op_sign_result@GPGME_1.0 1.1.2
  gpgme_op_sign_start@GPGME_1.0 1.1.2
+ gpgme_op_spawn@GPGME_1.1 1.5.0
+ gpgme_op_spawn_start@GPGME_1.1 1.5.0
  gpgme_op_trustlist_end@GPGME_1.0 1.1.2
  gpgme_op_trustlist_next@GPGME_1.0 1.1.2
  gpgme_op_trustlist_start@GPGME_1.0 1.1.2
@@ -202,6 +205,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_error_from_errno@GPGME_1.0 1.1.2
  gpgme_free@GPGME_1.1 1.1.2
  gpgme_get_armor@GPGME_1.0 1.1.2
+ gpgme_get_dirinfo@GPGME_1.1 1.5.0
  gpgme_get_engine_info@GPGME_1.0 1.1.2
  gpgme_get_include_certs@GPGME_1.0 1.1.2
  gpgme_get_io_cbs@GPGME_1.0 1.1.2
@@ -280,6 +284,8 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_op_sign@GPGME_1.0 1.1.2
  gpgme_op_sign_result@GPGME_1.0 1.1.2
  gpgme_op_sign_start@GPGME_1.0 1.1.2
+ gpgme_op_spawn@GPGME_1.1 1.5.0
+ gpgme_op_spawn_start@GPGME_1.1 1.5.0
  gpgme_op_trustlist_end@GPGME_1.0 1.1.2
  gpgme_op_trustlist_next@GPGME_1.0 1.1.2
  gpgme_op_trustlist_start@GPGME_1.0 1.1.2
