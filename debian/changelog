@@ -1,3 +1,11 @@
+gpgme1.0 (1.5.1-1) unstable; urgency=medium
+
+  * New upstream release
+  * placing package under team maintenance after discussion with Jose
+    Carlos Garcia Sogo on #752683.  Thanks Jose!
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Mon, 04 Aug 2014 16:45:58 -0400
+
 gpgme1.0 (1.5.0-0.1) unstable; urgency=low
 
   * NMU
