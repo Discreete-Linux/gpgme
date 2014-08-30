@@ -14,8 +14,8 @@ Build-Depends: autotools-dev (>> 20100122.1~),
                scdaemon
 Standards-Version: 3.9.5
 Homepage: http://www.gnupg.org/gpgme.html
-Vcs-Browser: http://anonscm.debian.org/viewvc/pkg-gnupg/gpgme/trunk/
-Vcs-Svn: svn://anonscm.debian.org/pkg-gnupg/gpgme/trunk/
+Vcs-Git: git://anonscm.debian.org/pkg-gnupg/gpgme.git
+Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-gnupg/gnupg.git
 
 Package: libgpgme11-dev
 Section: libdevel
