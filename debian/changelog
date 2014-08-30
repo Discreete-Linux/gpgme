@@ -1,3 +1,10 @@
+gpgme1.0 (1.5.1-2) unstable; urgency=medium
+
+  * wrap-and-sort for cleaner revision tracking
+  * move to git
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Sat, 30 Aug 2014 13:06:55 -0700
+
 gpgme1.0 (1.5.1-1) unstable; urgency=medium
 
   * New upstream release
