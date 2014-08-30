@@ -1,0 +1,859 @@
+2014-07-30  Werner Koch  <wk@gnupg.org>
+
+	Release 1.5.1.
+	* configure.ac: Change LT version to C24/A13/R0.
+
+	Fix possible realloc overflow for gpgsm and uiserver engines.
+	* src/engine-gpgsm.c (status_handler):
+	* src/engine-uiserver.c (status_handler):
+
+2014-06-26  Werner Koch  <wk@gnupg.org>
+
+	w32: Get IOSPAWN flag back in sync with spawn helper.
+	* src/gpgme-w32spawn.c: Include priv-io.h.
+
+2014-06-10  Werner Koch  <wk@gnupg.org>
+
+	Add new reason codes to the INV_RECP status code.
+	* src/op-support.c (_gpgme_parse_inv_recp): Add codes 13 and 14.
+
+2014-06-04  Werner Koch  <wk@gnupg.org>
+
+	Add new keylist mode GPGME_KEYLIST_MODE_WITH_SECRET.
+	* src/gpgme.h.in (GPGME_KEYLIST_MODE_WITH_SECRET): New.
+	* src/engine-gpg.c (gpg_keylist_build_options): Handle new mode.
+	* src/engine-gpgsm.c (gpgsm_keylist, gpgsm_keylist_ext): Ditto.
+	* src/keylist.c (parse_sec_field15): Add arg key and take care of
+	--with-secret output.
+
+	* src/gpgme-tool.c (gt_get_keylist_mode, cmd_keylist_mode): Add
+	"with_secret".  Print card info and and secret flag for subkeys.
+
+2014-05-21  Werner Koch  <wk@gnupg.org>
+
+	Release 1.5.0.
+	* configure.ac: Change LT version to C22/A11/R0.
+
+2014-05-13  Werner Koch  <wk@gnupg.org>
+
+	Add 6 new GPGME_STATUS_ codes.
+	* src/status-table.c: Also add missing DECRYPTION_INFO entry.
+
+2014-05-08  Werner Koch  <wk@gnupg.org>
+
+	Add field CURVE to the key info.
+	* src/gpgme.h.in (struct _gpgme_subkey): Add field CURVE.
+	* src/key.c (gpgme_key_unref): Free CURVE.
+	* src/keylist.c (keylist_colon_handler): Set CURVE.
+
+	* src/gpgme.c (gpgme_release): For failsafe reasons reset engine and
+	engine info after freeing.
+
+	Fix a memory access and a double slash bug.
+	* src/engine-spawn.c (engspawn_start): Allocate space for list
+	terminator.
+	* src/posix-util.c (walk_path): Fix trailing slash detection.
+
+	Map public key algos returned by gpg to gpgme values.
+	* src/conversion.c (_gpgme_map_pk_algo): New.
+	* src/decrypt.c (parse_enc_to): Add arg PROTOCOL and map pubkey algo.
+	(_gpgme_decrypt_status_handler): Map pubkey algo.
+	* src/keylist.c (keylist_colon_handler): Map pubkey algo.
+	* src/sign.c (parse_sig_created): Add arg PROTOCOL and map pubkey
+	algo.
+	* src/verify.c (parse_new_sig): Ditto.
+	(parse_valid_sig): Ditto.
+
+	* src/gpgme.h.in (GPGME_PK_ECC): New.
+	(GPGME_MD_SHA224): New.
+	* src/gpgme.c (gpgme_pubkey_algo_name): Add GPGME_PK_ECC case.
+	(gpgme_hash_algo_name): Add GPGME_MD_SHA224.
+
+	Add GPGME_ENCRYPT_NO_COMPRESS flag.
+	* src/gpgme.h.in (GPGME_ENCRYPT_NO_COMPRESS): New.
+	* src/engine-gpg.c (gpg_encrypt, gpg_encrypt_sign): Implement it.
+	* src/gpgme-tool.c (_cmd_sign_encrypt): Add option --no-compress.
+
+2014-04-16  Werner Koch  <wk@gnupg.org>
+
+	w32: Fix another memleak on error.
+	* src/w32-io.c (create_reader): free CTX.
+
+2014-04-15  Werner Koch  <wk@gnupg.org>
+
+	w32: Fix memleak in an error code paths.
+	* src/w32-io.c (create_writer): Free CTX in cased of bad FD.
+	* src/w32-util.c (_gpgme_mkstemp): Free TMPNAME in case of a failed
+	mkstemp.
+
+	Fix possible zombie processes.
+	* src/posix-io.c (_gpgme_io_waitpid): Protect waitpid agains EINTR.
+	(_gpgme_io_dup): Likewise.
+	(_gpgme_io_connect): Likewise.
+
+2014-04-10  Werner Koch  <wk@gnupg.org>
+
+	Actually implement flags for gpgme_op_spawn.
+	* src/spawn.c (gpgme_op_spawn_start, gpgme_op_spawn): Pass FLAGS dow
+	to spawn_start and add FLAGS args along the call path.
+	* src/engine-spawn.c (engspawn_start): Hack to automagically provide
+	argv[0].
+
+	Add GPGME_PROTOCOL_SPAWN and gpgme_op_spawn.
+	* src/gpgme.h.in (GPGME_PROTOCOL_SPAWN): New.
+	(GPGME_SPAWN_DETACHED, GPGME_SPAWN_ALLOW_SET_FG): New.
+	* src/gpgme.c (gpgme_set_protocol): Add new protocol.
+	(gpgme_get_protocol_name): Ditto.
+	* src/spawn.c: New.
+	* src/libgpgme.vers, src/gpgme.def: Add new public functions.
+	* src/engine-spawn.c: New.
+	* src/Makefile.am: Add new files.
+	* src/engine-backend.h (struct engine_ops): Add OPSPAWN.
+	* src/engine.c (engine_ops): Add _gpgme_engine_ops_spawn.
+	(gpgme_get_engine_info): Add Spawn to the list of protocols.
+	(_gpgme_engine_op_spawn): New.
+
+	* src/gpgme-tool.c (gt_protocol_from_name): Add new protocol.
+	(gt_spawn, cmd_spawn): New.
+
+	Add gpgme_get_dirinfo.
+	* src/dirinfo.c (gpgme_get_dirinfo): New.
+	* tests/t-engine-info.c (main): Print results from that function.
+
+	Make use of internal iospawn flags more flexible.
+	* src/priv-io.h (IOSPAWN_FLAG_DETACHED): New. Renumber the others.
+	* src/w32-io.c (_gpgme_io_spawn): Use DETACHED_PROCESS process only if
+	IOSPAWN_FLAG_DETACHED is given.
+	* src/w32-qt-io.cpp (_gpgme_io_spawn): Ditto.
+	* src/w32-glib-io.c (_gpgme_io_spawn): Ditto.
+	* src/assuan-support.c (my_spawn): Pass IOSPAWN_FLAG_DETACHED flags.
+	* src/dirinfo.c (read_gpgconf_dirs): Ditto.
+	* src/engine-gpg.c (start): Ditto.
+	* src/engine-gpgconf.c (gpgconf_read, gpgconf_write): Ditto.
+	* src/version.c (_gpgme_get_program_version): Ditto.
+
+	Make sure a spawned process has all standard fds connected.
+	* src/posix-io.c (_gpgme_io_spawn): dup /dev/null also to unsued
+	stdout.
+
+2014-03-13  Werner Koch  <wk@gnupg.org>
+
+	Add configure option --enable-fixed-path.
+	* configure.ac: Add option --enable-fixed-path.
+	(FIXED_SEARCH_PATH): New ac_define.
+	* src/posix-util.c (walk_path): Make use of the option.  Remove
+	current directory from fallback PATH.
+
+2014-03-11  Werner Koch  <wk@gnupg.org>
+
+	Avoid pointer arithmetic on void pointer.
+	* src/gpgme.c (gpgme_io_writen): Use new var buffer.
+
+	Change implementation return type to match the definition.
+	* src/gpgme.c (gpgme_get_sub_protocol): Change return type to
+	gpgme_protocol_t.
+
+2014-03-05  Daiki Ueno  <ueno@gnu.org>
+
+	doc: Fix documentation of struct data types.
+	* gpgme.texi (Key Management): Document is_cardkey and card_number
+	members of gpgme_subkey_t.
+	(Decrypt): Remove description of the non-existent wrong_key_usage
+	member of gpgme_recipient_t.
+	(Verify): Document pka_address member of gpgme_signature_t.
+	(Creating a Signature): Add missing member names in
+	gpgme_new_signature_t.
+	(Registering I/O Callbacks): Fix reference of gpgme_io_cbs struct.
+
+2014-02-21  Werner Koch  <wk@gnupg.org>
+
+	Always pass correct name to argv[0].  Ignore GPG_AGENT_INFO for gpg2.
+	* src/dirinfo.c (WANT_GPG_ONE_MODE): New.
+	(struct dirinfo): Add field "gpg_one_mode".
+	(get_gpgconf_item): Set that field and return it if requested.
+	(_gpgme_in_gpg_one_mode): New.
+	* src/engine-gpg.c (build_argv): Check GPG_AGENT_INFO only in gpg-1
+	mode.
+
+	* src/dirinfo.c (_gpgme_get_basename): New.
+	* src/engine-g13.c (g13_new): Take argv[0] from the pgmname.
+	* src/engine-gpgsm.c (gpgsm_new): Ditto.
+	* src/engine-gpg.c (build_argv): Ditto. Add arg PGMNAME.
+	(start): Pass PGMNAME to buildargv.
+
+2014-02-12  Werner Koch  <wk@gnupg.org>
+
+	Fix type inconsistency between gpgme.h and gpgme.c.
+	* src/gpgme.c (gpgme_set_pinentry_mode): Fix type of MODE.
+
+2014-01-10  Werner Koch  <wk@gnupg.org>
+
+	Use the generic autogen.sh script.
+	* autogen.rc: New.
+	* Makefile.am (EXTRA_DIST): Add it.
+	* autogen.sh: Update from GnuPG.
+
+	* configure.ac (AM_SILENT_RULES): New.
+
+2014-01-07  Werner Koch  <wk@gnupg.org>
+
+	Make gpgconf engine work again - fixes 02ba35c1.
+	* src/gpgconf.c: Remove ENABLE_GPGCONF and move prototypes to ...
+	* src/engine-backend.h: ... here.
+
+	Make gpgme_new return a proper error if no engines are installed.
+	* src/engine.c (gpgme_get_engine_info): Improve error handling.
+	(_gpgme_engine_info_copy): Ditto.
+	* src/gpgme.c (gpgme_new): Return error GPG_ERR_NO_ENGINE.
+
+	Print the full PATH in the log if gpg was not found.
+	* src/posix-util.c (walk_path): Keep a copy of PATH.
+
+2014-01-06  Werner Koch  <wk@gnupg.org>
+
+	Add global flags disable-gpgconf, gpgconf-name, and gpg-name.
+	* src/gpgme.c (gpgme_set_global_flag): Add names "disable-gpgconf",
+	"gpgconf-name", and "gpg-name".
+	* src/dirinfo.c (_gpgme_dirinfo_disable_gpgconf): New.
+	(get_gpgconf_item): Minor debug info change.
+	* src/posix-util.c (default_gpg_name, default_gpgconf_name): Add vars.
+	(_gpgme_set_default_gpg_name): New.
+	(_gpgme_set_default_gpgconf_name): New.
+	(_gpgme_get_gpg_path, _gpgme_get_gpgconf_path): Use new vars.
+	(walk_path): Add debug output on failure.
+	* src/w32-util.c (default_gpg_name, default_gpgconf_name): Add vars.
+	(replace_slashes): New.
+	(get_basename): New.
+	(_gpgme_set_default_gpg_name): New.
+	(_gpgme_set_default_gpgconf_name): New.
+	(_gpgme_get_gpg_path, _gpgme_get_gpgconf_path): Use new vars.
+
+	* tests/t-engine-info.c (main): Add --verbose and --set-global-flag
+	options.
+
+2013-12-27  Werner Koch  <wk@gnupg.org>
+
+	Locate engine names only at runtime and prefer GnuPG-2.
+	* configure.ac (NEED_GPG_VERSION, NEED_GPGSM_VERSION)
+	(NEED_G13_VERSION, NEED_GPGCONF_VERSION): Remove vars and all related
+	checks.  Do not check for any engine version.
+	(HAVE_ASSUAN): Remove AM conditional.
+	* src/Makefile.am: Remove separate component vars and always build all
+	engines but uiserver.
+	* src/dirinfo.c (WANT_GPGCONF_NAME): New.
+	(struct dirinfo): Add field gpgconf_name.
+	(_gpgme_get_default_gpgconf_name): Use WANT_GPGCONF_NAME.
+	(get_gpgconf_item): Set gpgconf name and adjust for _gpgme_get_*_path
+	now returning a malloced string.
+	* src/engine.c (engine_ops): Always init all engines except for
+	uiserver.
+	* src/posix-util.c (_gpgme_get_gpgsm_path, _gpgme_get_g13_path):
+	Remove unused functions.
+	(walk_path): New.
+	(_gpgme_get_gpg_path, _gpgme_get_gpgconf_path ): Re-implement using
+	walk_path.
+	* src/w32-util.c (_gpgme_get_gpgsm_path, _gpgme_get_g13_path): Remove
+	unused functions.
+	(_gpgme_get_gpg_path, _gpgme_get_gpgconf_path): Return a malloced
+	string.
+	* src/engine-g13.c (g13_get_req_version): Use a hardwired string with
+	the required version.  This info belongs into this file.
+	* src/engine-gpg.c (gpg_get_req_version): Ditto.
+	* src/engine-gpgconf.c (gpgconf_get_req_version): Ditto.
+	* src/engine-gpgsm.c (gpgsm_get_req_version): Ditto.
+	* tests/t-engine-info.c: Replace now useless test by an info output.
+	* tests/gpg/Makefile.am (GPG, GPG_AGENT): Hardwire gpg and gpg-agent.
+	* tests/gpgsm/Makefile.am (GPGSM): Hardwire gpgsm.
+
+2013-08-19  Werner Koch  <wk@gnupg.org>
+
+	Document API change for GPGME_EVENT_DONE from 2009.
+	* doc/gpgme.texi (I/O Callback Interface): Fix description for the
+	event arg.
+
+	Fix possible segv in the gpgme_op_card_edit.
+	* src/edit.c (gpgme_op_edit_start, gpgme_op_card_edit_start): Do not
+	deref a NULL KEY in TRACE_BEG.
+
+	tests: Fix NULL ptr deref in gpgsm/t-verify.
+	* tests/gpgsm/t-verify.c (check_result): Do not dereference a sig or
+	sig->fpr if NULL.
+
+2013-08-12  Werner Koch  <wk@gnupg.org>
+
+	Release 1.4.3.
+	* configure.ac: Change LT version to C22/A11/R0.
+
+	Make test suite workable with GnuPG 2.1.
+	* tests/gpg/start-stop-agent: New.
+	* tests/gpg/initial.test: New.
+	* tests/gpg/final.test: New.
+	* tests/gpg/Makefile.am (c_tests): New.
+	(TESTS): Move all to c_tests.  Add initial.test, final.test, and
+	c_tests.
+	(TESTS_ENVIRONMENT): Add C_ALL=C
+	(private_keys): New.
+	(EXTRA_DIST): Add new files.
+	(./private-keys-v1.d/gpg-sample.stamp): Copy private keys.
+	(all-local): Depend on gpg-sample.stamp.
+	* tests/gpg/13CBE3758AFE42B5E5E2AE4CED27AFA455E3F87F: New.
+	* tests/gpg/13CD0F3BDF24BE53FE192D62F18737256FF6E4FD: New.
+	* tests/gpg/76F7E2B35832976B50A27A282D9B87E44577EB66: New.
+	* tests/gpg/7A030357C0F253A5BBCD282FFC4E521B37558F5C: New.
+	* tests/gpg/A0747D5F9425E6664F4FFBEED20FBCA79FDED2BD: New.
+
+	Improve detection of default gpg by configure.
+	* configure.ac: Move test for gpgconf before test for gpg.
+	(GPG, GPGSM, G13): Use gpgconf instead of AC_PATH_PROG if possible.
+
+2013-08-09  Werner Koch  <wk@gnupg.org>
+
+	Add function gpgme_data_identify.
+	* src/gpgme.h.in (gpgme_data_type_t): New.
+	(gpgme_data_identify): New prototype.
+	* src/data-identify.c: New.
+	* src/parsetlv.c, src/parsetlv.h: New.  Take from gpa.
+	* src/libgpgme.vers, src/gpgme.def: Add gpgme_data_identify.
+	* src/gpgme-tool.c (status): Add STATUS_IDENTIFY_RESULT.
+	(gt_identify): New.
+	(cmd_identify): New.
+
+	(hlp_passwd): Move close to cmd_passwd.
+
+2013-08-02  Werner Koch  <wk@gnupg.org>
+
+	Prefer GnuPG-2 engines over GnuPG-1.
+	* src/util.h: Move some prototypes to ...
+	* src/sys-util.h: New.
+	* src/Makefile.am (main_sources): Add sys-util.h.
+	* configure.ac (AH_VERBATIM): Add DIRSEP_C and DIRSEP_S.
+	* src/dirinfo.c: Include sys-util.h.
+	(WANT_GPG_NAME, WANT_GPGSM_NAME, WANT_G13_NAME)
+	(WANT_UISRV_SOCKET): New.
+	(dirinfo): Add corresponding fields.
+	(parse_output): Add arg COMPONENTS and set new fields.
+	(read_gpgconf_dirs): Add arg components and act upon it.
+	(get_gpgconf_item): Call read_gpgconf_dirs two times.  Add debug
+	output.
+	(_gpgme_get_default_gpg_name): New.
+	(_gpgme_get_default_gpgsm_name): New.
+	(_gpgme_get_default_g13_name): New.
+	(_gpgme_get_default_gpgconf_name): New.
+	(_gpgme_get_default_uisrv_socket): New.
+	* src/engine-gpg.c, src/engine-g13.c, src/engine-gpgconf.c
+	* src/engine-gpgsm.c, src/engine-uiserver.c: Change to use
+	_gpgme_get_default_ instead of those from sys-util.h.
+	* src/posix-util.c (_gpgme_get_gpg_path): Include sys-util.h.
+	(_gpgme_get_uiserver_socket_path): Remove.
+	* src/w32-util.c (_gpgme_get_gpg_path): Include sys-util.h.
+	(_gpgme_get_uiserver_socket_path): Remove.
+
+	w32: Try to locate gpg in the gpgme installation dir.
+	* src/w32-util.c (my_hmodule): New.
+	(wchar_to_utf8): New.
+	(DllMain): New.
+	(_gpgme_get_inst_dir): New.
+	(find_program_in_dir): New.
+	(find_program_in_inst_dir): Add arg INST_DIR.
+	(_gpgme_get_gpg_path): Get inst_dir before acquiring the lock.
+	(_gpgme_get_gpgconf_path): Ditto.
+	(_gpgme_get_g13_path): Ditto.
+	(_gpgme_get_w32spawn_path): Ditto.
+
+2013-07-31  Werner Koch  <wk@gnupg.org>
+
+	doc: Add --binary option for the OUTPUT command of an uiserver.
+
+2013-06-18  Werner Koch  <wk@gnupg.org>
+
+	Add function gpgme_signers_count.
+	* src/signers.c (gpgme_signers_count): New.
+	* src/libgpgme.vers, src/gpgme.def: Add as external symbol.
+	* src/gpgme.h.in: Add prototype.
+
+2013-05-28  Werner Koch  <wk@gnupg.org>
+
+	Release 1.4.2.
+	* configure.ac: Set LT version to C21/A10/R0.
+
+	Add convenience macro GPGME_PROTOCOL_OPENPGP.
+	* src/gpgme.h.in (GPGME_PROTOCOL_OPENPGP): New.
+
+2013-05-23  Werner Koch  <wk@gnupg.org>
+
+	w32: Fix installing of .def file.
+	* src/Makefile.am (install-def-file): Create libdir first.
+
+	Fix libtool 2.4.2 to correctly detect .def files.
+	* build-aux/ltmain.sh (sed_uncomment_deffile): New.
+	(orig_export_symbols): Uncomment def file before testing for EXPORTS.
+	* m4/libtool.m4: Do the same for the generated code.
+
+2013-05-22  Werner Koch  <wk@gnupg.org>
+
+	Support --no-encrypt-to also with gpgme_op_encrypt_sign.
+	* src/engine-gpg.c (gpg_encrypt_sign): Support the
+	GPGME_ENCRYPT_NO_ENCRYPT_TO flag.
+
+2013-05-22  Werner Koch  <wk@gnupg.org>
+	    Kyle L. Huff  <g10bts@curetheitch.com>
+
+	Allow symmetric encryption with gpgme_op_encrypt_sign.
+	* src/encrypt-sign.c (encrypt_sym_status_handler): New.
+	(encrypt_sign_start): Handle recp == NULL case.
+	* src/engine-gpg.c (gpg_encrypt_sign): Implement symmetric encryption.
+	* tests/gpg/t-encrypt-sign.c (main): Add a test case for this.
+
+2013-05-22  Werner Koch  <wk@gnupg.org>
+
+	gpgme-tool: Allow for symmetric encryption.
+	* src/gpgme-tool.c (gt_sign_encrypt): Pass NULL for recp if no
+	recipients are given.
+
+	tests: Print auditlog in plain text format.
+	* tests/gpgsm/t-verify.c (show_auditlog): Use plain text format.
+
+2013-05-18  Werner Koch  <wk@gnupg.org>
+
+	Improve C++ compatibility of previous patch.
+	* src/gpgme.h.in: Move gpgme_sssize_t and gpgme_off_t typedefs into
+	the extern "C" scope.
+
+2013-05-16  Werner Koch  <wk@gnupg.org>
+
+	Make definition of off_t robust against misbehaving w32 toolchains.
+	* configure.ac (NEED__FILE_OFFSET_BITS): Change to define gpgme_off_t
+	and gpgme_ssize_t.
+	(API__OFF_T, API__SSIZE_T): New ac_subst.
+	* src/gpgme.h.in: Replace all ssize_t and off_t by ac_subst macros.
+	* src/assuan-support.c, src/ath-pthread.c, src/ath.c, src/ath.h
+	* src/data-compat.c, src/data-fd.c, src/data-mem.c, src/data-stream.c
+	* src/data-user.c, src/data.c, src/data.h, src/engine-gpgsm.c
+	* src/engine-uiserver.c, src/gpgme-tool.c, src/gpgme.c: Replace off_t
+	by gpgme_off_t and sszie_t by gpgme_ssize_t.
+	* src/ath-pthread.c, src/ath.h: Include gpgme.h.
+
+2013-05-11  Werner Koch  <wk@gnupg.org>
+
+	w32: Change the way the I/O threads are cleaned up.
+	* src/w32-io.c (reader_context_s, create_reader)
+	(writer_context_s, create_writer): Rename STOPPED to CLOSE_EV.
+	(reader, writer): Remove setting of STOPPED.  Wait for CLOSE_EV and
+	then release the context.
+	(destroy_reader, destroy_writer): Do not wait but set the CLOSE_EV.
+	(kill_reader, kill_writer): Remove.
+	(_gpgme_io_close): Add code from kill_reader and kill_writer.
+
+2013-05-08  Werner Koch  <wk@gnupg.org>
+
+	Fix hang in socket closing.
+	* src/w32-io.c (destroy_reader): Call shutdown.
+	(reader): Do not print an error in the shutdown case.
+
+	Improve debug output of the I/O reader and writer.
+	* src/w32-io.c (reader, writer): Also print file_sock.
+
+2013-05-06  Werner Koch  <wk@gnupg.org>
+
+	Simplify a debug code function.
+	* src/debug.c (_gpgme_debug): Remove static space string.
+
+2013-05-01  Werner Koch  <wk@gnupg.org>
+
+	Release 1.4.1.
+	* configure.ac: Bump LT version to C20/A9/R1.
+
+	Disable fd-passing for Apple.
+	* configure.ac: Disable fd-passing by default for Apple.
+
+2013-04-30  Werner Koch  <wk@gnupg.org>
+
+	Allow reading of long gpgconf output lines.
+	* src/engine-gpgconf.c (gpgconf_read): Rewrite to allow for line
+	lengths up to 64k.
+
+2013-04-29  Werner Koch  <wk@gnupg.org>
+
+	Fix for i686-w64-mingw32.
+	* configure.ac (NEED__FILE_OFFSET_BITS): Do not define under Windows.
+
+2013-02-26  Werner Koch  <wk@gnupg.org>
+
+	Release 1.4.0.
+	* configure.ac: Bump LT version to C20/A9/R0.
+
+	Enable FD passing and thus building of the UI-server.
+	* configure.ac: Make --enable-fd-passing the default.
+	* src/engine-uiserver.c (_gpgme_engine_ops_uiserver): Syntax fix.
+
+	w32: Hacks for building with 32 bit mingw64.
+	* configure.ac (INSERT__TYPEDEFS_FOR_GPGME_H): Add hacks for 32 bit
+	mingw64.
+	* src/util.h [W32]: Include winsock2.h before windows to make mingw64
+	happy.
+	* src/w32-util.c (_WIN32_IE): Need to use 5.1 for mingw64.
+
+	Improve missing libgpg-error reporting in configure.
+	* configure.ac (NEED_GPG_ERROR_VERSION): New.  Improve reporting for
+	missing libgpg-error.
+
+	Change the various version numbers to the new scheme.
+	* configure.ac: Rename my_foo variables to mym4_foo variables to make
+	clear that they are processed by m4.
+	(VERSION_NUMBER): New ac_subst.
+	(AH_BOTTOM): Add CRIGHTBLURB macro.
+	(BUILD_REVISION, BUILD_FILEVERSION, BUILD_TIMESTAMP): Change them to
+	work similar to libgpg-error et al.
+	* src/versioninfo.rc.in: Remove use of BUILD_NUMBER and get it in line
+	with gpg-error et al.
+	* src/version.c (cright_blurb): New.
+	(gpgme_check_version_internal): Add magic to display the above
+	information.
+	* tests/t-version.c (main): Add option --verbose.
+
+	Update GnuPG related m4 files.
+	* m4/gpg-error.m4: Update from libgpg-error.
+	* m4/libassuan.m4: Update from libassuan.
+
+	Update helper scripts.
+	* configure.ac: Use AC_CONFIG_AUX_DIR.  Remove args from
+	AM_INIT_AUTOMAKE.  Replace AM_CONFIG_HEADER by AC_CONFIG_HEADER.
+	* compile, config.guess, config.sub, depcomp, install-sh, ltmain.sh
+	* mkinstalldirs, texinfo.texi: Move to build-aux/ and update from
+	gnulib (c042abf).
+	* build-aux/mdate-sh, build-aux/missing: Install via automake -a -c.
+	Update autogen.sh for changed config dir.
+	* autogen.sh: Adjust for scripts dir change.  Update W32 toolprefix
+	list.
+
+2013-02-25  Werner Koch  <wk@gnupg.org>
+
+	Remove included gitlog-to-changelog.
+	* build-aux/gitlog-to-changelog: Remove.
+	* configure.ac (GITLOG_TO_CHANGELOG): Default to just
+	gitlog-to-changelog.
+
+2013-02-12  Werner Koch  <wk@gnupg.org>
+
+	Add macro GPGME_VERSION_NUMBER.
+	* src/gpgme.h.in (GPGME_VERSION_NUMBER): New.
+	* configure.ac (my_version_major, my_version_minor)
+	(my_version_micro): New m4 macros.
+	(my_version): Build from new m4 macros.
+	(VERSION_NUMBER): New ac_subst.
+
+	Add public function gpgme_get_pinentry_mode.
+	* src/gpgme.c (gpgme_get_pinentry_mode): New.
+
+2013-02-07  Werner Koch  <wk@gnupg.org>
+
+	gpgme_tool: Support GPG's new pinentry-mode.
+	* src/gpgme-tool.c (log_error): Do not always print the error source.
+	(gt_set_pinentry_mode): New.
+	(server_passphrase_cb): New.
+	(cmd_pinentry_mode): New.
+	(register_commands): Add cmd_pinentry_mode.
+	(options): Add option --gpg-binary.
+	(struct args): Add field gpg-binary.
+	(parse_options, main): Implement that option.
+
+	Add public function gpgme_set_pinentry_mode.
+	* src/gpgme.c (gpgme_set_pinentry_mode): New.
+	* src/gpgme.h.in (gpgme_pinentry_t): New.
+	(gpgme_set_pinentry_mode): New.
+	* src/context.h (struct gpgme_context): Add field pinentry_mode.
+	* src/engine-backend.h (struct engine_ops): Add field
+	set_pinentry_mode.
+	* src/engine-gpg.c (struct engine_gpg): Add field pinentry_mode.
+	(build_argv): Implement pinentry_mode.
+	(gpg_set_pinentry_mode): New.
+	(_gpgme_engine_ops_gpg): Register gpg_set_pinentry_mode.
+
+	Add public function gpgme_io_writen.
+	* src/gpgme.c (gpgme_io_read): New.
+
+2012-11-16  Werner Koch  <wk@gnupg.org>
+
+	Improve parsing of the GIT revision number.
+	* configure.ac (git_revision): Use git rev-parse.
+
+	Fix non-portable use of chmod in autogen.sh.
+	* autogen.sh: Remove option -c from chmod.
+
+2012-11-15  Werner Koch  <wk@gnupg.org>
+
+	Make _gpgme_encode_percent_string work for memory buffers.
+	* src/conversion.c (D_gpgme_encode_percent_string): Remove stray
+	semicolon.  Reported by Xi Wang.
+
+2012-10-24  Werner Koch  <wk@gnupg.org>
+
+	Make local variables configure hack more robust.
+	* configure.ac (emacs_local_vars_begin): Use extra m4 quoting so that
+	newer Emscasen won't take it up as Local Variables for this file.
+
+	Fix ttyname problem on Android.
+	* configure.ac: Define macro and conditional HAVE_ANDROID_SYSTEM.
+	* m4/gnupg-ttyname.m4: Force use of replacement on Android.
+	* src/ttyname_r.c: Ditto.
+
+	tests: Adhere to the docs and call gpgme_check_version.
+	* tests/t-engine-info.c: Call gpgme_check_version.
+
+2012-10-19  Werner Koch  <wk@gnupg.org>
+
+	Trace the use of GPG_ERR_INV_ENGINE.
+	* src/debug.h: Include "gpgme.h"
+	(_gpgme_trace_gpgme_error): New.
+	(trace_gpg_error): New macro.  Use it in all files where we return
+	GPG_ERR_INV_ENGINE; also "include debug.h" as needed.
+
+	Avoid warning about initialized but not used variable.
+	* src/engine-gpgsm.c (gpgsm_set_fd): Do not set DIR if not needed.
+
+2012-10-11  Werner Koch  <wk@gnupg.org>
+
+	gpgme-tool: Use membuf functions to build up strings.
+	* src/gpgme-tool.c (clear_membuf, init_membuf, put_membuf)
+	(put_membuf_str, get_membuf, peek_membuf): Add membuf functions.
+	Take from GnuPG master's common/membuf.[ch] and patch for our use.
+	(result_xml_escape): Rewrite using new functions.
+
+	gpgme-tool: Change license from LPGLv2+ to GPLv3+
+	* src/gpgme-tool.c: Change license notice.
+
+2012-10-11  W. Trevor King  <wking@tremily.us>
+
+	gpgme-tool: escape special characters in output XML data (<, >, and &).
+
+	src/gpgme-tool.c (result_xml_escape_replacement, result_xml_escape):
+	New.
+	(result_xml_tag_data): Use result_xml_escape() to escape data.
+	(result_add_error): Use unescaped < and >.
+
+	gpgme-tool: Fix chain_id -> chain-id in KEYLIST XML.
+
+	src/gpgme-tool.c (cmd_keylist): Use <chain-id> instead of <chain_id>.
+
+2012-09-28  W. Trevor King  <wking@tremily.us>
+
+	gpgme-tool: Return more detailed XML from KEYLIST.
+	src/gpgme-tool.c (cmd_keylist): Convert output from a list of
+	to more detailed XML.
+	(xml_preamble1, xml_preamble2, xml_end): Make global.
+	(result_add_protocol, result_add_validity): New functions for
+	generating XML from GPGME types.
+	(result_add_string): Treat NULL strings as "".
+	(result_xml_tag_data): Make 'data' a 'const char' so we can use the
+	value returned by gpgme_get_protocol_name directly.
+
+	gpgme-tool: Initialize input_fd and output_fd.
+	* src/gpgme-tool.c (gpgme_server): Initialize input_fd and output_fd.
+
+2012-09-26  Werner Koch  <wk@gnupg.org>
+
+	gpgme-tool: Fix handling of file descriptors.
+	* src/gpgme-tool.c (server_reset_fds): Use close/CloseHandle instead
+	of the assuan close functions.
+	(_cmd_decrypt_verify, _cmd_sign_encrypt, cmd_verify, cmd_import)
+	(cmd_export, cmd_genkey, cmd_getauditlog): Use SERVER object instead
+	of assuan_get_*_fd functions.
+
+2012-09-25  Werner Koch  <wk@gnupg.org>
+
+	Document contribution rules.
+	* doc/HACKING (License policy): New.
+	* doc/DCO: New.
+	* AUTHORS: Change maintainer address.
+
+	Add gpgme_set_global_flag to help debugging.
+	* src/gpgme.c (gpgme_set_global_flag): New.
+	* src/gpgme.h.in (gpgme_set_global_flag): New.
+	* src/gpgme.def, src/libgpgme.vers: Add new public function.
+	* src/debug.c (envvar_override): New.:
+	(_gpgme_debug_set_debug_envvar): New.
+	(debug_init): Take ENVVAR_OVERRIDE in account.
+
+2012-07-28  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
+
+	Add two recent contributors.
+
+	Fix sign error in position calculation for mem_seek.
+	* data-mem.c (mem_seek): Fix sign error in position calculation.
+
+	Allow null context on gpgme_set_locale.
+	* gpgme.c (gpgme_set_locale): Allow CTX to be a null pointer.
+
+2012-07-13  Werner Koch  <wk@gnupg.org>
+
+	Do not include the removed file status-table.h.
+	* src/engine-uiserver.c: Remove status-table.h which is not anymore
+	built.  Fixes bug#1412.
+
+	Make handling of new conf values more robust (bug#1413).
+	* src/engine-gpgconf.c (arg_to_data): Allow for NULL as value.string.
+
+2012-05-02  Werner Koch  <wk@gnupg.org>
+
+	Release 1.3.2.
+	* configure.ac: Bump LT version to C19/A8/R1.
+
+	* configure.ac (GITLOG_TO_CHANGELOG): Define.
+	* Makefile.am (gen-ChangeLog): Use it.
+
+	Remove unused pth stuff from gpgme-config.
+	* src/gpgme-config.in: Remove unused pth stuff.
+
+	Update signature summary for the case of missing X.509 keys.
+	* src/verify.c (gpgme_op_verify_result): Update summary field.
+
+2012-04-30  Werner Koch  <wk@gnupg.org>
+
+	Fix timestamp parsing for y2038 hack.
+	* src/conversion.c (_gpgme_parse_timestamp): Set ENDP before year 2038
+	check.
+
+2012-04-20  W. Trevor King  <wking@drexel.edu>
+
+	.gitignore: flesh out rules and add subdirectory-.gitignores.
+
+2012-04-13  W. Trevor King  <wking@drexel.edu>
+
+	status-table.c: include string.h for strcmp.
+	* status-table.c: include string.h to avoid `warning: implicit
+	declaration of function 'strcmp'`.
+
+2012-04-03  W. Trevor King  <wking@drexel.edu>
+
+	gpgme-tool: add help messages for a number of commands.
+	* src/gpgme-tool.c (hlp_engine, hlp_sub_protocol, hlp_armor, hlp_textmode,
+	hlp_include_certs, hlp_keylist_mode, hlp_input, hlp_output, hlp_message,
+	hlp_recipient, hlp_signer, hlp_signers_clear, hlp_decrypt, hlp_decrypt_verify,
+	hlp_encrypt, hlp_sign_encrypt, hlp_sign, hlp_verify, hlp_import): New strings.
+	(hlp_protocol): Fix typo.
+	(register_commands): Add documentation strings.
+	(doc): Mention Assuan.
+
+	uiserver.texi: fix decryption -> encryption typo in PREP_ENCRYPT discussion.
+	* doc/uiserver.texi (PREP_ENCRYPT): Fix documentation.
+
+	Update Werner Koch's distribution signing key in the README.
+	* README: Update signing key.
+
+2012-03-12  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
+
+	Do not rely on glibc name of syscall.
+	* src/ath.c (ath_self): Use __NR_gettid, not SYS_gettid.
+
+	Update config.guess and config.sub to latest version.
+	* config.guess, config.sub: Update to latest version.
+
+2012-02-14  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
+
+	Rework status table to be less dynamically generated.
+	* src/Makefile.am (EXTRA_DIST): Remove mkstatus.
+	(BUILT_SOURCE, MOSTLYCLEANFILES): Remove.
+	(main_sources): Remove status-table.h, extra-stati.h.
+	Add status-table.c.
+	(status-table.h): Remove rules for built source.
+	* src/decrypt.c: Don't include extra-stati.h.
+	* src/engine-gpg.c: Don't include status-table.h.
+	(status_cmp): Remove function.
+	(read_status): Use _gpgme_parse_status.
+	* src/engine-gpgsm.c: Don't include status-table.h.
+	(status_cmp, parse_status): Remove function.
+	(gpgsm_assuan_simple_command, status_handler): Use _gpgme_parse_status.
+	* src/engine-uiserver.c: Don't include status-table.h.
+	(status_cmp, parse_status): Remove function.
+	(uiserver_assuan_simple_command, status_handler): Use
+	_gpgme_parse_status.
+	* src/gpgme.h.in (gpgme_status_code_t): Add
+	GPGME_STATUS_DECRYPTION_INFO.
+	* src/util.h (_gpgme_status_init,_gpgme_parse_status): New declaration.
+	* src/status-table.c: New file.
+	* src/extra-stati.h, src/mkstatus: Files removed.
+	* version.c (do_subsystem_inits): Call _gpgme_status_init.
+
+2012-02-08  Marcus Brinkmann  <mb@g10code.com>
+
+	Use gpgme interface for error handling to avoid linking with gpg-error.
+	* tests/t-data.c, tests/run-export.c, tests/run-keylist.c,
+	tests/run-support.h, tests/run-verify.c, tests/gpg/t-decrypt-verify.c,
+	tests/gpg/t-edit.c, tests/gpg/t-eventloop.c, tests/gpg/t-keylist-sig.c,
+	tests/gpg/t-keylist.c, tests/gpg/t-support.h, tests/gpg/t-trustlist.c,
+	tests/gpg/t-verify.c, tests/gpg/t-wait.c, tests/gpgsm/cms-decrypt.c,
+	tests/gpgsm/cms-keylist.c, tests/gpgsm/t-keylist.c,
+	tests/gpgsm/t-support.h, tests/gpgsm/t-verify.c,
+	tests/opassuan/t-command.c: Use gpgme interface for gpg-error functions.
+
+	Link the thread test to pthread.
+	* tests/gpg/Makefile.am (t_thread1_LDADD): Add -lpthread.
+
+	Link gpgme-tool directly to libassuan, as it uses its interface.
+	* src/Makefile.am (gpgme_tool_LDADD): Add @LIBASSUAN_LIBS@.
+
+2012-01-19  Werner Koch  <wk@gnupg.org>
+
+	Support the mingw-w64 toolchain.
+	* autogen.sh (build-w32): Add i686-w64-mingw32 to the toolprefix.
+
+	Fix Solaris problems with ttyname_r.
+	* m4/gnupg-ttyname.m4: New.  Based on ttyname_r from gnulib.
+	* src/ttyname_r.c (_gpgme_ttyname_r): Rename from ttyname_r.
+	Implement hacks required for Solaris and possible other non-fully
+	Posix systems.
+	* src/util.h: Include unistd.h.  Redefine ttyname_r depending on
+	REPLACE_TTYNAME_R and put it into the gpgme name space.
+
+	Try to make configure.ac a bit smaller.
+	* configure.ac: Move header checks.
+
+	For W32 use a build number instead of abbreviated commit id.
+	We would need to use a shortened commit id so that it fits into an 16
+	bit Windows variable.  Further it is a random number and not something
+	increasing.  Thus a build number made up from the day of the year and
+	the hour is much more useful to describe a build number for a specific
+	revision.
+	* configure.ac [W32]: Replace BUILD_REVISION by BUILD_NUMBER.
+	* src/versioninfo.rc.in: Ditto.
+
+	Adjust configure.ac for modern autoconf.
+	* configure.ac: Minor cleanups.
+
+	Update to libtool 2.4.2.
+	* ltmain.sh, m4/libtool.m4, m4/ltoptions.m4, m4/ltversion.m4,
+	* m4/lt~obsolete.m4: Update.
+
+	Add ttyname_r check macro from gnulib.
+	* m4/gnupg-ttyname.m4: New. Taken from current gnulib.
+
+2011-12-02  Werner Koch  <wk@gnupg.org>
+
+	Generate the ChangeLog from commit logs.
+	* build-aux/gitlog-to-changelog: New script.  Taken from gnulib.
+	* build-aux/git-log-fix: New file.
+	* build-aux/git-log-footer: New file.
+	* build-aux/git-hook/commit-msg: New script.
+	* doc/HACKING: New file.
+	* ChangeLog: New file.
+	* Makefile.am (EXTRA_DIST): Add new files.
+	(gen-ChangeLog): New.
+	(dist-hook): Run gen-ChangeLog.
+	* autogen.sh: Install commit-msg hook for git.
+
+	Rename all ChangeLog files to ChangeLog-2011.
+
+2011-12-02  Werner Koch  <wk@gnupg.org>
+
+	NB: Changes done before December 1st, 2011 are described in
+	per directory files named ChangeLog-2011.  See doc/HACKING for
+	details.
+
+        -----
+        Copyright (C) 2001, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009,
+                      2010, 2011, 2012, 2013 g10 Code GmbH
+
+	Copying and distribution of this file and/or the original GIT
+	commit log messages, with or without modification, are
+	permitted provided the copyright notice and this notice are
+	preserved.
