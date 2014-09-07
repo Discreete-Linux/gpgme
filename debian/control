@@ -11,6 +11,7 @@ Build-Depends: debhelper (>> 9~),
                gpgsm,
                libassuan-dev (>> 2.0.2),
                libgpg-error-dev (>> 1.8),
+               texinfo,
                scdaemon
 Standards-Version: 3.9.5
 Homepage: http://www.gnupg.org/gpgme.html
