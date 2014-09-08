@@ -5,6 +5,7 @@
 export CPPFLAGS := $(shell dpkg-buildflags --get CPPFLAGS)
 export CFLAGS   := $(shell dpkg-buildflags --get CFLAGS)
 export LDFLAGS  := $(shell dpkg-buildflags --get LDFLAGS)
+export AUTOMAKE = automake-1.11
 
 %:
 	dh $@ --with autoreconf --parallel

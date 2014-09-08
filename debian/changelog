@@ -1,3 +1,10 @@
+gpgme1.0 (1.5.1-5) unstable; urgency=medium
+
+  * require automake1.11 to try to avoid test failures during parallelized
+    build. (Thanks, NIIBE Yutaka)
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Mon, 08 Sep 2014 00:27:48 -0400
+
 gpgme1.0 (1.5.1-4) unstable; urgency=medium
 
   * add texinfo to build-depends to deal with the modified .texi

@@ -4,7 +4,8 @@ Section: libs
 Maintainer: Debian GnuPG Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
 Uploaders: Jose Carlos Garcia Sogo <jsogo@debian.org>,
            Daniel Kahn Gillmor <dkg@fifthhorseman.net>
-Build-Depends: debhelper (>> 9~),
+Build-Depends: automake1.11,
+               debhelper (>> 9~),
                dh-autoreconf,
                gnupg-agent,
                gnupg2,
