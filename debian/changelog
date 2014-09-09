@@ -1,3 +1,9 @@
+gpgme1.0 (1.5.1-6) UNRELEASED; urgency=medium
+
+  * corrected Vcs-Browser
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 09 Sep 2014 09:20:29 -0400
+
 gpgme1.0 (1.5.1-5) unstable; urgency=medium
 
   * require automake1.11 to try to avoid test failures during parallelized
