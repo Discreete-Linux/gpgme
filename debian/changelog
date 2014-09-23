@@ -1,9 +1,9 @@
-gpgme1.0 (1.5.1-6) UNRELEASED; urgency=medium
+gpgme1.0 (1.5.1-6) unstable; urgency=medium
 
   * corrected Vcs-Browser
-  * ensure the same aclocal is used as automake
+  * ensure the same aclocal is used as automake (Closes: #762553)
 
- -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 09 Sep 2014 09:20:29 -0400
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 23 Sep 2014 11:57:09 -0400
 
 gpgme1.0 (1.5.1-5) unstable; urgency=medium
 
