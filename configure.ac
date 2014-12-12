@@ -29,7 +29,7 @@ min_automake_version="1.11"
 # for the LT versions.
 m4_define(mym4_version_major, [1])
 m4_define(mym4_version_minor, [5])
-m4_define(mym4_version_micro, [1])
+m4_define(mym4_version_micro, [2])
 
 # Below is m4 magic to extract and compute the revision number, the
 # decimalized short revision number, a beta version string, and a flag
@@ -59,7 +59,7 @@ LIBGPGME_LT_CURRENT=24
 # Subtract 2 from this value if you want to make the LFS transition an
 # ABI break.  [Note to self: Remove this comment with the next regular break.]
 LIBGPGME_LT_AGE=13
-LIBGPGME_LT_REVISION=0
+LIBGPGME_LT_REVISION=1
 
 # If the API is changed in an incompatible way: increment the next counter.
 GPGME_CONFIG_API_VERSION=1
@@ -83,6 +83,7 @@ AM_INIT_AUTOMAKE
 AM_MAINTAINER_MODE
 AC_CANONICAL_HOST
 AM_SILENT_RULES
+AC_ARG_VAR(SYSROOT,[locate config scripts also below that directory])
 
 # Enable GNU extensions on systems that have them.
 AC_GNU_SOURCE
@@ -636,3 +637,12 @@ echo "
         FD Passing:      $use_descriptor_passing
         GPGME Pthread:   $have_pthread
 "
+if test "x${gpg_config_script_warn}" != x; then
+cat <<G10EOF
+        Mismatches between the target platform and the to
+        be used libraries have been been detected for:
+         ${gpg_config_script_warn}
+        Please check above for warning messages.
+
+G10EOF
+fi

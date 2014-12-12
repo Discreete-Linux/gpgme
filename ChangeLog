@@ -1,3 +1,58 @@
+2014-11-21  Werner Koch  <wk@gnupg.org>
+
+	Release 1.5.2.
+	* configure.ac: Set LT version to C24/A13/R1.
+
+	Update the previous commit.
+	* src/sign.c (gpgme_op_sign_result): Reformat and take care of failed
+	malloc.
+
+2014-11-21  Ben Kibbey  <bjk@luxsci.net>
+
+	Fix returning new signatures when there are none.
+	* src/sign.c (gpgme_op_sign_result): Test that invalid and valid
+	signatures add up to gpgme_signers_count().
+
+2014-11-06  Werner Koch  <wk@gnupg.org>
+
+	Improve the debug output a bit.
+	* src/debug.h (TRACE_ERR): Include the line number in the output.
+
+2014-10-02  Werner Koch  <wk@gnupg.org>
+
+	build: Implement SYSROOT feature.
+	* configure.ac: Document SYSROOT.
+	* m4/gpg-error.m4: Update from libgpg-error master.
+	* src/gpgme.m4: Implement SYSROOT stuff.
+
+2014-09-24  Werner Koch  <wk@gnupg.org>
+
+	tests: Delay some test file extraction until "make check".
+	* tests/gpg/Makefile.am (all-local): Change to check-local.
+	* tests/gpgsm/Makefile.am (all-local): Ditto.
+
+2014-09-24  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	Clean up gpgme's tests/gpg when gpg2.1 is available.
+	* tests/gpg/Makefile.am: Clean up .gpg-v21-migrated
+
+2014-08-12  Werner Koch  <wk@gnupg.org>
+
+	gpgme-tool: Print fingerprint and keyid with keyservers.
+	* src/gpgme-tool.c (cmd_keylist): Print keyid.  Print FPR only if
+	available.
+
+	Handle modern keyserver output which may emit the fingerprint.
+	* src/engine-gpg.c (read_colon_line): Split preprocessed lines.
+	(gpg_keylist_preprocess): Limit keyid field and print fingerprint.
+
+	gpgme-tool: Install gpgme-tool.
+	* src/Makefile.am (bin_PROGRAMS): New.  Add gpgme-tools.
+	(noinst_PROGRAMS): Remove.
+
+	gpgme-tool: Fix segv for external key listing.
+	* src/gpgme-tool.c (result_xml_escape): Allow for DATA being NULL.
+
 2014-07-30  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.1.
