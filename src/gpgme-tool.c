@@ -831,14 +831,17 @@ result_xml_escape (const char *data, char **buf)
   membuf_t mb;
 
   init_membuf (&mb, 128);
-  data_len = strlen (data);
-  for (i = 0; i < data_len; i++)
+  if (data)
     {
-      r = result_xml_escape_replacement (data[i]);
-      if (r)
-        put_membuf (&mb, r, strlen (r));
-      else
-        put_membuf (&mb, data+i, 1);
+      data_len = strlen (data);
+      for (i = 0; i < data_len; i++)
+        {
+          r = result_xml_escape_replacement (data[i]);
+          if (r)
+            put_membuf (&mb, r, strlen (r));
+          else
+            put_membuf (&mb, data+i, 1);
+        }
     }
   put_membuf (&mb, "", 1);
   *buf = get_membuf (&mb, NULL);
@@ -3302,7 +3305,9 @@ cmd_keylist (assuan_context_t ctx, char *line)
 	  while (subkey) {
 	    result_xml_tag_start (&state, "subkey", NULL);
 	    /* FIXME: more data */
-	    result_add_fpr (&state, "fpr", subkey->fpr);
+	    result_add_keyid (&state, "keyid", subkey->keyid);
+            if (subkey->fpr)
+              result_add_fpr (&state, "fpr", subkey->fpr);
             result_add_value (&state, "secret", subkey->secret);
             result_add_value (&state, "is_cardkey", subkey->is_cardkey);
             if (subkey->card_number)
