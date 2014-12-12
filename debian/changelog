@@ -1,3 +1,9 @@
+gpgme1.0 (1.5.3-1) experimental; urgency=medium
+
+  * new upstream version (in experimental since debian is frozen)
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Fri, 12 Dec 2014 16:57:21 -0500
+
 gpgme1.0 (1.5.1-6) unstable; urgency=medium
 
   * corrected Vcs-Browser
