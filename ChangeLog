@@ -1,3 +1,20 @@
+2014-12-11  Werner Koch  <wk@gnupg.org>
+
+	Release 1.5.3.
+	* configure.ac: Set LT version to C24/A13/R2.
+
+2014-12-08  Werner Koch  <wk@gnupg.org>
+
+	Return an error for some export key operations.
+	* src/context.h (OPDATA_EXPORT): New.
+	* src/export.c (op_data_t): New.
+	(release_op_data): New.
+	(parse_error): New.
+	(export_status_handler): New.
+	(export_start, export_ext_start): Prepare op_data.
+	(gpgme_op_export_ext, gpgme_op_export_keys): Return an error from the
+	status handler.
+
 2014-11-21  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.2.
