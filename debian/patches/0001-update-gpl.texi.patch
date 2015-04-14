@@ -1,3 +1,11 @@
+From: Debian GnuPG Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
+Date: Tue, 14 Apr 2015 10:48:23 -0400
+Subject: update-gpl.texi
+
+---
+ doc/gpl.texi | 34 +++++++++++++++++++++-------------
+ 1 file changed, 21 insertions(+), 13 deletions(-)
+
 diff --git a/doc/gpl.texi b/doc/gpl.texi
 index 1b29a81..d13e9e4 100644
 --- a/doc/gpl.texi
