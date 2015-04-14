@@ -1,3 +1,11 @@
+Noteworthy changes in version 1.5.4 (2015-04-13) [C24/A13/R3]
+------------------------------------------------
+
+ * Fixed a possible crash in the debug code.
+
+ * Fixed building for Windows with newer versions of Mingw.
+
+
 Noteworthy changes in version 1.5.3 (2014-12-11) [C24/A13/R2]
 -------------------------------------------------------------
 
