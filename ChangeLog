@@ -1,3 +1,28 @@
+2015-04-13  Werner Koch  <wk@gnupg.org>
+
+	Release 1.5.4.
+
+	w32: Use -static-libgcc to avoid linking to libgcc_s_sjlj-1.dll.
+	* src/Makefile.am (extra_ltoptions): New.
+	(libgpgme_la_LDFLAGS): Use it.
+	(libgpgme_pthread_la_LDFLAGS): Ditto.
+	(libgpgme_glib_la_LDFLAGS): Ditto.
+
+2015-03-16  Werner Koch  <wk@gnupg.org>
+
+	Fix potential crash in trace macro.
+	* src/signers.c (gpgme_signers_add): Avoid deref of a NULL KEY in the
+	trace macro.
+	* src/engine-spawn.c (engspawn_release): Remove always true condition.
+	* src/engine-gpg.c (gpg_release): Ditto.
+
+	Fix one byte too short malloc.
+	* src/engine-spawn.c (add_data): Fix malloc
+
+2015-01-30  Werner Koch  <wk@gnupg.org>
+
+	Switch to automake 1.14 and update  build-aux files.
+
 2014-12-11  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.3.
