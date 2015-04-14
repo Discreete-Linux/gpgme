@@ -26,7 +26,6 @@ Depends: libassuan-dev,
          libc6-dev,
          libgpg-error-dev,
          libgpgme11 (= ${binary:Version}),
-         libpth-dev,
          ${misc:Depends}
 Conflicts: libgpgme-dev, libgpgme10-dev
 Description: GPGME - GnuPG Made Easy (development files)
