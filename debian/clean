@@ -1,1 +1,2 @@
 tests/gpg/*.gpg
+tests/gpg/S.gpg-agent
