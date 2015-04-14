@@ -26,6 +26,3 @@ override_dh_installdocs:
 
 override_dh_makeshlibs:
 	dh_makeshlibs -V
-
-override_dh_clean:
-	dh_clean tests/gpg/*.gpg
