@@ -1,4 +1,4 @@
-gpgme1.0 (1.5.3-1) experimental; urgency=medium
+gpgme1.0 (1.5.4-1) experimental; urgency=medium
 
   * new upstream version (in experimental since debian is frozen)
   * ship /usr/bin/gpgme-tool in the -dev package.
