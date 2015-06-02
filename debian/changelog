@@ -1,9 +1,9 @@
-gpgme1.0 (1.5.4-1) experimental; urgency=medium
+gpgme1.0 (1.5.4-1) unstable; urgency=medium
 
-  * new upstream version (in experimental since debian is frozen)
+  * new upstream version
   * ship /usr/bin/gpgme-tool in the -dev package.
 
- -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Fri, 12 Dec 2014 16:57:21 -0500
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 02 Jun 2015 14:39:43 -0400
 
 gpgme1.0 (1.5.1-6) unstable; urgency=medium
 
