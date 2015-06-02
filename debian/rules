@@ -13,10 +13,7 @@ override_dh_auto_configure:
 	dh_auto_configure -- \
 	    --enable-static \
 	    --disable-fd-passing \
-	    --infodir=/usr/share/info \
-	    --with-gpg=/usr/bin/gpg2 \
-	    --with-gpgsm=/usr/bin/gpgsm \
-	    --with-gpgconf=/usr/bin/gpgconf
+	    --infodir=/usr/share/info
 
 override_dh_install:
 	dh_install --list-missing -X.la -Xinfo/dir
