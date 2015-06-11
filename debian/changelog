@@ -1,9 +1,10 @@
-gpgme1.0 (1.5.4-1) unstable; urgency=medium
+gpgme1.0 (1.5.5-1) unstable; urgency=medium
 
   * new upstream version
   * ship /usr/bin/gpgme-tool in the -dev package.
+  * enable file descriptor passing
 
- -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 02 Jun 2015 14:39:43 -0400
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Thu, 11 Jun 2015 18:18:30 -0400
 
 gpgme1.0 (1.5.1-6) unstable; urgency=medium
 
