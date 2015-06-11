@@ -1,2 +1,4 @@
 tests/gpg/*.gpg
 tests/gpg/S.gpg-agent
+tests/gpgsm/S.gpg-agent
+debian/gpgme-tool.1
