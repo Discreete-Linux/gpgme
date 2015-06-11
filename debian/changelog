@@ -3,6 +3,7 @@ gpgme1.0 (1.5.5-1) unstable; urgency=medium
   * new upstream version
   * ship /usr/bin/gpgme-tool in the -dev package.
   * enable file descriptor passing
+  * use autoreconf
 
  -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Thu, 11 Jun 2015 18:18:30 -0400
 
