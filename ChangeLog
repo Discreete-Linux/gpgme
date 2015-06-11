@@ -1,3 +1,45 @@
+2015-06-08  Werner Koch  <wk@gnupg.org>
+
+	Release 1.5.5.
+
+	Fix regression with gpgsm 2.0 due to "OPTION with-secret".
+	* src/engine-gpgsm.c (gpgsm_assuan_simple_command): Do not terminate
+	on a status lines.
+
+	tests: Add option --secret to run-keylist.
+
+	Fix compiler warnings about unused value in TRACE macros.
+	* src/debug.h: Change macros to not have a literal 0 as last
+	expression of the comma operator.
+	* src/debug.c (_gpgme_debug_frame_end): Return 0.
+	(_gpgme_debug): Return 0.
+
+	Fix test suite for GnuPG 2.1 which uses pubring.kbx.
+	* tests/gpgsm/final.test: New.
+	* tests/gpgsm/initial.test: New.
+	* tests/gpg/start-stop-agent: Move to ../.
+	* tests/gpgsm/Makefile.am (TESTS_ENVIRONMENT): Export top_srcdir.
+	(TESTS): Add intial.test and final.test.
+	(AM_LDFLAGS): Add -no-install.
+	(clean-local): Use start-stop-agent
+	(initial.test): Add dependency.
+	* tests/gpg/Makefile.am (top_srcdir): Export top_srcdir.
+	(AM_LDFLAGS): Add -no-install.
+	(check-local): Depend on pubring-stamp instead of pubring.gpg.
+	(initial.test): Depend on check-local.
+	(./pubring-gpg): Replace by rule for ./pubring-stamp.
+
+2015-06-05  Matthew Barnes  <mbarnes@redhat.com>
+
+	Set GPGME_SIGSUM_KEY_REVOKED also for gpg.
+	* src/verify.c (calc_sig_summary): Handle GPG_ERR_CERT_REVOKED.
+
+2015-06-05  Werner Koch  <wk@gnupg.org>
+
+	Fix segv for userids with a backslash.
+	* src/engine-gpg.c (gpg_keylist_preprocess): Increment SRC for a
+	backslash.
+
 2015-04-13  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.4.
