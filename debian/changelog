@@ -1,3 +1,10 @@
+gpgme1.0 (1.5.5-2) unstable; urgency=medium
+
+  * use installed libgpgme to get help2man to work on minimal build
+    systems.  Thanks, James Cowgill! (Closes: #789042)
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Wed, 17 Jun 2015 08:21:10 -0400
+
 gpgme1.0 (1.5.5-1) unstable; urgency=medium
 
   * new upstream version

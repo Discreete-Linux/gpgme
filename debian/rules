@@ -18,7 +18,7 @@ override_dh_install:
 	dh_install --list-missing -X.la -Xinfo/dir
 
 override_dh_installdocs:
-	help2man -o debian/gpgme-tool.1 -n 'Assuan server exposing GnuPG Made Easy operations' debian/tmp/usr/bin/gpgme-tool
+	help2man -o debian/gpgme-tool.1 -n 'Assuan server exposing GnuPG Made Easy operations' src/gpgme-tool
 	dh_installdocs -A
 
 override_dh_makeshlibs:
