@@ -1,0 +1,70 @@
+From: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+Date: Wed, 8 Jul 2015 12:09:15 -0400
+Subject: GPGME: remove BUILD_TIMESTAMP
+
+embedding the timestamp of the configuration into the build makes the
+binary output unreproducible, which makes it more difficult to verify
+that any particular set of binaries is build from the expected source
+code.
+
+This changeset removes all attempts at embedding the build timestamp
+in GPGME.  We already have PACKAGE_VERSION (and BUILD_REVISION when
+building from git) as identifiers of what was built, so we should be
+able to let go of this source of variation in the build without much
+of a drawback.
+
+If removal of BUILD_TIMESTAMP isn't acceptable for gpgme, we should
+allow it to be externally set for people who are trying to rebuild the
+package reproducibly.
+
+See also:
+https://wiki.debian.org/ReproducibleBuilds/Howto#Files_in_data.tar_contain_timestamps
+
+Signed-off-by: Daniel Kahn Gillmor <dkg@fifthhorseman.net>
+---
+ configure.ac          | 5 -----
+ src/version.c         | 2 +-
+ src/versioninfo.rc.in | 1 -
+ 3 files changed, 1 insertion(+), 7 deletions(-)
+
+diff --git a/configure.ac b/configure.ac
+index 1bb1a9e..946c60b 100644
+--- a/configure.ac
++++ b/configure.ac
+@@ -260,11 +260,6 @@ changequote([,])dnl
+ BUILD_FILEVERSION="${BUILD_FILEVERSION}mym4_revision_dec"
+ AC_SUBST(BUILD_FILEVERSION)
+ 
+-BUILD_TIMESTAMP=`date -u +%Y-%m-%dT%H:%M+0000 2>/dev/null || date`
+-AC_SUBST(BUILD_TIMESTAMP)
+-AC_DEFINE_UNQUOTED(BUILD_TIMESTAMP, "$BUILD_TIMESTAMP",
+-                   [The time this package was configured for a build])
+-
+ #
+ # Options to disable some regression tests
+ #
+diff --git a/src/version.c b/src/version.c
+index 15e5aee..09602b0 100644
+--- a/src/version.c
++++ b/src/version.c
+@@ -92,7 +92,7 @@ cright_blurb (void)
+     "This is GPGME " PACKAGE_VERSION " - The GnuPG Made Easy library\n"
+     CRIGHTBLURB
+     "\n"
+-    "(" BUILD_REVISION " " BUILD_TIMESTAMP ")\n"
++    "(" BUILD_REVISION ")\n"
+     "\n\n";
+   return blurb;
+ }
+diff --git a/src/versioninfo.rc.in b/src/versioninfo.rc.in
+index a4ab0af..50df4fd 100644
+--- a/src/versioninfo.rc.in
++++ b/src/versioninfo.rc.in
+@@ -45,7 +45,6 @@ BEGIN
+             VALUE "PrivateBuild", "\0"
+             VALUE "ProductName", "GPGME\0"
+             VALUE "ProductVersion", "@VERSION@\0"
+-            VALUE "SpecialBuild", "@BUILD_TIMESTAMP@\0"
+         END
+     END
+ END
