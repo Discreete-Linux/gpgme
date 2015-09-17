@@ -107,8 +107,8 @@ subdir = src
 DIST_COMMON = $(srcdir)/Makefile.in $(srcdir)/Makefile.am \
 	$(top_srcdir)/build-aux/mkinstalldirs \
 	$(srcdir)/versioninfo.rc.in $(srcdir)/gpgme.h.in \
-	$(srcdir)/gpgme-config.in setenv.c funopen.c stpcpy.c \
-	vasprintf.c ttyname_r.c $(top_srcdir)/build-aux/depcomp
+	$(srcdir)/gpgme-config.in stpcpy.c funopen.c vasprintf.c \
+	setenv.c ttyname_r.c $(top_srcdir)/build-aux/depcomp
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/glib-2.0.m4 \
 	$(top_srcdir)/m4/glibc21.m4 $(top_srcdir)/m4/gnupg-ttyname.m4 \
