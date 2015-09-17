@@ -472,6 +472,30 @@ gpgme_get_textmode (gpgme_ctx_t ctx)
 }
 
 
+/* Enable offline mode for this context. In offline mode dirmngr
+  will be disabled. */
+void
+gpgme_set_offline (gpgme_ctx_t ctx, int offline)
+{
+  TRACE2 (DEBUG_CTX, "gpgme_set_offline", ctx, "offline=%i (%s)",
+          offline, offline ? "yes" : "no");
+
+  if (!ctx)
+    return;
+
+  ctx->offline = offline;
+}
+
+/* Return the state of the offline flag.  */
+int
+gpgme_get_offline (gpgme_ctx_t ctx)
+{
+  TRACE2 (DEBUG_CTX, "gpgme_get_offline", ctx, "ctx->offline=%i (%s)",
+          ctx->offline, ctx->offline ? "yes" : "no");
+  return ctx->offline;
+}
+
+
 /* Set the number of certifications to include in an S/MIME message.
    The default is GPGME_INCLUDE_CERTS_DEFAULT.  -1 means all certs,
    and -2 means all certs except the root cert.  */
@@ -629,6 +653,47 @@ gpgme_get_progress_cb (gpgme_ctx_t ctx, gpgme_progress_cb_t *r_cb,
     *r_cb = ctx->progress_cb;
   if (r_cb_value)
     *r_cb_value = ctx->progress_cb_value;
+}
+
+
+/* This function sets a callback function to be used as a status
+   message forwarder.  */
+void
+gpgme_set_status_cb (gpgme_ctx_t ctx, gpgme_status_cb_t cb, void *cb_value)
+{
+  TRACE2 (DEBUG_CTX, "gpgme_set_status_cb", ctx, "status_cb=%p/%p",
+	  cb, cb_value);
+
+  if (!ctx)
+    return;
+
+  ctx->status_cb = cb;
+  ctx->status_cb_value = cb_value;
+}
+
+
+/* This function returns the callback function to be used as a
+   status message forwarder.  */
+void
+gpgme_get_status_cb (gpgme_ctx_t ctx, gpgme_status_cb_t *r_cb,
+		       void **r_cb_value)
+{
+  TRACE2 (DEBUG_CTX, "gpgme_get_status_cb", ctx, "ctx->status_cb=%p/%p",
+	  ctx ? ctx->status_cb : NULL, ctx ? ctx->status_cb_value : NULL);
+
+  if (r_cb)
+    *r_cb = NULL;
+
+  if (r_cb_value)
+    *r_cb_value = NULL;
+
+  if (!ctx || !ctx->status_cb)
+    return;
+
+  if (r_cb)
+    *r_cb = ctx->status_cb;
+  if (r_cb_value)
+    *r_cb_value = ctx->status_cb_value;
 }
 
 

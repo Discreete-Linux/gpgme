@@ -1,3 +1,173 @@
+2015-08-26  Werner Koch  <wk@gnupg.org>
+
+	Release 1.6.0.
+	* configure.ac: Set LT version to C25/A14/R0.
+
+	Make use of GPGRT macros is available.
+	* src/gpgme.h.in (_GPGME_INLINE): Define using GPGRT_INLINE if
+	possible.  Fix problem with -Wundef by adding an extra "defined()".
+	(_GPGME_GCC_VERSION): Define using GPGRT_ macro if possible.
+
+2015-08-25  Werner Koch  <wk@gnupg.org>
+
+	Avoid -Wundef warnings if gpgme.h is used by g++.
+	* src/gpgme.h.in (_GPGME_INLINE): Move definition into the
+	extern-C-scope.
+
+	Add configure option --enable-build-timestamp.
+	* configure.ac (BUILD_TIMESTAMP): Set to "<none>" by default.
+
+2015-08-25  Daiki Ueno  <ueno@gnu.org>
+
+	Relax ttyname_r error checks.
+	* src/engine-assuan.c (llass_new): Don't treat ttyname_r error as
+	fatal.
+	* src/engine-g13.c (g13_new): Likewise.
+	* src/engine-gpg.c (gpg_new): Likewise.
+	* src/engine-gpgsm.c (gpgsm_new): Likewise.
+	* src/engine-uiserver.c (uiserver_new): Likewise.
+
+2015-08-25  Werner Koch  <wk@gnupg.org>
+
+	Cleanup layout of gpgme.h.
+	* src/gpgme.h.in: Reorder prototypes.  Chnage some comments.
+
+	Improve error return by checking the FAILURE status.
+	* src/gpgme.h.in (GPGME_STATUS_FAILURE): New.
+	* src/status-table.c (FAILURE): New.
+	* src/op-support.c (_gpgme_parse_failure): New.
+	* src/passphrase.c (_gpgme_passphrase_status_handler): Forward FAILURE
+	status line to the status callback.
+
+	* src/decrypt.c (op_data_t): Add field failure_code.
+	(_gpgme_decrypt_status_handler): Parse that code and act upon it on EOF.
+	* src/encrypt.c (op_data_t): Add field failure_code.
+	(_gpgme_encrypt_status_handler): Parse that code and act upon it on EOF.
+	* src/genkey.c (op_data_t): Add field failure_code.
+	(genkey_status_handler): Parse that code and act upon it on EOF.
+	* src/passwd.c (op_data_t): Add field failure_code.
+	(passwd_status_handler): Parse that code and act upon it on EOF.
+	* src/sign.c (op_data_t): Add field failure_code.
+	(_gpgme_sign_status_handler): Parse that code and act upon it on EOF.
+	* src/verify.c (op_data_t): Add field failure_code.
+	(_gpgme_verify_status_handler): Parse that code and act upon it on EOF.
+
+	tests: Allow using run-sign to test loopback pinentry problems.
+	* tests/run-sign.c: Add options --status and --loopback.
+
+2015-08-24  Werner Koch  <wk@gnupg.org>
+
+	Call status_cb for an ERROR status seen in the passphrase handler.
+	* src/passphrase.c (_gpgme_passphrase_status_handler): Call status_cb.
+
+	w32: Look for gpgconf in the new GnuPG 2.1 install dir.
+	* src/w32-util.c (_gpgme_get_gpgconf_path): Try another location of
+	gpgconf.exe.
+
+	w32: Expect gpgme-w32spawn.exe only in the gpgme installation dir.
+	* src/w32-util.c (find_program_at_standard_place): Remove.
+	(_gpgme_get_gpg_path): Make the search order more explicit.
+	(_gpgme_get_gpgconf_path): Ditto.
+	(_gpgme_get_w32spawn_path): Search only in the inst_dir.
+
+	w32: Print the installation directory in debug mode.
+	* src/debug.c (debug_init) [W32]: Show libgpgme installation dir.
+
+	Add an export secret key feature.
+	* src/gpgme.h.in (GPGME_EXPORT_MODE_SECRET): New.
+	(GPGME_EXPORT_MODE_RAW): New.
+	(GPGME_EXPORT_MODE_PKCS12): New.
+	* src/export.c (export_start, export_ext_start): Allow new flags.
+	* src/engine-gpg.c (export_common): Support secret key export.
+	* src/engine-gpgsm.c (gpgsm_export, gpgsm_export_ext): Ditto.
+
+	* src/gpgme-tool.c (cmd_export): Add options --secret, --raw,
+	and --pkcs12.
+	* tests/run-export.c (main): Likewise.
+
+2015-08-16  Ben Kibbey  <bjk@luxsci.net>
+
+	Parse INQUIRE_MAXLEN in the passphrase callback.
+	* src/passphrase.c (_gpgme_passphrase_status_handler): Parse
+	GPGME_STATUS_INQUIRE_MAXLEN.
+	* src/passphrase.c (_gpgme_passphrase_command_handler): Send the
+	INQUIRE_MAXLEN status message.
+
+	Fix gpgme_{get,set}_status_cb to match documentation.
+	* doc/gpgme.texi: Minor fixes.
+	* src/gpgme.c (gpgme_get_status_cb): Set return variables to NULL and
+	check for a valid ctx pointer.
+
+	Parse the INQUIRE_MAXLEN status message.
+	* src/gpgme.h.in: (gpgme_status_code_t): Add INQUIRE_MAXLEN.
+	* src/status-table.c (status_table_s): Ditto.
+	* src/genkey.c (genkey_status_handler): Parse INQUIRE_MAXLEN.
+	* src/decrypt.c (_gpgme_decrypt_status_handler): Ditto.
+	* src/sign.c (_gpgme_sign_status_handler): Ditto.
+
+	This status message informs the client of the maximum length of an
+	inquired line. It is sent from gpg and forwarded to the client via
+	gpgme_status_cb_t.
+
+	Add gpgme_set/get_status_cb().
+	* src/gpgme.h.in (gpgme_set_status_cb): New.
+	(gpgme_get_status_cb): New.
+	(gpgme_status_cb_t): New.
+	* src/gpgme.c (gpgme_set_status_cb): New.
+	(gpgme_get_status_cb): New.
+	* src/context.h (status_cb): New.
+	(status_cb_value): New.
+	* src/gpgme.def: Export new symbols.
+	* src/libgpgme.vers: Ditto.
+	* doc/gpgme.texi: Document these new functions.
+
+	Make use of user passphrase handler during genkey.
+	* src/genkey.c (genkey_start): set engine passphrase command handler.
+
+2015-08-12  Ben Kibbey  <bjk@luxsci.net>
+
+	Also check the return code in gpg_sign().
+	* src/engine-gpg.c (gpg_sign): Check return value from start().
+
+2015-08-11  Ben Kibbey  <bjk@luxsci.net>
+
+	Check the return value when starting gpg.
+	* src/engine-gpg.c (gpg_decrypt, gpg_delete, gpg_passwd): Check return
+	value of start().
+
+2015-07-31  Andre Heinecke  <aheinecke@intevation.de>
+
+	Add offline mode support for CMS keylisting.
+	* doc/gpgme.texi: Document offline mode.
+	* src/context.h (gpgme_context): Add offline.
+	* src/engine-backend.h (keylist, keylist_ext): Add engine_flags.
+	* src/engine.c, src/engine.h (_gpgme_engine_op_keylist): Ditto.
+	  (_gpgme_engine_op_keylist_ext): Ditto.
+	* src/engine.h (GPGME_ENGINE_FLAG_OFFLINE): New.
+	* src/engine-gpg.c (gpg_keylist, gpg_keylist_ext): Ditto.
+	* src/engine-gpgsm.c (gpgsm_keylist): Handle engine_flags.
+	  (gpgsm_keylist_ext): Ditto.
+	* src/gpgme.c (gpgme_set_offline, gpgme_get_offline): New.
+	* src/gpgme.def (gpgme_set_offline, gpgme_get_offline): New.
+	* src/gpgme.h.in (gpgme_set_offline, gpgme_get_offline): New.
+	* src/libgpgme.vers (gpgme_set_offline, gpgme_get_offline): New.
+	* src/keylist.c (gpgme_op_keylist_start): Set offline flag.
+	  (gpgme_op_keylist_ext_start): Ditto.
+	* tests/run-keylist.c (show_usage, main): Add offline argument.
+
+2015-07-23  Peter Wu  <peter@lekensteyn.nl>
+
+	build: ignore scissor line for the commit-msg hook.
+	* build-aux/git-hooks/commit-msg: Stop processing more lines when the
+	  scissor line is encountered.
+
+2015-07-23  Werner Koch  <wk@gnupg.org>
+
+	Add option --lib-version to gpgme-tool.
+	* src/gpgme-tool.c (options, parse_options):  Add --lib-version
+	(CMD_LIBVERSION): New.
+	(main): Implement.
+
 2015-06-08  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.5.

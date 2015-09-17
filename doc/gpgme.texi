@@ -189,10 +189,12 @@ Context Attributes
 * Crypto Engine::                 Configuring the crypto engine.
 * ASCII Armor::                   Requesting @acronym{ASCII} armored output.
 * Text Mode::                     Choosing canonical text mode.
+* Offline Mode::                  Choosing offline mode.
 * Included Certificates::         Including a number of certificates.
 * Key Listing Mode::              Selecting key listing mode.
 * Passphrase Callback::           Getting the passphrase from the user.
 * Progress Meter Callback::       Being informed about the progress.
+* Status Message Callback::       Status messages received from gpg.
 * Locale::                        Setting the locale of a context.
 
 Key Management
@@ -2285,10 +2287,12 @@ started.  In fact, these references are accessed through the
 * Crypto Engine::                 Configuring the crypto engine.
 * ASCII Armor::                   Requesting @acronym{ASCII} armored output.
 * Text Mode::                     Choosing canonical text mode.
+* Offline Mode::                  Choosing offline mode.
 * Included Certificates::         Including a number of certificates.
 * Key Listing Mode::              Selecting key listing mode.
 * Passphrase Callback::           Getting the passphrase from the user.
 * Progress Meter Callback::       Being informed about the progress.
+* Status Message Callback::       Status messages received from gpg.
 * Locale::                        Setting the locale of a context.
 @end menu
 
@@ -2408,6 +2412,37 @@ otherwise.
 
 @deftypefun int gpgme_get_textmode (@w{gpgme_ctx_t @var{ctx}})
 The function @code{gpgme_get_textmode} returns 1 if canonical text
+mode is enabled, and @code{0} if it is not, or if @var{ctx} is not a
+valid pointer.
+@end deftypefun
+
+
+@node Offline Mode
+@subsection Offline Mode
+@cindex context, offline mode
+@cindex offline mode
+
+@deftypefun void gpgme_set_offline (@w{gpgme_ctx_t @var{ctx}}, @w{int @var{yes}})
+The function @code{gpgme_set_offline} specifies if offline mode
+should be used.  By default, offline mode is not used.
+
+The offline mode specifies if dirmngr should be used to do additional
+validation that might require connections to external services.
+(e.g. CRL / OCSP checks).
+
+Offline mode only affects the keylist mode @code{GPGME_KEYLIST_MODE_VALIDATE}
+and is only relevant to the CMS crypto engine. Offline mode
+is ignored otherwise.
+
+This option may be extended in the future to completely disable
+the use of dirmngr for any engine.
+
+Offline mode is disabled if @var{yes} is zero, and enabled
+otherwise.
+@end deftypefun
+
+@deftypefun int gpgme_get_offline (@w{gpgme_ctx_t @var{ctx}})
+The function @code{gpgme_get_offline} returns 1 if offline
 mode is enabled, and @code{0} if it is not, or if @var{ctx} is not a
 valid pointer.
 @end deftypefun
@@ -2639,6 +2674,43 @@ progress callback is set, or @var{ctx} is not a valid pointer,
 
 @var{progfunc} or @var{hook_value} can be @code{NULL}.  In this case,
 the corresponding value will not be returned.
+@end deftypefun
+
+
+@node Status Message Callback
+@subsection Status Message Callback
+@cindex callback, status message
+@cindex status message callback
+
+@deftp {Data type} {gpgme_error_t (*gpgme_status_cb_t)(void *@var{hook}, const char *@var{keyword}, const char *@var{args})}
+@tindex gpgme_status_cb_t
+The @code{gpgme_status_cb_t} type is the type of function usable as
+a status message callback function.
+
+The argument @var{keyword} is the name of the status message while the
+@var{args} argument contains any arguments for the status message.
+
+If an error occurs, return the corresponding @code{gpgme_error_t}
+value. Otherwise, return @code{0}.
+@end deftp
+
+@deftypefun void gpgme_set_status_cb (@w{gpgme_ctx_t @var{ctx}}, @w{gpgme_status_cb_t @var{statusfunc}}, @w{void *@var{hook_value}})
+The function @code{gpgme_set_status_cb} sets the function that is used when a
+status message is received from gpg to @var{statusfunc}. The function
+@var{statusfunc} needs to be implemented by the user, and whenever it is
+called, it is called with its first argument being @var{hook_value}.  By
+default, no status message callback function is set.
+
+The user can disable the use of a status message callback function by calling
+@code{gpgme_set_status_cb} with @var{statusfunc} being @code{NULL}.
+@end deftypefun
+
+@deftypefun void gpgme_get_status_cb (@w{gpgme_ctx_t @var{ctx}}, @w{gpgme_status_cb_t *@var{statusfunc}}, @w{void **@var{hook_value}})
+The function @code{gpgme_get_status_cb} returns the function that is used to
+process status messages from gpg in @var{*statusfunc}, and the first argument
+for this function in @var{*hook_value}.  If no status message callback is set,
+or @var{ctx} is not a valid pointer, @code{NULL} is returned in both
+variables.
 @end deftypefun
 
 
@@ -3627,6 +3699,21 @@ If this bit is set, the smallest possible key is exported.  For OpenPGP
 keys it removes all signatures except for the latest self-signatures.
 For X.509 keys it has no effect.
 
+
+@item GPGME_EXPORT_MODE_SECRET
+Instead of exporting the public key, the secret key is exported.  This
+may not be combined with @code{GPGME_EXPORT_MODE_EXTERN}.  For X.509
+the export format is PKCS#8.
+
+@item GPGME_EXPORT_MODE_RAW
+If this flag is used with @code{GPGME_EXPORT_MODE_SECRET} for an X.509
+key the export format will be changed to PKCS#1.  This flag may not be
+used with OpenPGP.
+
+@item GPGME_EXPORT_MODE_PKCS12
+If this flag is used with @code{GPGME_EXPORT_MODE_SECRET} for an X.509
+key the export format will be changed to PKCS#12 which also includes
+the certificate.  This flag may not be used with OpenPGP.
 
 @end table
 
@@ -6116,15 +6203,15 @@ you run your tests only with play data.
 
 @include gpl.texi
 
-@node Function and Data Index
-@unnumbered Function and Data Index
-
-@printindex fn
-
 @node Concept Index
 @unnumbered Concept Index
 
 @printindex cp
+
+@node Function and Data Index
+@unnumbered Function and Data Index
+
+@printindex fn
 
 
 @bye

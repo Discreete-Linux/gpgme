@@ -20,8 +20,8 @@ END-INFO-DIR-ENTRY
 
    This file documents the GPGME library.
 
-   This is Edition 1.5.5, last updated 6 November 2014, of ‘The ‘GnuPG
-Made Easy’ Reference Manual’, for Version 1.5.5.
+   This is Edition 1.6.0, last updated 26 August 2015, of ‘The ‘GnuPG
+Made Easy’ Reference Manual’, for Version 1.6.0.
 
    Copyright © 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2010, 2012,
 2013, 2014 g10 Code GmbH.
@@ -39,121 +39,123 @@ Public License for more details.
 
 
 Indirect:
-gpgme.info-1: 1739
-gpgme.info-2: 336269
+gpgme.info-1: 1738
+gpgme.info-2: 302237
 
 Tag Table:
 (Indirect)
-Node: Top1739
-Node: Introduction8866
-Node: Getting Started9656
-Node: Features10781
-Node: Overview11937
-Node: Preparation13046
-Node: Header14043
-Node: Building the Source14790
-Node: Largefile Support (LFS)16963
-Node: Using Automake22377
-Node: Using Libtool24823
-Node: Library Version Check25185
-Node: Signal Handling30279
-Node: Multi Threading31549
-Ref: Multi Threading-Footnote-133783
-Node: Protocols and Engines34206
-Node: Engine Version Check36695
-Node: Engine Information38321
-Node: Engine Configuration42181
-Node: OpenPGP43465
-Node: Cryptographic Message Syntax43805
-Node: Algorithms44103
-Ref: Algorithms-Footnote-144582
-Node: Public Key Algorithms44710
-Node: Hash Algorithms46687
-Node: Error Handling47877
-Node: Error Values49751
-Node: Error Sources54954
-Node: Error Codes57394
-Node: Error Strings62185
-Node: Exchanging Data63992
-Node: Creating Data Buffers65858
-Node: Memory Based Data Buffers66374
-Node: File Based Data Buffers69807
-Node: Callback Based Data Buffers72009
-Node: Destroying Data Buffers77696
-Node: Manipulating Data Buffers79087
-Node: Data Buffer I/O Operations79579
-Node: Data Buffer Meta-Data82306
-Node: Data Buffer Convenience85774
-Node: Contexts87751
-Node: Creating Contexts88937
-Node: Destroying Contexts89784
-Node: Result Management90123
-Node: Context Attributes91552
-Node: Protocol Selection92332
-Node: Crypto Engine93364
-Node: ASCII Armor95207
-Node: Text Mode95831
-Node: Included Certificates96774
-Node: Key Listing Mode98192
-Node: Passphrase Callback102066
-Node: Progress Meter Callback105278
-Node: Locale107244
-Node: Key Management108801
-Node: Listing Keys119694
-Node: Information About Keys127120
-Node: Key Signatures135451
-Node: Manipulating Keys139587
-Node: Generating Keys140447
-Node: Exporting Keys145171
-Node: Importing Keys151209
-Ref: Importing Keys-Footnote-1158646
-Node: Deleting Keys158774
-Node: Changing Passphrases160219
-Node: Advanced Key Editing161508
-Node: Trust Item Management164690
-Node: Listing Trust Items165802
-Node: Information About Trust Items168168
-Node: Manipulating Trust Items170097
-Node: Crypto Operations171076
-Node: Decrypt172340
-Node: Verify176210
-Node: Decrypt and Verify194587
-Node: Sign196655
-Node: Selecting Signers197219
-Node: Creating a Signature198391
-Node: Signature Notation Data203161
-Node: Encrypt205389
-Node: Encrypting a Plaintext205745
-Node: Miscellaneous212419
-Node: Running other Programs212707
-Node: Run Control214731
-Node: Waiting For Completion215475
-Node: Using External Event Loops217593
-Node: I/O Callback Interface219565
-Node: Registering I/O Callbacks224803
-Node: I/O Callback Example226841
-Node: I/O Callback Example GTK+233058
-Node: I/O Callback Example GDK234847
-Node: I/O Callback Example Qt236489
-Node: Cancellation238777
-Node: UI Server Protocol241070
-Ref: UI Server Protocol-Footnote-1242505
-Node: UI Server Encrypt242624
-Node: UI Server Sign247769
-Node: UI Server Decrypt250122
-Node: UI Server Verify251588
-Node: UI Server Set Input Files255160
-Node: UI Server Sign/Encrypt Files256230
-Node: UI Server Verify/Decrypt Files258038
-Node: UI Server Import/Export Keys259914
-Node: UI Server Checksum Files260976
-Node: Miscellaneous UI Server Commands263192
-Ref: command SENDER265123
-Node: Debugging266825
-Node: Library Copying268569
-Node: Copying296774
-Node: Function and Data Index336269
-Node: Concept Index362522
+Node: Top1738
+Node: Introduction8990
+Node: Getting Started9780
+Node: Features10905
+Node: Overview12061
+Node: Preparation13170
+Node: Header14167
+Node: Building the Source14914
+Node: Largefile Support (LFS)17087
+Node: Using Automake22501
+Node: Using Libtool24947
+Node: Library Version Check25309
+Node: Signal Handling30403
+Node: Multi Threading31673
+Ref: Multi Threading-Footnote-133907
+Node: Protocols and Engines34330
+Node: Engine Version Check36819
+Node: Engine Information38445
+Node: Engine Configuration42305
+Node: OpenPGP43589
+Node: Cryptographic Message Syntax43929
+Node: Algorithms44227
+Ref: Algorithms-Footnote-144706
+Node: Public Key Algorithms44834
+Node: Hash Algorithms46811
+Node: Error Handling48001
+Node: Error Values49875
+Node: Error Sources55078
+Node: Error Codes57518
+Node: Error Strings62309
+Node: Exchanging Data64116
+Node: Creating Data Buffers65982
+Node: Memory Based Data Buffers66498
+Node: File Based Data Buffers69931
+Node: Callback Based Data Buffers72133
+Node: Destroying Data Buffers77820
+Node: Manipulating Data Buffers79211
+Node: Data Buffer I/O Operations79703
+Node: Data Buffer Meta-Data82430
+Node: Data Buffer Convenience85898
+Node: Contexts87875
+Node: Creating Contexts89061
+Node: Destroying Contexts89908
+Node: Result Management90247
+Node: Context Attributes91676
+Node: Protocol Selection92582
+Node: Crypto Engine93614
+Node: ASCII Armor95457
+Node: Text Mode96081
+Node: Offline Mode97015
+Node: Included Certificates98095
+Node: Key Listing Mode99516
+Node: Passphrase Callback103390
+Node: Progress Meter Callback106602
+Node: Status Message Callback108585
+Node: Locale110305
+Node: Key Management111864
+Node: Listing Keys122757
+Node: Information About Keys130183
+Node: Key Signatures138514
+Node: Manipulating Keys142650
+Node: Generating Keys143510
+Node: Exporting Keys148234
+Node: Importing Keys154934
+Ref: Importing Keys-Footnote-1162371
+Node: Deleting Keys162499
+Node: Changing Passphrases163944
+Node: Advanced Key Editing165233
+Node: Trust Item Management168415
+Node: Listing Trust Items169527
+Node: Information About Trust Items171893
+Node: Manipulating Trust Items173822
+Node: Crypto Operations174801
+Node: Decrypt176065
+Node: Verify179935
+Node: Decrypt and Verify198312
+Node: Sign200380
+Node: Selecting Signers200944
+Node: Creating a Signature202116
+Node: Signature Notation Data206886
+Node: Encrypt209114
+Node: Encrypting a Plaintext209470
+Node: Miscellaneous216144
+Node: Running other Programs216432
+Node: Run Control218456
+Node: Waiting For Completion219200
+Node: Using External Event Loops221318
+Node: I/O Callback Interface223290
+Node: Registering I/O Callbacks228528
+Node: I/O Callback Example230566
+Node: I/O Callback Example GTK+236783
+Node: I/O Callback Example GDK238572
+Node: I/O Callback Example Qt240214
+Node: Cancellation242502
+Node: UI Server Protocol244795
+Ref: UI Server Protocol-Footnote-1246230
+Node: UI Server Encrypt246349
+Node: UI Server Sign251494
+Node: UI Server Decrypt253847
+Node: UI Server Verify255313
+Node: UI Server Set Input Files258885
+Node: UI Server Sign/Encrypt Files259955
+Node: UI Server Verify/Decrypt Files261763
+Node: UI Server Import/Export Keys263639
+Node: UI Server Checksum Files264701
+Node: Miscellaneous UI Server Commands266917
+Ref: command SENDER268848
+Node: Debugging270550
+Node: Library Copying272294
+Node: Copying302237
+Node: Concept Index339983
+Node: Function and Data Index354540
 
 End Tag Table
 
