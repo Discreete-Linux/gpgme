@@ -1,3 +1,12 @@
+gpgme1.0 (1.6.0-2) unstable; urgency=medium
+
+  * updated debian/watch to version 4
+  * depend on gnupg from version 2 or later, instead of gnupg2
+  * bumped Standards-Version to 3.9.8 (no changes needed)
+  * updated Vcs-* fields
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 19 Apr 2016 17:34:59 -0400
+
 gpgme1.0 (1.6.0-1) unstable; urgency=medium
 
   * New upstream release.
