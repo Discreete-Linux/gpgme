@@ -7,8 +7,8 @@ Uploaders: Jose Carlos Garcia Sogo <jsogo@debian.org>,
 Build-Depends: automake (>= 1.14),
                debhelper (>> 9~),
                dh-autoreconf,
+               gnupg (>= 2) | gnupg2,
                gnupg-agent,
-               gnupg2,
                gpgsm,
                help2man,
                libassuan-dev (>> 2.0.2),
@@ -40,7 +40,9 @@ Package: libgpgme11
 Architecture: any
 Multi-Arch: same
 Pre-Depends: ${misc:Pre-Depends}
-Depends: gnupg2 (>> 2.0.4), ${misc:Depends}, ${shlibs:Depends}
+Depends: gnupg (>> 2) | gnupg2 (>> 2.0.4),
+         ${misc:Depends},
+         ${shlibs:Depends}
 Suggests: gpgsm (>> 1.9.6)
 Description: GPGME - GnuPG Made Easy (library)
  GPGME is a wrapper library which provides a C API to access some of the
