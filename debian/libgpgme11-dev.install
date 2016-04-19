@@ -1,7 +1,7 @@
 usr/bin/gpgme-config
+usr/bin/gpgme-tool
 usr/include/
 usr/lib/*/lib*.a
 usr/lib/*/lib*.so
 usr/share/aclocal/
 usr/share/info/*info*
-usr/bin/gpgme-tool
