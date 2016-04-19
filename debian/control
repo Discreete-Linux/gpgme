@@ -17,8 +17,8 @@ Build-Depends: automake (>= 1.14),
                texinfo
 Standards-Version: 3.9.8
 Homepage: https://www.gnupg.org/related_software/gpgme/
-Vcs-Git: git://anonscm.debian.org/pkg-gnupg/gpgme.git
-Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-gnupg/gpgme.git
+Vcs-Git: https://anonscm.debian.org/git/pkg-gnupg/gpgme.git
+Vcs-Browser: https://anonscm.debian.org/git/kg-gnupg/gpgme.git
 
 Package: libgpgme11-dev
 Section: libdevel
