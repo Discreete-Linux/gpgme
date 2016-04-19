@@ -15,7 +15,7 @@ Build-Depends: automake (>= 1.14),
                libgpg-error-dev (>> 1.8),
                scdaemon,
                texinfo
-Standards-Version: 3.9.6
+Standards-Version: 3.9.8
 Homepage: https://www.gnupg.org/related_software/gpgme/
 Vcs-Git: git://anonscm.debian.org/pkg-gnupg/gpgme.git
 Vcs-Browser: http://anonscm.debian.org/gitweb/?p=pkg-gnupg/gpgme.git
