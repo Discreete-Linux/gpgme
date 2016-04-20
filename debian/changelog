@@ -1,3 +1,10 @@
+gpgme1.0 (1.6.0-3) unstable; urgency=medium
+
+  * change order of gnupg2 | gnupg (>= 2) build-dep so that sbuild is OK
+    (while gnupg (>= 2) is still only in experimental).
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Wed, 20 Apr 2016 08:36:10 -0400
+
 gpgme1.0 (1.6.0-2) unstable; urgency=medium
 
   * updated debian/watch to version 4
