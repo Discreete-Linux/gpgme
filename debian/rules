@@ -12,6 +12,7 @@ export LDFLAGS  := $(shell dpkg-buildflags --get LDFLAGS)
 override_dh_auto_configure:
 	dh_auto_configure -- \
 	    --enable-static \
+	    --enable-languages=no \
 	    --infodir=/usr/share/info
 
 override_dh_install:
