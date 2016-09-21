@@ -7,19 +7,26 @@ looking like a beta because we're not on a git tag.
 
 This patch avoids that situation.
 ---
- configure.ac | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ configure.ac | 7 ++-----
+ 1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index 7f03170..1bb1a9e 100644
+index c9d16af..1a8d33a 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -43,7 +43,7 @@ m4_define([mym4_revision_dec],
+@@ -37,13 +37,10 @@ m4_define(mym4_version_micro, [0])
+ # processing is done by autoconf and not during the configure run.
+ m4_define(mym4_version,
+           [mym4_version_major.mym4_version_minor.mym4_version_micro])
+-m4_define([mym4_revision],
+-          m4_esyscmd([git rev-parse --short HEAD | tr -d '\n\r']))
++m4_define([mym4_revision], [])
+ m4_define([mym4_revision_dec],
            m4_esyscmd_s([echo $((0x$(echo ]mym4_revision[|head -c 4)))]))
- m4_define([mym4_betastring],
-           m4_esyscmd_s([git describe --match 'gpgme-[0-9].*[0-9]' --long|\
+-m4_define([mym4_betastring],
+-          m4_esyscmd_s([git describe --match 'gpgme-[0-9].*[0-9]' --long|\
 -                        awk -F- '$3!=0{print"-beta"$3}']))
-+                        awk -F- '$3!=0{print""}']))
++m4_define([mym4_betastring], [])
  m4_define([mym4_isgit],m4_if(mym4_betastring,[],[no],[yes]))
  m4_define([mym4_full_version],[mym4_version[]mym4_betastring])
  
