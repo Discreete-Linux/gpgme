@@ -212,7 +212,8 @@ g13_release (void *engine)
 
 
 static gpgme_error_t
-g13_new (void **engine, const char *file_name, const char *home_dir)
+g13_new (void **engine, const char *file_name, const char *home_dir,
+         const char *version)
 {
   gpgme_error_t err = 0;
   engine_g13_t g13;
@@ -221,8 +222,11 @@ g13_new (void **engine, const char *file_name, const char *home_dir)
   const char *argv[5];
   char *dft_display = NULL;
   char dft_ttyname[64];
+  char *env_tty = NULL;
   char *dft_ttytype = NULL;
   char *optstr;
+
+  (void)version; /* Not yet used.  */
 
   g13 = calloc (1, sizeof *g13);
   if (!g13)
@@ -281,11 +285,20 @@ g13_new (void **engine, const char *file_name, const char *home_dir)
 	goto leave;
     }
 
-  if (isatty (1))
+  err = _gpgme_getenv ("GPG_TTY", &env_tty);
+  if (isatty (1) || env_tty || err)
     {
-      int rc;
+      int rc = 0;
 
-      rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
+      if (err)
+        goto leave;
+      else if (env_tty)
+        {
+          snprintf (dft_ttyname, sizeof (dft_ttyname), "%s", env_tty);
+          free (env_tty);
+        }
+      else
+        rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
 
       /* Even though isatty() returns 1, ttyname_r() may fail in many
 	 ways, e.g., when /dev/pts is not accessible under chroot.  */
@@ -353,7 +366,7 @@ g13_set_locale (void *engine, int category, const char *value)
   engine_g13_t g13 = engine;
   gpgme_error_t err;
   char *optstr;
-  char *catstr;
+  const char *catstr;
 
   /* FIXME: If value is NULL, we need to reset the option to default.
      But we can't do this.  So we error out here.  G13 needs support
@@ -402,13 +415,16 @@ g13_set_locale (void *engine, int category, const char *value)
 
 #if USE_DESCRIPTOR_PASSING
 static gpgme_error_t
-g13_assuan_simple_command (assuan_context_t ctx, char *cmd,
+g13_assuan_simple_command (assuan_context_t ctx, const char *cmd,
 			   engine_status_handler_t status_fnc,
 			   void *status_fnc_value)
 {
   gpg_error_t err;
   char *line;
   size_t linelen;
+
+  (void)status_fnc;
+  (void)status_fnc_value;
 
   err = assuan_write_line (ctx, cmd);
   if (err)
@@ -768,6 +784,7 @@ struct engine_ops _gpgme_engine_ops_g13 =
 #else
     NULL,			/* reset */
 #endif
+    NULL,               /* set_status_cb */
     NULL,               /* set_status_handler */
     NULL,		/* set_command_handler */
     NULL,               /* set_colon_line_handler */
@@ -785,6 +802,8 @@ struct engine_ops _gpgme_engine_ops_g13 =
     NULL,               /* import */
     NULL,               /* keylist */
     NULL,               /* keylist_ext */
+    NULL,               /* keysign */
+    NULL,               /* tofu_policy */
     NULL,               /* sign */
     NULL,		/* trustlist */
     NULL,               /* verify */

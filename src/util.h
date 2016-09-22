@@ -45,6 +45,11 @@
 
 #define DIM(v) (sizeof(v)/sizeof((v)[0]))
 
+#if GPG_ERROR_VERSION_NUMBER < 0x011500 /* 1.21 */
+# define GPG_ERR_FALSE 256
+#endif
+
+
 
 /*-- {posix,w32}-util.c --*/
 int _gpgme_get_conf_int (const char *key, int *value);
@@ -124,6 +129,18 @@ gpgme_error_t _gpgme_decode_percent_string (const char *src, char **destp,
 gpgme_error_t _gpgme_encode_percent_string (const char *src, char **destp,
 					    size_t len);
 
+/* Split a string into space delimited fields and remove leading and
+ * trailing spaces from each field.  A pointer to the each field is
+ * stored in ARRAY.  Stop splitting at ARRAYSIZE fields.  The function
+ * modifies STRING.  The number of parsed fields is returned.  */
+int _gpgme_split_fields (char *string, char **array, int arraysize);
+
+/* Convert the field STRING into an unsigned long value.  Check for
+ * trailing garbage.  */
+gpgme_error_t _gpgme_strtoul_field (const char *string, unsigned long *result);
+
+/* Convert STRING into an offset value similar to atoi().  */
+gpgme_off_t _gpgme_string_to_off (const char *string);
 
 /* Parse the string TIMESTAMP into a time_t.  The string may either be
    seconds since Epoch or in the ISO 8601 format like
@@ -138,6 +155,26 @@ gpgme_error_t _gpgme_map_gnupg_error (char *err);
 int _gpgme_map_pk_algo (int algo, gpgme_protocol_t protocol);
 
 
+/*-- b64dec.c --*/
+
+struct b64state
+{
+  int idx;
+  int quad_count;
+  char *title;
+  unsigned char radbuf[4];
+  int stop_seen:1;
+  int invalid_encoding:1;
+  gpg_error_t lasterr;
+};
+
+gpg_error_t _gpgme_b64dec_start (struct b64state *state, const char *title);
+gpg_error_t _gpgme_b64dec_proc (struct b64state *state,
+                                void *buffer, size_t length, size_t *r_nbytes);
+gpg_error_t _gpgme_b64dec_finish (struct b64state *state);
+
+
+
 /* Retrieve the environment variable NAME and return a copy of it in a
    malloc()'ed buffer in *VALUE.  If the environment variable is not
    set, return NULL in *VALUE.  */
@@ -148,6 +185,7 @@ gpgme_error_t _gpgme_getenv (const char *name, char **value);
 /* Convert a status string to a status code.  */
 void _gpgme_status_init (void);
 gpgme_status_code_t _gpgme_parse_status (const char *name);
+const char *_gpgme_status_to_string (gpgme_status_code_t code);
 
 
 #ifdef HAVE_W32_SYSTEM

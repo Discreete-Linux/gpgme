@@ -131,14 +131,15 @@ llass_get_home_dir (void)
 static char *
 llass_get_version (const char *file_name)
 {
-  return strdup ("1.0");
+  (void)file_name;
+  return NULL;
 }
 
 
 static const char *
 llass_get_req_version (void)
 {
-  return "1.0";
+  return NULL;
 }
 
 
@@ -212,11 +213,15 @@ llass_release (void *engine)
 /* Create a new instance. If HOME_DIR is NULL standard options for use
    with gpg-agent are issued.  */
 static gpgme_error_t
-llass_new (void **engine, const char *file_name, const char *home_dir)
+llass_new (void **engine, const char *file_name, const char *home_dir,
+           const char *version)
 {
   gpgme_error_t err = 0;
   engine_llass_t llass;
   char *optstr;
+  char *env_tty = NULL;
+
+  (void)version; /* Not yet used.  */
 
   llass = calloc (1, sizeof *llass);
   if (!llass)
@@ -245,6 +250,7 @@ llass_new (void **engine, const char *file_name, const char *home_dir)
   if (err)
     goto leave;
   assuan_ctx_set_system_hooks (llass->assuan_ctx, &_gpgme_assuan_system_hooks);
+  assuan_set_flag (llass->assuan_ctx, ASSUAN_CONVEY_COMMENTS, 1);
 
   err = assuan_socket_connect (llass->assuan_ctx, file_name, 0, 0);
   if (err)
@@ -275,13 +281,24 @@ llass_new (void **engine, const char *file_name, const char *home_dir)
         }
     }
 
-  if (llass->opt.gpg_agent && isatty (1))
+  if (llass->opt.gpg_agent)
+    err = _gpgme_getenv ("GPG_TTY", &env_tty);
+
+  if (llass->opt.gpg_agent && (isatty (1) || env_tty || err))
     {
-      int rc;
+      int rc = 0;
       char dft_ttyname[64];
       char *dft_ttytype = NULL;
 
-      rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
+      if (err)
+        goto leave;
+      else if (env_tty)
+        {
+          snprintf (dft_ttyname, sizeof (dft_ttyname), "%s", env_tty);
+          free (env_tty);
+        }
+      else
+        rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
 
       /* Even though isatty() returns 1, ttyname_r() may fail in many
 	 ways, e.g., when /dev/pts is not accessible under chroot.  */
@@ -354,7 +371,7 @@ llass_set_locale (void *engine, int category, const char *value)
   gpgme_error_t err;
   engine_llass_t llass = engine;
   char *optstr;
-  char *catstr;
+  const char *catstr;
 
   if (!llass->opt.gpg_agent)
     return 0;
@@ -752,6 +769,7 @@ struct engine_ops _gpgme_engine_ops_assuan =
     /* Member functions.  */
     llass_release,
     NULL,		/* reset */
+    NULL,               /* set_status_cb */
     NULL,               /* set_status_handler */
     NULL,		/* set_command_handler */
     NULL,               /* set_colon_line_handler */
@@ -769,6 +787,8 @@ struct engine_ops _gpgme_engine_ops_assuan =
     NULL,               /* import */
     NULL,               /* keylist */
     NULL,               /* keylist_ext */
+    NULL,               /* keysign */
+    NULL,               /* tofu_policy */
     NULL,               /* sign */
     NULL,		/* trustlist */
     NULL,               /* verify */

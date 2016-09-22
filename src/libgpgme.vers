@@ -98,6 +98,25 @@ GPGME_1.1 {
 
     gpgme_set_status_cb;
     gpgme_get_status_cb;
+
+    gpgme_pubkey_algo_string;
+    gpgme_set_ctx_flag;
+    gpgme_data_set_flag;
+
+    gpgme_op_createkey_start;
+    gpgme_op_createkey;
+    gpgme_op_createsubkey_start;
+    gpgme_op_createsubkey;
+    gpgme_op_adduid_start;
+    gpgme_op_adduid;
+    gpgme_op_revuid_start;
+    gpgme_op_revuid;
+    gpgme_op_keysign_start;
+    gpgme_op_keysign;
+    gpgme_op_tofu_policy_start;
+    gpgme_op_tofu_policy;
+    gpgme_op_interact_start;
+    gpgme_op_interact;
 };
 
 

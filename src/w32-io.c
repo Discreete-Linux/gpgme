@@ -50,6 +50,7 @@
 #include "sema.h"
 #include "priv-io.h"
 #include "debug.h"
+#include "sys-util.h"
 
 
 /* FIXME: Optimize.  */
@@ -74,7 +75,7 @@ static struct
      that dup'ed file descriptors are closed before the file
      descriptors from which they are dup'ed are closed, ensures that
      the handle or socket is always valid, and shared among all file
-     descriptors refering to the same underlying object.
+     descriptors referring to the same underlying object.
 
      The logic behind this is that there is only one reason for us to
      dup file descriptors anyway: to allow simpler book-keeping of
@@ -978,7 +979,7 @@ _gpgme_io_write (int fd, const void *buffer, size_t count)
       return TRACE_SYSRES (-1);
     }
 
-  /* If no error occured, the number of bytes in the buffer must be
+  /* If no error occurred, the number of bytes in the buffer must be
      zero.  */
   assert (!ctx->nbytes);
 
@@ -1550,6 +1551,7 @@ _gpgme_io_spawn (const char *path, char *const argv[], unsigned int flags,
   int debug_me = 0;
   int tmp_fd;
   char *tmp_name;
+  const char *spawnhelper;
 
   TRACE_BEG1 (DEBUG_SYSIO, "_gpgme_io_spawn", path,
 	      "path=%s", path);
@@ -1603,7 +1605,33 @@ _gpgme_io_spawn (const char *path, char *const argv[], unsigned int flags,
   if ((flags & IOSPAWN_FLAG_DETACHED))
     cr_flags |= DETACHED_PROCESS;
   cr_flags |= GetPriorityClass (GetCurrentProcess ());
-  if (!CreateProcessA (_gpgme_get_w32spawn_path (),
+  spawnhelper = _gpgme_get_w32spawn_path ();
+  if (!spawnhelper)
+    {
+      /* This is a common mistake for new users of gpgme not to include
+         gpgme-w32spawn.exe with their binary. So we want to make
+         this transparent to developers. If users have somehow messed
+         up their installation this should also be properly communicated
+         as otherwise calls to gnupg will result in unsupported protocol
+         errors that do not explain a lot. */
+      char *msg;
+      gpgrt_asprintf (&msg, "gpgme-w32spawn.exe was not found in the "
+                            "detected installation directory of GpgME"
+                            "\n\t\"%s\"\n\n"
+                            "Crypto operations will not work.\n\n"
+                            "If you see this it indicates a problem "
+                            "with your installation.\n"
+                            "Please report the problem to your "
+                            "distributor of GpgME.\n\n"
+                            "Developers Note: The install dir can be "
+                            "manually set with: gpgme_set_global_flag",
+                            _gpgme_get_inst_dir ());
+      MessageBoxA (NULL, msg, "GpgME not installed correctly", MB_OK);
+      free (msg);
+      gpg_err_set_errno (EIO);
+      return TRACE_SYSRES (-1);
+    }
+  if (!CreateProcessA (spawnhelper,
 		       arg_string,
 		       &sec_attr,     /* process security attributes */
 		       &sec_attr,     /* thread security attributes */
@@ -1614,7 +1642,8 @@ _gpgme_io_spawn (const char *path, char *const argv[], unsigned int flags,
 		       &si,           /* startup information */
 		       &pi))          /* returns process information */
     {
-      TRACE_LOG1 ("CreateProcess failed: ec=%d", (int) GetLastError ());
+      int lasterr = (int)GetLastError ();
+      TRACE_LOG1 ("CreateProcess failed: ec=%d", lasterr);
       free (arg_string);
       close (tmp_fd);
       DeleteFileA (tmp_name);

@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include <gpgme.h>
 
@@ -35,6 +36,35 @@
 
 
 static int verbose;
+
+
+static const char *
+isotimestr (unsigned long value)
+{
+  time_t t;
+  static char buffer[25+5];
+  struct tm *tp;
+
+  if (!value)
+    return "none";
+  t = value;
+
+  tp = gmtime (&t);
+  snprintf (buffer, sizeof buffer, "%04d-%02d-%02d %02d:%02d:%02d",
+            1900+tp->tm_year, tp->tm_mon+1, tp->tm_mday,
+            tp->tm_hour, tp->tm_min, tp->tm_sec);
+  return buffer;
+}
+
+
+static gpg_error_t
+status_cb (void *opaque, const char *keyword, const char *value)
+{
+  (void)opaque;
+  fprintf (stderr, "status_cb: %s %s\n", keyword, value);
+  return 0;
+}
+
 
 static void
 print_summary (gpgme_sigsum_t summary)
@@ -85,9 +115,25 @@ print_validity (gpgme_validity_t val)
 
 
 static void
+print_description (const char *text, int indent)
+{
+  for (; *text; text++)
+    {
+      putchar (*text);
+      if (*text == '\n')
+        printf ("%*s", indent, "");
+    }
+  putchar ('\n');
+}
+
+
+static void
 print_result (gpgme_verify_result_t result)
 {
   gpgme_signature_t sig;
+  gpgme_sig_notation_t nt;
+  gpgme_user_id_t uid;
+  gpgme_tofu_info_t ti;
   int count = 0;
 
   printf ("Original file name: %s\n", nonnull(result->file_name));
@@ -102,8 +148,10 @@ print_result (gpgme_verify_result_t result)
       printf ("  validity ..: ");
       print_validity (sig->validity); putchar ('\n');
       printf ("  val.reason : %s\n", gpgme_strerror (sig->status));
-      printf ("  pubkey algo: %d\n", sig->pubkey_algo);
-      printf ("  digest algo: %d\n", sig->hash_algo);
+      printf ("  pubkey algo: %d (%s)\n", sig->pubkey_algo,
+              nonnull(gpgme_pubkey_algo_name (sig->pubkey_algo)));
+      printf ("  digest algo: %d (%s)\n", sig->hash_algo,
+              nonnull(gpgme_hash_algo_name (sig->hash_algo)));
       printf ("  pka address: %s\n", nonnull (sig->pka_address));
       printf ("  pka trust .: %s\n",
               sig->pka_trust == 0? "n/a" :
@@ -113,8 +161,52 @@ print_result (gpgme_verify_result_t result)
               sig->wrong_key_usage? " wrong-key-usage":"",
               sig->chain_model? " chain-model":""
               );
-      printf ("  notations .: %s\n",
-              sig->notations? "yes":"no");
+      for (nt = sig->notations; nt; nt = nt->next)
+        {
+          printf ("  notation ..: '%s'\n", nt->name);
+          if (strlen (nt->name) != nt->name_len)
+            printf ("    warning : name larger (%d)\n", nt->name_len);
+          printf ("    flags ...:%s%s (0x%02x)\n",
+                  nt->critical? " critical":"",
+                  nt->human_readable? " human":"",
+                  nt->flags);
+          if (nt->value)
+            printf ("    value ...: '%s'\n", nt->value);
+          if ((nt->value?strlen (nt->value):0) != nt->value_len)
+            printf ("    warning : value larger (%d)\n", nt->value_len);
+        }
+      if (sig->key)
+        {
+          printf ("  primary fpr: %s\n", nonnull (sig->key->fpr));
+          for (uid = sig->key->uids; uid; uid = uid->next)
+            {
+              printf ("  tofu addr .: %s\n", nonnull (uid->address));
+              ti = uid->tofu;
+              if (!ti)
+                continue;
+              printf ("    validity : %u (%s)\n", ti->validity,
+                      ti->validity == 0? "conflict" :
+                      ti->validity == 1? "no history" :
+                      ti->validity == 2? "little history" :
+                      ti->validity == 3? "enough history" :
+                      ti->validity == 4? "lot of history" : "?");
+              printf ("    policy ..: %u (%s)\n", ti->policy,
+                      ti->policy == GPGME_TOFU_POLICY_NONE? "none" :
+                      ti->policy == GPGME_TOFU_POLICY_AUTO? "auto" :
+                      ti->policy == GPGME_TOFU_POLICY_GOOD? "good" :
+                      ti->policy == GPGME_TOFU_POLICY_UNKNOWN? "unknown" :
+                      ti->policy == GPGME_TOFU_POLICY_BAD? "bad" :
+                      ti->policy == GPGME_TOFU_POLICY_ASK? "ask" : "?");
+              printf ("    signcount: %hu\n", ti->signcount);
+              printf ("      first..: %s\n", isotimestr (ti->signfirst));
+              printf ("      last ..: %s\n", isotimestr (ti->signlast));
+              printf ("    encrcount: %hu\n", ti->encrcount);
+              printf ("      first..: %s\n", isotimestr (ti->encrfirst));
+              printf ("      last ..: %s\n", isotimestr (ti->encrlast));
+              printf ("    desc ....: ");
+              print_description (nonnull (ti->description), 15);
+            }
+        }
     }
 }
 
@@ -126,6 +218,7 @@ show_usage (int ex)
   fputs ("usage: " PGM " [options] [DETACHEDSIGFILE] FILE\n\n"
          "Options:\n"
          "  --verbose        run in verbose mode\n"
+         "  --status         print status lines from the backend\n"
          "  --openpgp        use the OpenPGP protocol (default)\n"
          "  --cms            use the CMS protocol\n"
          , stderr);
@@ -145,6 +238,7 @@ main (int argc, char **argv)
   FILE *fp_msg = NULL;
   gpgme_data_t msg = NULL;
   gpgme_verify_result_t result;
+  int print_status = 0;
 
   if (argc)
     { argc--; argv++; }
@@ -162,6 +256,11 @@ main (int argc, char **argv)
       else if (!strcmp (*argv, "--verbose"))
         {
           verbose = 1;
+          argc--; argv++;
+        }
+      else if (!strcmp (*argv, "--status"))
+        {
+          print_status = 1;
           argc--; argv++;
         }
       else if (!strcmp (*argv, "--openpgp"))
@@ -207,6 +306,12 @@ main (int argc, char **argv)
   err = gpgme_new (&ctx);
   fail_if_err (err);
   gpgme_set_protocol (ctx, protocol);
+  if (print_status)
+    {
+      gpgme_set_status_cb (ctx, status_cb, NULL);
+      gpgme_set_ctx_flag (ctx, "full-status", "1");
+    }
+  /* gpgme_set_ctx_flag (ctx, "raw-description", "1"); */
 
   err = gpgme_data_new_from_stream (&sig, fp_sig);
   if (err)
@@ -232,7 +337,7 @@ main (int argc, char **argv)
     print_result (result);
   if (err)
     {
-      fprintf (stderr, PGM ": signing failed: %s\n", gpgme_strerror (err));
+      fprintf (stderr, PGM ": verify failed: %s\n", gpgme_strerror (err));
       exit (1);
     }
 

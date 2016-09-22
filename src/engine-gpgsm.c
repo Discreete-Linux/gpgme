@@ -88,6 +88,8 @@ struct engine_gpgsm
   {
     engine_status_handler_t fnc;
     void *fnc_value;
+    gpgme_status_cb_t mon_cb;
+    void *mon_cb_value;
   } status;
 
   struct
@@ -183,6 +185,8 @@ close_notify_handler (int fd, void *opaque)
 static gpgme_error_t
 default_inq_cb (engine_gpgsm_t gpgsm, const char *line)
 {
+  (void)gpgsm;
+
   if (!strncmp (line, "PINENTRY_LAUNCHED", 17) && (line[17]==' '||!line[17]))
     {
       _gpgme_allow_set_foreground_window ((pid_t)strtoul (line+17, NULL, 10));
@@ -235,7 +239,8 @@ gpgsm_release (void *engine)
 
 
 static gpgme_error_t
-gpgsm_new (void **engine, const char *file_name, const char *home_dir)
+gpgsm_new (void **engine, const char *file_name, const char *home_dir,
+           const char *version)
 {
   gpgme_error_t err = 0;
   engine_gpgsm_t gpgsm;
@@ -248,8 +253,11 @@ gpgsm_new (void **engine, const char *file_name, const char *home_dir)
 #endif
   char *dft_display = NULL;
   char dft_ttyname[64];
+  char *env_tty = NULL;
   char *dft_ttytype = NULL;
   char *optstr;
+
+  (void)version; /* Not yet used.  */
 
   gpgsm = calloc (1, sizeof *gpgsm);
   if (!gpgsm)
@@ -403,11 +411,20 @@ gpgsm_new (void **engine, const char *file_name, const char *home_dir)
 	goto leave;
     }
 
-  if (isatty (1))
+  err = _gpgme_getenv ("GPG_TTY", &env_tty);
+  if (isatty (1) || env_tty || err)
     {
-      int rc;
+      int rc = 0;
 
-      rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
+      if (err)
+        goto leave;
+      else if (env_tty)
+        {
+          snprintf (dft_ttyname, sizeof (dft_ttyname), "%s", env_tty);
+          free (env_tty);
+        }
+      else
+        rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
 
       /* Even though isatty() returns 1, ttyname_r() may fail in many
 	 ways, e.g., when /dev/pts is not accessible under chroot.  */
@@ -510,7 +527,7 @@ gpgsm_set_locale (void *engine, int category, const char *value)
   engine_gpgsm_t gpgsm = engine;
   gpgme_error_t err;
   char *optstr;
-  char *catstr;
+  const char *catstr;
 
   /* FIXME: If value is NULL, we need to reset the option to default.
      But we can't do this.  So we error out here.  GPGSM needs support
@@ -558,10 +575,11 @@ gpgsm_set_locale (void *engine, int category, const char *value)
 
 
 static gpgme_error_t
-gpgsm_assuan_simple_command (assuan_context_t ctx, char *cmd,
+gpgsm_assuan_simple_command (engine_gpgsm_t gpgsm, const char *cmd,
 			     engine_status_handler_t status_fnc,
 			     void *status_fnc_value)
 {
+  assuan_context_t ctx = gpgsm->assuan_ctx;
   gpg_error_t err, cb_err;
   char *line;
   size_t linelen;
@@ -610,8 +628,15 @@ gpgsm_assuan_simple_command (assuan_context_t ctx, char *cmd,
                 *(rest++) = 0;
 
               r = _gpgme_parse_status (line + 2);
+              if (gpgsm->status.mon_cb && r != GPGME_STATUS_PROGRESS)
+                {
+                  /* Note that we call the monitor even if we do
+                   * not know the status code (r < 0).  */
+                  cb_err = gpgsm->status.mon_cb (gpgsm->status.mon_cb_value,
+                                                 line + 2, rest);
+                }
 
-              if (r >= 0 && status_fnc)
+              if (r >= 0 && status_fnc && !cb_err)
                 cb_err = status_fnc (status_fnc_value, r, rest);
             }
 	}
@@ -647,6 +672,9 @@ gpgsm_clear_fd (engine_gpgsm_t gpgsm, fd_type_t fd_type)
       _gpgme_io_close (gpgsm->message_cb.fd);
       break;
     }
+#else
+  (void)gpgsm;
+  (void)fd_type;
 #endif
 }
 
@@ -656,7 +684,7 @@ gpgsm_set_fd (engine_gpgsm_t gpgsm, fd_type_t fd_type, const char *opt)
 {
   gpg_error_t err = 0;
   char line[COMMANDLINELEN];
-  char *which;
+  const char *which;
   iocb_data_t *iocb_data;
 #if USE_DESCRIPTOR_PASSING
   int dir;
@@ -726,7 +754,7 @@ gpgsm_set_fd (engine_gpgsm_t gpgsm, fd_type_t fd_type, const char *opt)
               which, iocb_data->server_fd_str);
 #endif
 
-  err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, line, NULL, NULL);
+  err = gpgsm_assuan_simple_command (gpgsm, line, NULL, NULL);
 
 #if USE_DESCRIPTOR_PASSING
  leave_set_fd:
@@ -805,8 +833,13 @@ status_handler (void *opaque, int fd)
 	       && (line[2] == '\0' || line[2] == ' '))
 	{
 	  if (gpgsm->status.fnc)
-	    err = gpgsm->status.fnc (gpgsm->status.fnc_value,
-				     GPGME_STATUS_EOF, "");
+            {
+              char emptystring[1] = {0};
+              err = gpgsm->status.fnc (gpgsm->status.fnc_value,
+                                       GPGME_STATUS_EOF, emptystring);
+              if (gpg_err_code (err) == GPG_ERR_FALSE)
+                err = 0; /* Drop special error code.  */
+            }
 
 	  if (!err && gpgsm->colon.fnc && gpgsm->colon.any)
             {
@@ -957,7 +990,11 @@ status_handler (void *opaque, int fd)
 	  if (r >= 0)
 	    {
 	      if (gpgsm->status.fnc)
-		err = gpgsm->status.fnc (gpgsm->status.fnc_value, r, rest);
+                {
+                  err = gpgsm->status.fnc (gpgsm->status.fnc_value, r, rest);
+                  if (gpg_err_code (err) == GPG_ERR_FALSE)
+                    err = 0; /* Drop special error code.  */
+                }
 	    }
 	  else
 	    fprintf (stderr, "[UNKNOWN STATUS]%s %s", line + 2, rest);
@@ -1075,8 +1112,7 @@ gpgsm_reset (void *engine)
      need to reset the list of signers.  Note that RESET does not
      reset OPTION commands. */
   return (gpgsm->assuan_ctx
-          ? gpgsm_assuan_simple_command (gpgsm->assuan_ctx, "RESET",
-                                         NULL, NULL)
+          ? gpgsm_assuan_simple_command (gpgsm, "RESET", NULL, NULL)
           : 0);
 }
 #endif
@@ -1117,6 +1153,8 @@ gpgsm_delete (void *engine, gpgme_key_t key, int allow_secret)
   char *linep = fpr;
   char *line;
   int length = 8;	/* "DELKEYS " */
+
+  (void)allow_secret;
 
   if (!fpr)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -1180,7 +1218,6 @@ static gpgme_error_t
 set_recipients (engine_gpgsm_t gpgsm, gpgme_key_t recp[])
 {
   gpgme_error_t err = 0;
-  assuan_context_t ctx = gpgsm->assuan_ctx;
   char *line;
   int linelen;
   int invalid_recipients = 0;
@@ -1218,7 +1255,7 @@ set_recipients (engine_gpgsm_t gpgsm, gpgme_key_t recp[])
 	}
       strcpy (&line[10], fpr);
 
-      err = gpgsm_assuan_simple_command (ctx, line, gpgsm->status.fnc,
+      err = gpgsm_assuan_simple_command (gpgsm, line, gpgsm->status.fnc,
 					 gpgsm->status.fnc_value);
       /* FIXME: This requires more work.  */
       if (gpg_err_code (err) == GPG_ERR_NO_PUBKEY)
@@ -1249,7 +1286,7 @@ gpgsm_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
 
   if (flags & GPGME_ENCRYPT_NO_ENCRYPT_TO)
     {
-      err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+      err = gpgsm_assuan_simple_command (gpgsm,
 					 "OPTION no-encrypt-to", NULL, NULL);
       if (err)
 	return err;
@@ -1422,29 +1459,51 @@ gpgsm_export_ext (void *engine, const char *pattern[], gpgme_export_mode_t mode,
 
 
 static gpgme_error_t
-gpgsm_genkey (void *engine, gpgme_data_t help_data, int use_armor,
+gpgsm_genkey (void *engine,
+              const char *userid, const char *algo,
+              unsigned long reserved, unsigned long expires,
+              gpgme_key_t key, unsigned int flags,
+              gpgme_data_t help_data, unsigned int extraflags,
 	      gpgme_data_t pubkey, gpgme_data_t seckey)
 {
   engine_gpgsm_t gpgsm = engine;
   gpgme_error_t err;
 
-  if (!gpgsm || !pubkey || seckey)
+  (void)reserved;
+
+  if (!gpgsm)
     return gpg_error (GPG_ERR_INV_VALUE);
 
-  gpgsm->input_cb.data = help_data;
-  err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
-  if (err)
-    return err;
-  gpgsm->output_cb.data = pubkey;
-  err = gpgsm_set_fd (gpgsm, OUTPUT_FD, use_armor ? "--armor"
-		      : map_data_enc (gpgsm->output_cb.data));
-  if (err)
-    return err;
-  gpgsm_clear_fd (gpgsm, MESSAGE_FD);
-  gpgsm->inline_data = NULL;
+  if (help_data)
+    {
+      if (!pubkey || seckey)
+        return gpg_error (GPG_ERR_INV_VALUE);
 
-  err = start (gpgsm, "GENKEY");
-  return err;
+      gpgsm->input_cb.data = help_data;
+      err = gpgsm_set_fd (gpgsm, INPUT_FD, map_data_enc (gpgsm->input_cb.data));
+      if (err)
+        return err;
+      gpgsm->output_cb.data = pubkey;
+      err = gpgsm_set_fd (gpgsm, OUTPUT_FD,
+                          (extraflags & GENKEY_EXTRAFLAG_ARMOR)? "--armor"
+                          : map_data_enc (gpgsm->output_cb.data));
+      if (err)
+        return err;
+      gpgsm_clear_fd (gpgsm, MESSAGE_FD);
+      gpgsm->inline_data = NULL;
+
+      err = start (gpgsm, "GENKEY");
+      return err;
+    }
+
+  (void)userid;
+  (void)algo;
+  (void)expires;
+  (void)key;
+  (void)flags;
+
+  /* The new interface has not yet been implemented,  */
+  return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
 }
 
 
@@ -1472,8 +1531,7 @@ gpgsm_import (void *engine, gpgme_data_t keydata, gpgme_key_t *keyarray)
       /* Fist check whether the engine already features the
          --re-import option.  */
       err = gpgsm_assuan_simple_command
-        (gpgsm->assuan_ctx,
-         "GETINFO cmd_has_option IMPORT re-import", NULL, NULL);
+        (gpgsm, "GETINFO cmd_has_option IMPORT re-import", NULL, NULL);
       if (err)
 	return gpg_error (GPG_ERR_NOT_SUPPORTED);
 
@@ -1575,13 +1633,12 @@ gpgsm_keylist (void *engine, const char *pattern, int secret_only,
      available and thus there is no need for gpgsm to ask the agent
      whether a secret key exists for the public key.  */
   if (secret_only || (mode & GPGME_KEYLIST_MODE_WITH_SECRET))
-    gpgsm_assuan_simple_command (gpgsm->assuan_ctx, "GETINFO agent-check",
-                                 NULL, NULL);
+    gpgsm_assuan_simple_command (gpgsm, "GETINFO agent-check", NULL, NULL);
 
   /* Always send list-mode option because RESET does not reset it.  */
   if (asprintf (&line, "OPTION list-mode=%d", (list_mode & 3)) < 0)
     return gpg_error_from_syserror ();
-  err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, line, NULL, NULL);
+  err = gpgsm_assuan_simple_command (gpgsm, line, NULL, NULL);
   free (line);
   if (err)
     return err;
@@ -1591,24 +1648,24 @@ gpgsm_keylist (void *engine, const char *pattern, int secret_only,
 
   /* Use the validation mode if requested.  We don't check for an error
      yet because this is a pretty fresh gpgsm features. */
-  gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+  gpgsm_assuan_simple_command (gpgsm,
                                (mode & GPGME_KEYLIST_MODE_VALIDATE)?
                                "OPTION with-validation=1":
                                "OPTION with-validation=0" ,
                                NULL, NULL);
   /* Include the ephemeral keys if requested.  We don't check for an error
      yet because this is a pretty fresh gpgsm features. */
-  gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+  gpgsm_assuan_simple_command (gpgsm,
                                (mode & GPGME_KEYLIST_MODE_EPHEMERAL)?
                                "OPTION with-ephemeral-keys=1":
                                "OPTION with-ephemeral-keys=0" ,
                                NULL, NULL);
-  gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+  gpgsm_assuan_simple_command (gpgsm,
                                (mode & GPGME_KEYLIST_MODE_WITH_SECRET)?
                                "OPTION with-secret=1":
                                "OPTION with-secret=0" ,
                                NULL, NULL);
-  gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+  gpgsm_assuan_simple_command (gpgsm,
                                (engine_flags & GPGME_ENGINE_FLAG_OFFLINE)?
                                "OPTION offline=1":
                                "OPTION offline=0" ,
@@ -1665,7 +1722,7 @@ gpgsm_keylist_ext (void *engine, const char *pattern[], int secret_only,
   /* Always send list-mode option because RESET does not reset it.  */
   if (asprintf (&line, "OPTION list-mode=%d", (list_mode & 3)) < 0)
     return gpg_error_from_syserror ();
-  err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, line, NULL, NULL);
+  err = gpgsm_assuan_simple_command (gpgsm, line, NULL, NULL);
   free (line);
   if (err)
     return err;
@@ -1673,17 +1730,17 @@ gpgsm_keylist_ext (void *engine, const char *pattern[], int secret_only,
   /* Always send key validation because RESET does not reset it.  */
   /* Use the validation mode if required.  We don't check for an error
      yet because this is a pretty fresh gpgsm features. */
-  gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+  gpgsm_assuan_simple_command (gpgsm,
                                (mode & GPGME_KEYLIST_MODE_VALIDATE)?
                                "OPTION with-validation=1":
                                "OPTION with-validation=0" ,
                                NULL, NULL);
-  gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+  gpgsm_assuan_simple_command (gpgsm,
                                (mode & GPGME_KEYLIST_MODE_WITH_SECRET)?
                                "OPTION with-secret=1":
                                "OPTION with-secret=0" ,
                                NULL, NULL);
-  gpgsm_assuan_simple_command (gpgsm->assuan_ctx,
+  gpgsm_assuan_simple_command (gpgsm,
                                (engine_flags & GPGME_ENGINE_FLAG_OFFLINE)?
                                "OPTION offline=1":
                                "OPTION offline=0" ,
@@ -1784,6 +1841,8 @@ gpgsm_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
   int i;
   gpgme_key_t key;
 
+  (void)use_textmode;
+
   if (!gpgsm)
     return gpg_error (GPG_ERR_INV_VALUE);
 
@@ -1797,8 +1856,7 @@ gpgsm_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
 
       if (asprintf (&assuan_cmd, "OPTION include-certs %i", include_certs) < 0)
 	return gpg_error_from_syserror ();
-      err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, assuan_cmd,
-                                         NULL, NULL);
+      err = gpgsm_assuan_simple_command (gpgsm, assuan_cmd, NULL, NULL);
       free (assuan_cmd);
       if (err)
 	return err;
@@ -1812,7 +1870,7 @@ gpgsm_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
           char buf[100];
 
           strcpy (stpcpy (buf, "SIGNER "), s);
-          err = gpgsm_assuan_simple_command (gpgsm->assuan_ctx, buf,
+          err = gpgsm_assuan_simple_command (gpgsm, buf,
                                              gpgsm->status.fnc,
                                              gpgsm->status.fnc_value);
 	}
@@ -1913,6 +1971,17 @@ gpgsm_getauditlog (void *engine, gpgme_data_t output, unsigned int flags)
 }
 
 
+/* This sets a status callback for monitoring status lines before they
+ * are passed to a caller set handler.  */
+static void
+gpgsm_set_status_cb (void *engine, gpgme_status_cb_t cb, void *cb_value)
+{
+  engine_gpgsm_t gpgsm = engine;
+
+  gpgsm->status.mon_cb = cb;
+  gpgsm->status.mon_cb_value = cb_value;
+}
+
 
 static void
 gpgsm_set_status_handler (void *engine, engine_status_handler_t fnc,
@@ -1966,6 +2035,8 @@ gpgsm_passwd (void *engine, gpgme_key_t key, unsigned int flags)
   gpgme_error_t err;
   char *line;
 
+  (void)flags;
+
   if (!key || !key->subkeys || !key->subkeys->fpr)
     return gpg_error (GPG_ERR_INV_CERT_OBJ);
 
@@ -2001,6 +2072,7 @@ struct engine_ops _gpgme_engine_ops_gpgsm =
 #else
     NULL,			/* reset */
 #endif
+    gpgsm_set_status_cb,
     gpgsm_set_status_handler,
     NULL,		/* set_command_handler */
     gpgsm_set_colon_line_handler,
@@ -2018,6 +2090,8 @@ struct engine_ops _gpgme_engine_ops_gpgsm =
     gpgsm_import,
     gpgsm_keylist,
     gpgsm_keylist_ext,
+    NULL,               /* keysign */
+    NULL,               /* tofu_policy */
     gpgsm_sign,
     NULL,		/* trustlist */
     gpgsm_verify,

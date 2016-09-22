@@ -85,7 +85,10 @@ static HMODULE my_hmodule;
    binaries.  The are set only once by gpgme_set_global_flag.  */
 static char *default_gpg_name;
 static char *default_gpgconf_name;
-
+/* If this variable is not NULL the value is assumed to be the
+   installation directory.  The variable may only be set once by
+   gpgme_set_global_flag and accessed by _gpgme_get_inst_dir.  */
+static char *override_inst_dir;
 
 #ifdef HAVE_ALLOW_SET_FOREGROUND_WINDOW
 
@@ -347,6 +350,9 @@ _gpgme_get_inst_dir (void)
 {
   static char *inst_dir;
 
+  if (override_inst_dir)
+    return override_inst_dir;
+
   LOCK (get_path_lock);
   if (!inst_dir)
     {
@@ -403,8 +409,13 @@ find_program_at_standard_place (const char *name)
   char path[MAX_PATH];
   char *result = NULL;
 
-  /* See http://wiki.tcl.tk/17492 for details on compatibility.  */
-  if (SHGetSpecialFolderPathA (NULL, path, CSIDL_PROGRAM_FILES, 0))
+  /* See http://wiki.tcl.tk/17492 for details on compatibility.
+
+     We First try the generic place and then fallback to the x86
+     (i.e. 32 bit) place.  This will prefer a 64 bit of the program
+     over a 32 bit version on 64 bit Windows if installed.  */
+  if (SHGetSpecialFolderPathA (NULL, path, CSIDL_PROGRAM_FILES, 0)
+      || SHGetSpecialFolderPathA (NULL, path, CSIDL_PROGRAM_FILESX86, 0))
     {
       result = malloc (strlen (path) + 1 + strlen (name) + 1);
       if (result)
@@ -453,6 +464,28 @@ _gpgme_set_default_gpgconf_name (const char *name)
         }
     }
   return !default_gpgconf_name;
+}
+
+
+/* Set the override installation directory.  This function may only be
+   called by gpgme_set_global_flag.  Returns 0 on success.  */
+int
+_gpgme_set_override_inst_dir (const char *dir)
+{
+  if (!override_inst_dir)
+    {
+      override_inst_dir = malloc (strlen (dir) + 1);
+      if (override_inst_dir)
+        {
+          strcpy (override_inst_dir, dir);
+          replace_slashes (override_inst_dir);
+          /* Remove a trailing slash.  */
+          if (*override_inst_dir
+              && override_inst_dir[strlen (override_inst_dir)-1] == '\\')
+            override_inst_dir[strlen (override_inst_dir)-1] = 0;
+        }
+    }
+  return !override_inst_dir;
 }
 
 
@@ -530,15 +563,26 @@ _gpgme_get_gpgconf_path (void)
       gpgconf = find_program_at_standard_place (name2);
     }
 
-  /* 3. Try to find gpgconf.exe using that ancient registry key.  This
-        should eventually be removed.  */
+  /* 3. Try to find gpgconf.exe using the Windows registry. */
   if (!gpgconf)
     {
       char *dir;
 
-      dir = read_w32_registry_string ("HKEY_LOCAL_MACHINE",
+      dir = read_w32_registry_string (NULL,
                                       "Software\\GNU\\GnuPG",
                                       "Install Directory");
+      if (!dir)
+        {
+          char *tmp = read_w32_registry_string (NULL,
+                                                "Software\\GnuPG",
+                                                "Install Directory");
+          if (tmp)
+            {
+              if (gpgrt_asprintf (&dir, "%s\\bin", tmp) == -1)
+                return NULL;
+              free (tmp);
+            }
+        }
       if (dir)
         {
           gpgconf = find_program_in_dir (dir, name);
@@ -614,7 +658,7 @@ static const char letters[] =
    does not exist at the time of the call to mkstemp.  TMPL is
    overwritten with the result.  */
 static int
-mkstemp (char *tmpl)
+my_mkstemp (char *tmpl)
 {
   int len;
   char *XXXXXX;
@@ -722,7 +766,7 @@ _gpgme_mkstemp (int *fd, char **name)
   if (!tmpname)
     return -1;
   strcpy (stpcpy (tmpname, tmp), "\\gpgme-XXXXXX");
-  *fd = mkstemp (tmpname);
+  *fd = my_mkstemp (tmpname);
   if (fd < 0)
     {
       free (tmpname);

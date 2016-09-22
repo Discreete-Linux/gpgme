@@ -128,7 +128,7 @@ gpgme_data_new_from_file (gpgme_data_t *r_dh, const char *fname, int copy)
 #else
   gpgme_error_t err;
   struct stat statbuf;
-  TRACE_BEG3 (DEBUG_DATA, "gpgme_data_new_from_filepart", r_dh,
+  TRACE_BEG3 (DEBUG_DATA, "gpgme_data_new_from_file", r_dh,
 	      "file_name=%s, copy=%i (%s)", fname, copy, copy ? "yes" : "no");
 
   if (!fname || !copy)
@@ -146,7 +146,7 @@ gpgme_data_new_from_file (gpgme_data_t *r_dh, const char *fname, int copy)
 static int
 gpgme_error_to_errno (gpgme_error_t err)
 {
-  int res = gpg_err_code_to_errno (err);
+  int res = gpg_err_code_to_errno (gpg_err_code (err));
 
   if (!err)
     {
@@ -187,7 +187,7 @@ old_user_read (gpgme_data_t dh, void *buffer, size_t size)
 				 buffer, size, &amt);
   if (err)
     return TRACE_SYSRES (gpgme_error_to_errno (err));
-  return TRACE_SYSRES (amt);
+  return TRACE_SYSRES ((gpgme_ssize_t)amt);
 }
 
 

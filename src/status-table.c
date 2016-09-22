@@ -84,6 +84,7 @@ static struct status_table_s status_table[] =
   { "INQUIRE_MAXLEN", GPGME_STATUS_INQUIRE_MAXLEN },
   { "INV_RECP", GPGME_STATUS_INV_RECP },
   { "INV_SGNR", GPGME_STATUS_INV_SGNR },
+  { "KEY_CONSIDERED", GPGME_STATUS_KEY_CONSIDERED },
   { "KEY_CREATED", GPGME_STATUS_KEY_CREATED },
   { "KEY_NOT_CREATED",   GPGME_STATUS_KEY_NOT_CREATED  },
   { "KEYEXPIRED", GPGME_STATUS_KEYEXPIRED },
@@ -101,6 +102,7 @@ static struct status_table_s status_table[] =
   { "NO_SGNR", GPGME_STATUS_NO_SGNR },
   { "NODATA", GPGME_STATUS_NODATA },
   { "NOTATION_DATA", GPGME_STATUS_NOTATION_DATA },
+  { "NOTATION_FLAGS", GPGME_STATUS_NOTATION_FLAGS },
   { "NOTATION_NAME", GPGME_STATUS_NOTATION_NAME },
   { "PINENTRY_LAUNCHED", GPGME_STATUS_PINENTRY_LAUNCHED},
   { "PKA_TRUST_BAD", GPGME_STATUS_PKA_TRUST_BAD },
@@ -123,6 +125,9 @@ static struct status_table_s status_table[] =
   { "SIG_SUBPACKET", GPGME_STATUS_SIG_SUBPACKET },
   { "SIGEXPIRED", GPGME_STATUS_SIGEXPIRED },
   { "SUCCESS", GPGME_STATUS_SUCCESS },
+  { "TOFU_STATS", GPGME_STATUS_TOFU_STATS },
+  { "TOFU_STATS_LONG", GPGME_STATUS_TOFU_STATS_LONG },
+  { "TOFU_USER", GPGME_STATUS_TOFU_USER },
   { "TRUNCATED", GPGME_STATUS_TRUNCATED },
   { "TRUST_FULLY", GPGME_STATUS_TRUST_FULLY },
   { "TRUST_MARGINAL", GPGME_STATUS_TRUST_MARGINAL },
@@ -163,4 +168,16 @@ _gpgme_parse_status (const char *name)
   r = bsearch (&t, status_table, DIM(status_table) - 1,
 	       sizeof t, status_cmp);
   return r ? r->code : -1;
+}
+
+
+const char *
+_gpgme_status_to_string (gpgme_status_code_t code)
+{
+  int i;
+
+  for (i=0; i < DIM(status_table); i++)
+    if (status_table[i].code == code)
+      return status_table[i].name? status_table[i].name : "";
+  return "status_code_lost";
 }

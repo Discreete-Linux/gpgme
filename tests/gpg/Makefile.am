@@ -38,7 +38,7 @@ c_tests = \
         t-encrypt t-encrypt-sym t-encrypt-sign t-sign t-signers		\
 	t-decrypt t-verify t-decrypt-verify t-sig-notation t-export	\
 	t-import t-trustlist t-edit t-keylist t-keylist-sig t-wait	\
-	t-encrypt-large t-file-name t-gpgconf $(tests_unix)
+	t-encrypt-large t-file-name t-gpgconf t-encrypt-mixed $(tests_unix)
 
 TESTS = initial.test $(c_tests) final.test
 
@@ -89,11 +89,11 @@ export GPG_AGENT_INFO :=
 	echo x > ./private-keys-v1.d/gpg-sample.stamp
 
 ./pubring-stamp: $(srcdir)/pubdemo.asc
-	$(GPG) --no-permission-warning \
+	$(GPG) --batch --no-permission-warning \
                --import $(srcdir)/pubdemo.asc
-	-$(GPG) --no-permission-warning \
+	-$(GPG) --batch --no-permission-warning \
 		--import $(srcdir)/secdemo.asc
-	touch ./pubring-stamp
+	echo x > ./pubring-stamp
 
 ./gpg.conf:
 # This is required for t-sig-notations.

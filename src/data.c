@@ -193,7 +193,7 @@ gpgme_data_set_encoding (gpgme_data_t dh, gpgme_data_encoding_t enc)
 	      "encoding=%i", enc);
   if (!dh)
     return TRACE_ERR (gpg_error (GPG_ERR_INV_VALUE));
-  if (enc < 0 || enc > GPGME_DATA_ENCODING_URL0)
+  if (enc < 0 || enc > GPGME_DATA_ENCODING_MIME)
     return TRACE_ERR (gpg_error (GPG_ERR_INV_VALUE));
   dh->encoding = enc;
   return TRACE_ERR (0);
@@ -242,6 +242,28 @@ gpgme_data_get_file_name (gpgme_data_t dh)
 	  "dh->file_name=%s", dh->file_name);
   return dh->file_name;
 }
+
+
+/* Set a flag for the data object DH.  See the manual for details.  */
+gpg_error_t
+gpgme_data_set_flag (gpgme_data_t dh, const char *name, const char *value)
+{
+  TRACE_BEG2 (DEBUG_DATA, "gpgme_data_set_flag", dh,
+	      "%s=%s", name, value);
+
+  if (!dh)
+    return TRACE_ERR (gpg_error (GPG_ERR_INV_VALUE));
+
+  if (!strcmp (name, "size-hint"))
+    {
+      dh->size_hint= value? _gpgme_string_to_off (value) : 0;
+    }
+  else
+    return gpg_error (GPG_ERR_UNKNOWN_NAME);
+
+  return 0;
+}
+
 
 
 /* Functions to support the wait interface.  */
@@ -333,4 +355,12 @@ _gpgme_data_get_fd (gpgme_data_t dh)
   if (!dh || !dh->cbs->get_fd)
     return -1;
   return (*dh->cbs->get_fd) (dh);
+}
+
+
+/* Get the size-hint value for DH or 0 if not available.  */
+gpgme_off_t
+_gpgme_data_get_size_hint (gpgme_data_t dh)
+{
+  return dh ? dh->size_hint : 0;
 }

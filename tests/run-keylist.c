@@ -26,6 +26,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 #include <gpgme.h>
 
@@ -49,14 +50,36 @@ show_usage (int ex)
          "  --local          use GPGME_KEYLIST_MODE_LOCAL\n"
          "  --extern         use GPGME_KEYLIST_MODE_EXTERN\n"
          "  --sigs           use GPGME_KEYLIST_MODE_SIGS\n"
+         "  --tofu           use GPGME_KEYLIST_MODE_TOFU\n"
          "  --sig-notations  use GPGME_KEYLIST_MODE_SIG_NOTATIONS\n"
          "  --ephemeral      use GPGME_KEYLIST_MODE_EPHEMERAL\n"
          "  --validate       use GPGME_KEYLIST_MODE_VALIDATE\n"
          "  --import         import all keys\n"
          "  --offline        use offline mode\n"
+         "  --require-gnupg  required at least the given GnuPG version\n"
          , stderr);
   exit (ex);
 }
+
+
+static const char *
+isotimestr (unsigned long value)
+{
+  time_t t;
+  static char buffer[25+5];
+  struct tm *tp;
+
+  if (!value)
+    return "none";
+  t = value;
+
+  tp = gmtime (&t);
+  snprintf (buffer, sizeof buffer, "%04d-%02d-%02d %02d:%02d:%02d",
+            1900+tp->tm_year, tp->tm_mon+1, tp->tm_mday,
+            tp->tm_hour, tp->tm_min, tp->tm_sec);
+  return buffer;
+}
+
 
 
 int
@@ -67,6 +90,7 @@ main (int argc, char **argv)
   gpgme_ctx_t ctx;
   gpgme_keylist_mode_t mode = 0;
   gpgme_key_t key;
+  gpgme_subkey_t subkey;
   gpgme_keylist_result_t result;
   int import = 0;
   gpgme_key_t keyarray[100];
@@ -118,6 +142,11 @@ main (int argc, char **argv)
           mode |= GPGME_KEYLIST_MODE_EXTERN;
           argc--; argv++;
         }
+      else if (!strcmp (*argv, "--tofu"))
+        {
+          mode |= GPGME_KEYLIST_MODE_WITH_TOFU;
+          argc--; argv++;
+        }
       else if (!strcmp (*argv, "--sigs"))
         {
           mode |= GPGME_KEYLIST_MODE_SIGS;
@@ -148,9 +177,16 @@ main (int argc, char **argv)
           offline = 1;
           argc--; argv++;
         }
+      else if (!strcmp (*argv, "--require-gnupg"))
+        {
+          argc--; argv++;
+          if (!argc)
+            show_usage (1);
+          gpgme_set_global_flag ("require-gnupg", *argv);
+          argc--; argv++;
+        }
       else if (!strncmp (*argv, "--", 2))
         show_usage (1);
-
     }
 
   if (argc > 1)
@@ -172,33 +208,95 @@ main (int argc, char **argv)
   while (!(err = gpgme_op_keylist_next (ctx, &key)))
     {
       gpgme_user_id_t uid;
+      gpgme_tofu_info_t ti;
       int nuids;
-
+      int nsub;
 
       printf ("keyid   : %s\n", key->subkeys?nonnull (key->subkeys->keyid):"?");
       printf ("fpr     : %s\n", key->subkeys?nonnull (key->subkeys->fpr):"?");
+      if (key->subkeys && key->subkeys->keygrip)
+        printf ("grip    : %s\n", key->subkeys->keygrip);
+      if (key->subkeys && key->subkeys->curve)
+            printf ("curve   : %s\n", key->subkeys->curve);
       printf ("caps    : %s%s%s%s\n",
               key->can_encrypt? "e":"",
               key->can_sign? "s":"",
               key->can_certify? "c":"",
               key->can_authenticate? "a":"");
-      printf ("flags   :%s%s%s%s%s%s\n",
+      printf ("flags   :%s%s%s%s%s%s%s\n",
               key->secret? " secret":"",
               key->revoked? " revoked":"",
               key->expired? " expired":"",
               key->disabled? " disabled":"",
               key->invalid? " invalid":"",
-              key->is_qualified? " qualifid":"");
+              key->is_qualified? " qualifid":"",
+              key->subkeys && key->subkeys->is_cardkey? " cardkey":"");
+
+      subkey = key->subkeys;
+      if (subkey)
+        subkey = subkey->next;
+      for (nsub=1; subkey; subkey = subkey->next, nsub++)
+        {
+          printf ("fpr   %2d: %s\n", nsub, nonnull (subkey->fpr));
+          if (subkey->keygrip)
+            printf ("grip  %2d: %s\n", nsub, subkey->keygrip);
+          if (subkey->curve)
+            printf ("curve %2d: %s\n", nsub, subkey->curve);
+          printf ("caps  %2d: %s%s%s%s\n",
+                  nsub,
+                  subkey->can_encrypt? "e":"",
+                  subkey->can_sign? "s":"",
+                  subkey->can_certify? "c":"",
+                  subkey->can_authenticate? "a":"");
+          printf ("flags %2d:%s%s%s%s%s%s%s\n",
+                  nsub,
+                  subkey->secret? " secret":"",
+                  subkey->revoked? " revoked":"",
+                  subkey->expired? " expired":"",
+                  subkey->disabled? " disabled":"",
+                  subkey->invalid? " invalid":"",
+                  subkey->is_qualified? " qualifid":"",
+                  subkey->is_cardkey? " cardkey":"");
+        }
       for (nuids=0, uid=key->uids; uid; uid = uid->next, nuids++)
         {
           printf ("userid %d: %s\n", nuids, nonnull(uid->uid));
-          printf ("valid  %d: %s\n", nuids,
+          printf ("    mbox: %s\n", nonnull(uid->address));
+          if (uid->email && uid->email != uid->address)
+            printf ("   email: %s\n", uid->email);
+          if (uid->name)
+            printf ("    name: %s\n", uid->name);
+          if (uid->comment)
+            printf ("   cmmnt: %s\n", uid->comment);
+          printf ("   valid: %s\n",
                   uid->validity == GPGME_VALIDITY_UNKNOWN? "unknown":
                   uid->validity == GPGME_VALIDITY_UNDEFINED? "undefined":
                   uid->validity == GPGME_VALIDITY_NEVER? "never":
                   uid->validity == GPGME_VALIDITY_MARGINAL? "marginal":
                   uid->validity == GPGME_VALIDITY_FULL? "full":
                   uid->validity == GPGME_VALIDITY_ULTIMATE? "ultimate": "[?]");
+          if ((ti = uid->tofu))
+            {
+              printf ("    tofu: %u (%s)\n", ti->validity,
+                      ti->validity == 0? "conflict" :
+                      ti->validity == 1? "no history" :
+                      ti->validity == 2? "little history" :
+                      ti->validity == 3? "enough history" :
+                      ti->validity == 4? "lot of history" : "?");
+              printf ("  policy: %u (%s)\n", ti->policy,
+                      ti->policy == GPGME_TOFU_POLICY_NONE? "none" :
+                      ti->policy == GPGME_TOFU_POLICY_AUTO? "auto" :
+                      ti->policy == GPGME_TOFU_POLICY_GOOD? "good" :
+                      ti->policy == GPGME_TOFU_POLICY_UNKNOWN? "unknown" :
+                      ti->policy == GPGME_TOFU_POLICY_BAD? "bad" :
+                      ti->policy == GPGME_TOFU_POLICY_ASK? "ask" : "?");
+              printf ("   nsigs: %hu\n", ti->signcount);
+              printf ("   first: %s\n", isotimestr (ti->signfirst));
+              printf ("    last: %s\n", isotimestr (ti->signlast));
+              printf ("   nencr: %hu\n", ti->encrcount);
+              printf ("   first: %s\n", isotimestr (ti->encrfirst));
+              printf ("    last: %s\n", isotimestr (ti->encrlast));
+            }
         }
 
       putchar ('\n');

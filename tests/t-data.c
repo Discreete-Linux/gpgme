@@ -86,6 +86,8 @@ read_cb (void *cb_value, char *buffer, size_t count, size_t *nread)
   unsigned int amount = strlen (text) - off;
   /*  round_t round = *((round_t *) cb_value);  */
 
+  (void)cb_value;
+
   if (!buffer && !count && !nread)
     {
       /* Rewind requested.  */
@@ -143,7 +145,7 @@ read_test (round_t round, gpgme_data_t data)
       read = gpgme_data_read (data, buffer, sizeof (buffer));
       if (read > 0)
 	{
-	  fprintf (stderr, "%s:%d: (%i) gpgme_data_read succeded unexpectedly\n",
+	  fprintf (stderr, "%s:%d: (%i) gpgme_data_read succeeded unexpectedly\n",
 		   __FILE__, __LINE__, round);
 	  exit (1);
 	}
@@ -190,12 +192,13 @@ write_test (round_t round, gpgme_data_t data)
     }
 }
 
+
 int
-main (int argc, char **argv)
+main (void)
 {
   round_t round = TEST_INITIALIZER;
-  const char *text_filename = make_filename ("t-data-1.txt");
-  const char *longer_text_filename = make_filename ("t-data-2.txt");
+  char *text_filename = make_filename ("t-data-1.txt");
+  char *longer_text_filename = make_filename ("t-data-2.txt");
   const char *missing_filename = "this-file-surely-does-not-exist";
   gpgme_error_t err = 0;
   gpgme_data_t data;
@@ -269,7 +272,7 @@ main (int argc, char **argv)
 	  }
 	  break;
 	case TEST_END:
-	  return 0;
+	  goto out;
 	case TEST_INITIALIZER:
 	  /* Shouldn't happen.  */
 	  fprintf (stderr, "%s:%d: impossible condition\n", __FILE__, __LINE__);
@@ -281,5 +284,8 @@ main (int argc, char **argv)
       write_test (round, data);
       gpgme_data_release (data);
     }
+ out:
+  free (text_filename);
+  free (longer_text_filename);
   return 0;
 }
