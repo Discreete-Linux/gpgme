@@ -1,7 +1,6 @@
 tests/gpg/*.gpg
 tests/gpg/S.gpg-agent
 tests/gpgsm/S.gpg-agent
-debian/gpgme-tool.1
 lang/python/tests/support.pyc
 lang/python/tests/__pycache__/
 doc/gpgme.info*

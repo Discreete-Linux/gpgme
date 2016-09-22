@@ -1,11 +1,5 @@
 #!/usr/bin/make -f
 
-#export DH_VERBOSE=1
-
-export CPPFLAGS := $(shell dpkg-buildflags --get CPPFLAGS)
-export CFLAGS   := $(shell dpkg-buildflags --get CFLAGS)
-export LDFLAGS  := $(shell dpkg-buildflags --get LDFLAGS)
-
 %:
 	dh $@ --with autoreconf --parallel
 
@@ -17,10 +11,6 @@ override_dh_auto_configure:
 
 override_dh_install:
 	dh_install --list-missing -X.la -Xinfo/dir
-
-override_dh_installdocs:
-	help2man -o debian/gpgme-tool.1 -n 'Assuan server exposing GnuPG Made Easy operations' src/gpgme-tool
-	dh_installdocs -A
 
 override_dh_makeshlibs:
 	dh_makeshlibs -V

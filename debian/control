@@ -12,7 +12,6 @@ Build-Depends:
  gnupg-agent,
  gnupg2 | gnupg (>= 2),
  gpgsm,
- help2man,
  libassuan-dev (>> 2.0.2),
  libgpg-error-dev (>> 1.8),
  scdaemon,
