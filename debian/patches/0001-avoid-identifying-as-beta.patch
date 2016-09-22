@@ -20,7 +20,7 @@ index c9d16af..1a8d33a 100644
            [mym4_version_major.mym4_version_minor.mym4_version_micro])
 -m4_define([mym4_revision],
 -          m4_esyscmd([git rev-parse --short HEAD | tr -d '\n\r']))
-+m4_define([mym4_revision], [])
++m4_define([mym4_revision], [0])
  m4_define([mym4_revision_dec],
            m4_esyscmd_s([echo $((0x$(echo ]mym4_revision[|head -c 4)))]))
 -m4_define([mym4_betastring],
