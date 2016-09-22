@@ -1,0 +1,32 @@
+From: Daiki Ueno <ueno@gnu.org>
+Date: Tue, 9 Feb 2016 17:03:53 +0900
+Subject: gpg: Add option --exit-on-status-write-error
+
+* src/engine-gpg.c (gpg_new): Add --exit-on-status-write-error if the
+engine version is latest enough to expect progress output from gpg.
+
+--
+GnuPG-bug-id: 1415
+Signed-off-by: Daiki Ueno <ueno@gnu.org>
+
+Changed the version test from the patch to use the newer
+have_gpg_version.
+
+Signed-off-by: Werner Koch <wk@gnupg.org>
+---
+ src/engine-gpg.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/src/engine-gpg.c b/src/engine-gpg.c
+index 8bb348f..3f1d34d 100644
+--- a/src/engine-gpg.c
++++ b/src/engine-gpg.c
+@@ -544,6 +544,8 @@ gpg_new (void **engine, const char *file_name, const char *home_dir,
+     rc = add_arg (gpg, "utf8");
+   if (!rc)
+     rc = add_arg (gpg, "--enable-progress-filter");
++  if (!rc && have_gpg_version (gpg, "2.1.11"))
++    rc = add_arg (gpg, "--exit-on-status-write-error");
+   if (rc)
+     goto leave;
+ 

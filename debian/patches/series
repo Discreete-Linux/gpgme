@@ -1,1 +1,5 @@
 0001-avoid-identifying-as-beta.patch
+0002-doc-Fix-minor-errors-in-I-O-callback-example.patch
+0003-tests-Fix-select-usage-in-t-eventloop.patch
+0004-gpg-Add-option-exit-on-status-write-error.patch
+0005-tests-Add-test-for-cancellation.patch

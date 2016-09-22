@@ -1,0 +1,37 @@
+From: Daiki Ueno <ueno@gnu.org>
+Date: Tue, 9 Feb 2016 17:03:51 +0900
+Subject: tests: Fix select usage in t-eventloop
+
+* tests/gpg/t-eventloop.c (do_select): Supply timeout value to select.
+
+Signed-off-by: Daiki Ueno <ueno@gnu.org>
+---
+ tests/gpg/t-eventloop.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/tests/gpg/t-eventloop.c b/tests/gpg/t-eventloop.c
+index 74af35f..2d3df41 100644
+--- a/tests/gpg/t-eventloop.c
++++ b/tests/gpg/t-eventloop.c
+@@ -111,6 +111,7 @@ do_select (void)
+   fd_set wfds;
+   int i, n;
+   int any = 0;
++  struct timeval tv;
+ 
+   FD_ZERO (&rfds);
+   FD_ZERO (&wfds);
+@@ -118,9 +119,12 @@ do_select (void)
+     if (fdlist[i].fd != -1)
+       FD_SET (fdlist[i].fd, fdlist[i].dir ? &rfds : &wfds);
+ 
++  tv.tv_sec = 0;
++  tv.tv_usec = 1000;
++
+   do
+     {
+-      n = select (FD_SETSIZE, &rfds, &wfds, NULL, 0);
++      n = select (FD_SETSIZE, &rfds, &wfds, NULL, &tv);
+     }
+   while (n < 0 && errno == EINTR);
+ 
