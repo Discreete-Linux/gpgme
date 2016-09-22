@@ -1,10 +1,10 @@
 .TH "GPGME" "1" "08 July 2012" "gpgme" "User commands"
 
 .SH NAME
-gpgme-config \- script to get information about the installed version of GPGME
+gpgme\-config \- script to get information about the installed version of GPGME
 
 .SH SYNOPSIS
-.B  gpgme-config
+.B  gpgme\-config
 .RB [ \-\-api\-version ]
 .RB [ \-\-cflags ]
 .RB [ \-\-exec\-prefix ]
@@ -18,14 +18,14 @@ gpgme-config \- script to get information about the installed version of GPGME
 
 .SH DESCRIPTION
 .PP
-\fBgpgme-config\fP is a tool that is used to configure to determine
+\fBgpgme\-config\fP is a tool that is used to configure to determine
 the compiler and linker flags that should be used to compile
 and link programs that use \fIGPGME\fP. It is also used internally
 to the .m4 macros for GNU autoconf that are included with \fIGPGME\fP.
 
 .SH OPTIONS
 .PP
-\fBgpgme-config\fP accepts the following options:
+\fBgpgme\-config\fP accepts the following options:
 .TP
 .B \-\-api\-version
 Print the currently installed API version of \fIGPGME\fP to standard output.
@@ -67,6 +67,27 @@ Print the currently installed version of \fIGPGME\fP to standard output.
 
 .SH AUTHORS
 .PP
+.PP
+The
+.I GPGME
+library is written by many contributors, including Werner Koch, Marcus
+Brinkmann, Andre Heinecke, Justus Winter, and Karl-Heinz Zimmer.
+.PP
 This manual page page was written by \fBJose Carlos Garcia Sogo\fR
 \&<\&jsogo@debian.org\&> and \fBDaniel Leidert\fR <\&daniel.leidert@wgdd.de\&>
 for the Debian distribution (but may be used by others).
+
+.SH BUGS
+.PP
+Please report bugs to <https://bugs.gnupg.org>.
+
+.SH COPYRIGHT
+\fBgpgme\-tool\fP is Copyright \(co 2015-2016 g10 Code GmbH License
+GPLv2+: GNU GPL version 2 or later <https://www.gnu.org/licenses/>
+.PP
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+
+.SH "SEE ALSO"
+.BR gpgme\-tool (1),
+.B /usr/include/gpgme.h
