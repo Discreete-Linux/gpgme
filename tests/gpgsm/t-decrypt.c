@@ -34,7 +34,6 @@
 #include "t-support.h"
 
 
-static const char test_text1[] = "Hallo Leute!\n";
 static const char test_cip1[] =
 "-----BEGIN CMS OBJECT-----\n"
 "MIAGCSqGSIb3DQEHA6CAMIACAQAxggEJMIIBBQIBADBwMGsxCzAJBgNVBAYTAkRF\n"
