@@ -26,6 +26,7 @@
 #include <string.h>
 #include <errno.h>
 #include <assert.h>
+#include <limits.h>
 
 #include "gpgme.h"
 #include "debug.h"
@@ -71,6 +72,8 @@ release_op_data (void *hook)
 	free (sig->fpr);
       if (sig->pka_address)
 	free (sig->pka_address);
+      if (sig->key)
+        gpgme_key_unref (sig->key);
       free (sig);
       sig = next;
     }
@@ -363,25 +366,10 @@ parse_new_sig (op_data_t opd, gpgme_status_code_t code, char *args,
 	end++;
 
       /* Parse the return code.  */
-      if (end[0] && (!end[1] || end[1] == ' '))
-	{
-	  switch (end[0])
-	    {
-	    case '4':
-	      sig->status = gpg_error (GPG_ERR_UNSUPPORTED_ALGORITHM);
-	      break;
-
-	    case '9':
-	      sig->status = gpg_error (GPG_ERR_NO_PUBKEY);
-	      break;
-
-	    default:
-	      sig->status = gpg_error (GPG_ERR_GENERAL);
-	    }
-	}
-      else
+      if (!*end)
 	goto parse_err_sig_fail;
 
+      sig->status = strtoul (end, NULL, 10);
       goto parse_err_sig_ok;
 
     parse_err_sig_fail:
@@ -486,13 +474,14 @@ parse_notation (gpgme_signature_t sig, gpgme_status_code_t code, char *args)
   gpgme_error_t err;
   gpgme_sig_notation_t *lastp = &sig->notations;
   gpgme_sig_notation_t notation = sig->notations;
-  char *end = strchr (args, ' ');
-
-  if (end)
-    *end = '\0';
+  char *p;
 
   if (code == GPGME_STATUS_NOTATION_NAME || code == GPGME_STATUS_POLICY_URL)
     {
+      p = strchr (args, ' ');
+      if (p)
+        *p = '\0';
+
       /* FIXME: We could keep a pointer to the last notation in the list.  */
       while (notation && notation->value)
 	{
@@ -520,9 +509,8 @@ parse_notation (gpgme_signature_t sig, gpgme_status_code_t code, char *args)
 
 	  notation->name_len = strlen (notation->name);
 
-	  /* FIXME: For now we fake the human-readable flag.  The
-	     critical flag can not be reported as it is not
-	     provided.  */
+	  /* Set default flags for use with older gpg versions which
+           * do not emit a NOTATIONS_FLAG line.  */
 	  notation->flags = GPGME_SIG_NOTATION_HUMAN_READABLE;
 	  notation->human_readable = 1;
 	}
@@ -540,6 +528,37 @@ parse_notation (gpgme_signature_t sig, gpgme_status_code_t code, char *args)
 	  notation->value_len = strlen (notation->value);
 	}
       *lastp = notation;
+    }
+  else if (code == GPGME_STATUS_NOTATION_FLAGS)
+    {
+      char *field[2];
+
+      while (notation && notation->next)
+	{
+	  lastp = &notation->next;
+	  notation = notation->next;
+	}
+
+      if (!notation || !notation->name)
+        { /* There are notation flags without a previous notation name.
+           * The crypto backend misbehaves.  */
+          return trace_gpg_error (GPG_ERR_INV_ENGINE);
+        }
+      if (_gpgme_split_fields (args, field, DIM (field)) < 2)
+        { /* Required args missing.  */
+          return trace_gpg_error (GPG_ERR_INV_ENGINE);
+        }
+      notation->flags = 0;
+      if (atoi (field[0]))
+        {
+          notation->flags |= GPGME_SIG_NOTATION_CRITICAL;
+          notation->critical = 1;
+        }
+      if (atoi (field[1]))
+        {
+          notation->flags |= GPGME_SIG_NOTATION_HUMAN_READABLE;
+          notation->human_readable = 1;
+        }
     }
   else if (code == GPGME_STATUS_NOTATION_DATA)
     {
@@ -631,6 +650,213 @@ parse_trust (gpgme_signature_t sig, gpgme_status_code_t code, char *args)
         }
     }
 
+  return 0;
+}
+
+
+/* Parse a TOFU_USER line and put the info into SIG.  */
+static gpgme_error_t
+parse_tofu_user (gpgme_signature_t sig, char *args, gpgme_protocol_t protocol)
+{
+  gpg_error_t err;
+  char *tail;
+  gpgme_user_id_t uid;
+  gpgme_tofu_info_t ti;
+  char *fpr = NULL;
+  char *address = NULL;
+
+  tail = strchr (args, ' ');
+  if (!tail || tail == args)
+    {
+      err = trace_gpg_error (GPG_ERR_INV_ENGINE);  /* No fingerprint.  */
+      goto leave;
+    }
+  *tail++ = 0;
+
+  fpr = strdup (args);
+  if (!fpr)
+    {
+      err = gpg_error_from_syserror ();
+      goto leave;
+    }
+
+  args = tail;
+  tail = strchr (args, ' ');
+  if (tail == args)
+    {
+      err = trace_gpg_error (GPG_ERR_INV_ENGINE);  /* No addr-spec.  */
+      goto leave;
+    }
+  if (tail)
+    *tail = 0;
+
+  err = _gpgme_decode_percent_string (args, &address, 0, 0);
+  if (err)
+    goto leave;
+
+  if (!sig->key)
+    {
+      err = _gpgme_key_new (&sig->key);
+      if (err)
+        goto leave;
+      sig->key->fpr = fpr;
+      sig->key->protocol = protocol;
+      fpr = NULL;
+    }
+  else if (!sig->key->fpr)
+    {
+      err = trace_gpg_error (GPG_ERR_INTERNAL);
+      goto leave;
+    }
+  else if (strcmp (sig->key->fpr, fpr))
+    {
+      /* The engine did not emit NEWSIG before a new key.  */
+      err = trace_gpg_error (GPG_ERR_INV_ENGINE);
+      goto leave;
+    }
+
+  err = _gpgme_key_append_name (sig->key, address, 0);
+  if (err)
+    goto leave;
+
+  uid = sig->key->_last_uid;
+  assert (uid);
+
+  ti = calloc (1, sizeof *ti);
+  if (!ti)
+    {
+      err = gpg_error_from_syserror ();
+      goto leave;
+    }
+  uid->tofu = ti;
+
+
+ leave:
+  free (fpr);
+  free (address);
+  return err;
+}
+
+
+/* Parse a TOFU_STATS line and store it in the last tofu info of SIG.
+ *
+ *   TOFU_STATS <validity> <sign-count> <encr-count> \
+ *                         [<policy> [<tm1> <tm2> <tm3> <tm4>]]
+ */
+static gpgme_error_t
+parse_tofu_stats (gpgme_signature_t sig, char *args)
+{
+  gpgme_error_t err;
+  gpgme_tofu_info_t ti;
+  char *field[8];
+  int nfields;
+  unsigned long uval;
+
+  if (!sig->key || !sig->key->_last_uid || !(ti = sig->key->_last_uid->tofu))
+    return trace_gpg_error (GPG_ERR_INV_ENGINE); /* No TOFU_USER seen.  */
+  if (ti->signfirst || ti->signcount || ti->validity || ti->policy)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE); /* Already set.  */
+
+  nfields = _gpgme_split_fields (args, field, DIM (field));
+  if (nfields < 3)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE); /* Required args missing.  */
+
+  /* Note that we allow a value of up to 7 which is what we can store
+   * in the ti->validity.  */
+  err = _gpgme_strtoul_field (field[0], &uval);
+  if (err || uval > 7)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE);
+  ti->validity = uval;
+
+  /* Parse the sign-count.  */
+  err = _gpgme_strtoul_field (field[1], &uval);
+  if (err)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE);
+  if (uval > USHRT_MAX)
+    uval = USHRT_MAX;
+  ti->signcount = uval;
+
+  /* Parse the encr-count.  */
+  err = _gpgme_strtoul_field (field[2], &uval);
+  if (err)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE);
+  if (uval > USHRT_MAX)
+    uval = USHRT_MAX;
+  ti->encrcount = uval;
+
+  if (nfields == 3)
+    return 0; /* All mandatory fields parsed.  */
+
+  /* Parse the policy.  */
+  if (!strcmp (field[3], "none"))
+    ti->policy = GPGME_TOFU_POLICY_NONE;
+  else if (!strcmp (field[3], "auto"))
+    ti->policy = GPGME_TOFU_POLICY_AUTO;
+  else if (!strcmp (field[3], "good"))
+    ti->policy = GPGME_TOFU_POLICY_GOOD;
+  else if (!strcmp (field[3], "bad"))
+    ti->policy = GPGME_TOFU_POLICY_BAD;
+  else if (!strcmp (field[3], "ask"))
+    ti->policy = GPGME_TOFU_POLICY_ASK;
+  else /* "unknown" and invalid policy strings.  */
+    ti->policy = GPGME_TOFU_POLICY_UNKNOWN;
+
+  if (nfields == 4)
+    return 0; /* No more optional fields.  */
+
+  /* Parse first and last seen timestamps (none or both are required).  */
+  if (nfields < 6)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE); /* "tm2" missing.  */
+  err = _gpgme_strtoul_field (field[4], &uval);
+  if (err)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE);
+  ti->signfirst = uval;
+  err = _gpgme_strtoul_field (field[5], &uval);
+  if (err)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE);
+  ti->signlast = uval;
+  if (nfields > 7)
+    {
+      /* This condition is only to allow for gpg 2.1.15 - can
+       * eventually be removed.  */
+      err = _gpgme_strtoul_field (field[6], &uval);
+      if (err)
+        return trace_gpg_error (GPG_ERR_INV_ENGINE);
+      ti->encrfirst = uval;
+      err = _gpgme_strtoul_field (field[7], &uval);
+      if (err)
+        return trace_gpg_error (GPG_ERR_INV_ENGINE);
+      ti->encrlast = uval;
+    }
+
+  return 0;
+}
+
+
+/* Parse a TOFU_STATS_LONG line and store it in the last tofu info of SIG.  */
+static gpgme_error_t
+parse_tofu_stats_long (gpgme_signature_t sig, char *args, int raw)
+{
+  gpgme_error_t err;
+  gpgme_tofu_info_t ti;
+  char *p;
+
+  if (!sig->key || !sig->key->_last_uid || !(ti = sig->key->_last_uid->tofu))
+    return trace_gpg_error (GPG_ERR_INV_ENGINE); /* No TOFU_USER seen.  */
+  if (ti->description)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE); /* Already set.  */
+
+  err = _gpgme_decode_percent_string (args, &ti->description, 0, 0);
+  if (err)
+    return err;
+
+  /* Remove the non-breaking spaces.  */
+  if (!raw)
+    {
+      for (p = ti->description; *p; p++)
+        if (*p == '~')
+          *p = ' ';
+    }
   return 0;
 }
 
@@ -737,6 +963,7 @@ _gpgme_verify_status_handler (void *priv, gpgme_status_code_t code, char *args)
       break;
 
     case GPGME_STATUS_NOTATION_NAME:
+    case GPGME_STATUS_NOTATION_FLAGS:
     case GPGME_STATUS_NOTATION_DATA:
     case GPGME_STATUS_POLICY_URL:
       opd->only_newsig_seen = 0;
@@ -765,6 +992,21 @@ _gpgme_verify_status_handler (void *priv, gpgme_status_code_t code, char *args)
         *end = 0;
       sig->pka_address = strdup (args);
       break;
+
+    case GPGME_STATUS_TOFU_USER:
+      opd->only_newsig_seen = 0;
+      return sig ? parse_tofu_user (sig, args, ctx->protocol)
+        /*    */ : trace_gpg_error (GPG_ERR_INV_ENGINE);
+
+    case GPGME_STATUS_TOFU_STATS:
+      opd->only_newsig_seen = 0;
+      return sig ? parse_tofu_stats (sig, args)
+        /*    */ : trace_gpg_error (GPG_ERR_INV_ENGINE);
+
+    case GPGME_STATUS_TOFU_STATS_LONG:
+      opd->only_newsig_seen = 0;
+      return sig ? parse_tofu_stats_long (sig, args, ctx->raw_description)
+        /*    */ : trace_gpg_error (GPG_ERR_INV_ENGINE);
 
     case GPGME_STATUS_ERROR:
       opd->only_newsig_seen = 0;
@@ -861,8 +1103,6 @@ verify_start (gpgme_ctx_t ctx, int synchronous, gpgme_data_t sig,
 
   if (!sig)
     return gpg_error (GPG_ERR_NO_DATA);
-  if (!signed_text && !plaintext)
-    return gpg_error (GPG_ERR_INV_VALUE);
 
   return _gpgme_engine_op_verify (ctx->engine, sig, signed_text, plaintext);
 }
@@ -1008,6 +1248,8 @@ gpgme_get_sig_ulong_attr (gpgme_ctx_t ctx, int idx,
 {
   gpgme_verify_result_t result;
   gpgme_signature_t sig;
+
+  (void)whatidx;
 
   result = gpgme_op_verify_result (ctx);
   sig = result->signatures;

@@ -24,6 +24,11 @@
 
 #include "gpgme.h"
 
+/* Flags used by the EXTRAFLAGS arg of _gpgme_engine_op_genkey.  */
+#define GENKEY_EXTRAFLAG_ARMOR   1
+#define GENKEY_EXTRAFLAG_REVOKE  2
+
+
 struct engine;
 typedef struct engine *engine_t;
 
@@ -38,6 +43,8 @@ typedef gpgme_error_t (*engine_command_handler_t) (void *priv,
 typedef gpgme_error_t (*engine_assuan_result_cb_t) (void *priv,
                                                     gpgme_error_t result);
 
+/* Helper for gpgme_set_global_flag.  */
+int _gpgme_set_engine_minimal_version (const char *value);
 
 /* Get a deep copy of the engine info and return it in INFO.  */
 gpgme_error_t _gpgme_engine_info_copy (gpgme_engine_info_t *r_info);
@@ -62,6 +69,8 @@ gpgme_error_t _gpgme_engine_set_locale (engine_t engine, int category,
 gpgme_error_t _gpgme_engine_set_protocol (engine_t engine,
 					  gpgme_protocol_t protocol);
 void _gpgme_engine_release (engine_t engine);
+void _gpgme_engine_set_status_cb (engine_t engine,
+                                  gpgme_status_cb_t cb, void *cb_value);
 void _gpgme_engine_set_status_handler (engine_t engine,
 				       engine_status_handler_t fnc,
 				       void *fnc_value);
@@ -104,9 +113,22 @@ gpgme_error_t _gpgme_engine_op_export_ext (engine_t engine,
 					   gpgme_data_t keydata,
 					   int use_armor);
 gpgme_error_t _gpgme_engine_op_genkey (engine_t engine,
+                                       const char *userid, const char *algo,
+                                       unsigned long reserved,
+                                       unsigned long expires,
+                                       gpgme_key_t key, unsigned int flags,
 				       gpgme_data_t help_data,
-				       int use_armor, gpgme_data_t pubkey,
+				       unsigned int extraflags,
+                                       gpgme_data_t pubkey,
 				       gpgme_data_t seckey);
+gpgme_error_t _gpgme_engine_op_keysign (engine_t engine,
+                                        gpgme_key_t key, const char *userid,
+                                        unsigned long expires,
+                                        unsigned int flags,
+                                        gpgme_ctx_t ctx);
+gpgme_error_t _gpgme_engine_op_tofu_policy (engine_t engine,
+                                            gpgme_key_t key,
+                                            gpgme_tofu_policy_t policy);
 gpgme_error_t _gpgme_engine_op_import (engine_t engine,
 				       gpgme_data_t keydata,
                                        gpgme_key_t *keyarray);

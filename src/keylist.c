@@ -33,6 +33,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <errno.h>
+#include <limits.h>
 
 /* Suppress warning for accessing deprecated member "class".  */
 #define _GPGME_IN_GPGME
@@ -120,6 +121,8 @@ keylist_status_handler (void *priv, gpgme_status_code_t code, char *args)
   gpgme_error_t err;
   void *hook;
   op_data_t opd;
+
+  (void)args;
 
   err = _gpgme_op_data_lookup (ctx, OPDATA_KEYLIST, &hook, -1, NULL);
   opd = hook;
@@ -403,6 +406,98 @@ parse_sec_field15 (gpgme_key_t key, gpgme_subkey_t subkey, char *field)
 }
 
 
+/* Parse a tfs record.  */
+static gpg_error_t
+parse_tfs_record (gpgme_user_id_t uid, char **field, int nfield)
+{
+  gpg_error_t err;
+  gpgme_tofu_info_t ti;
+  unsigned long uval;
+
+  /* We add only the first TOFU record in case future versions emit
+   * several.  */
+  if (uid->tofu)
+    return 0;
+
+  /* Check that we have enough fields and that the version is supported.  */
+  if (nfield < 8 || atoi(field[1]) != 1)
+    return trace_gpg_error (GPG_ERR_INV_ENGINE);
+
+  ti = calloc (1, sizeof *ti);
+  if (!ti)
+    return gpg_error_from_syserror ();
+
+  /* Note that we allow a value of up to 7 which is what we can store
+   * in the ti->validity.  */
+  err = _gpgme_strtoul_field (field[2], &uval);
+  if (err || uval > 7)
+    goto inv_engine;
+  ti->validity = uval;
+
+  /* Parse the sign-count.  */
+  err = _gpgme_strtoul_field (field[3], &uval);
+  if (err)
+    goto inv_engine;
+  if (uval > USHRT_MAX)
+    uval = USHRT_MAX;
+  ti->signcount = uval;
+
+  /* Parse the encr-count.  */
+  err = _gpgme_strtoul_field (field[4], &uval);
+  if (err)
+    goto inv_engine;
+  if (uval > USHRT_MAX)
+    uval = USHRT_MAX;
+  ti->encrcount = uval;
+
+  /* Parse the policy.  */
+  if (!strcmp (field[5], "none"))
+    ti->policy = GPGME_TOFU_POLICY_NONE;
+  else if (!strcmp (field[5], "auto"))
+    ti->policy = GPGME_TOFU_POLICY_AUTO;
+  else if (!strcmp (field[5], "good"))
+    ti->policy = GPGME_TOFU_POLICY_GOOD;
+  else if (!strcmp (field[5], "bad"))
+    ti->policy = GPGME_TOFU_POLICY_BAD;
+  else if (!strcmp (field[5], "ask"))
+    ti->policy = GPGME_TOFU_POLICY_ASK;
+  else /* "unknown" and invalid policy strings.  */
+    ti->policy = GPGME_TOFU_POLICY_UNKNOWN;
+
+  /* Parse first and last seen timestamps.  */
+  err = _gpgme_strtoul_field (field[6], &uval);
+  if (err)
+    goto inv_engine;
+  ti->signfirst = uval;
+  err = _gpgme_strtoul_field (field[7], &uval);
+  if (err)
+    goto inv_engine;
+  ti->signlast = uval;
+
+  if (nfield > 9)
+    {
+      /* This condition is only to allow for gpg 2.1.15 - can
+       * eventually be removed.  */
+      err = _gpgme_strtoul_field (field[8], &uval);
+      if (err)
+        goto inv_engine;
+      ti->encrfirst = uval;
+      err = _gpgme_strtoul_field (field[9], &uval);
+      if (err)
+        goto inv_engine;
+      ti->encrlast = uval;
+    }
+
+  /* Ready.  */
+  uid->tofu = ti;
+  return 0;
+
+ inv_engine:
+  free (ti);
+  return trace_gpg_error (GPG_ERR_INV_ENGINE);
+}
+
+
 /* We have read an entire key into tmp_key and should now finish it.
    It is assumed that this releases tmp_key.  */
 static void
@@ -426,7 +521,7 @@ keylist_colon_handler (void *priv, char *line)
   gpgme_ctx_t ctx = (gpgme_ctx_t) priv;
   enum
     {
-      RT_NONE, RT_SIG, RT_UID, RT_SUB, RT_PUB, RT_FPR,
+      RT_NONE, RT_SIG, RT_UID, RT_TFS, RT_SUB, RT_PUB, RT_FPR, RT_GRP,
       RT_SSB, RT_SEC, RT_CRT, RT_CRS, RT_REV, RT_SPK
     }
   rectype = RT_NONE;
@@ -479,8 +574,12 @@ keylist_colon_handler (void *priv, char *line)
     rectype = RT_CRS;
   else if (!strcmp (field[0], "fpr") && key)
     rectype = RT_FPR;
+  else if (!strcmp (field[0], "grp") && key)
+    rectype = RT_GRP;
   else if (!strcmp (field[0], "uid") && key)
     rectype = RT_UID;
+  else if (!strcmp (field[0], "tfs") && key)
+    rectype = RT_TFS;
   else if (!strcmp (field[0], "sub") && key)
     rectype = RT_SUB;
   else if (!strcmp (field[0], "ssb") && key)
@@ -490,10 +589,10 @@ keylist_colon_handler (void *priv, char *line)
   else
     rectype = RT_NONE;
 
-  /* Only look at signatures immediately following a user ID.  For
-     this, clear the user ID pointer when encountering anything but a
-     signature.  */
-  if (rectype != RT_SIG && rectype != RT_REV)
+  /* Only look at signature and trust info records immediately
+     following a user ID.  For this, clear the user ID pointer when
+     encountering anything but a signature or trust record.  */
+  if (rectype != RT_SIG && rectype != RT_REV && rectype != RT_TFS)
     opd->tmp_uid = NULL;
 
   /* Only look at subpackets immediately following a signature.  For
@@ -693,6 +792,15 @@ keylist_colon_handler (void *priv, char *line)
 	}
       break;
 
+    case RT_TFS:
+      if (opd->tmp_uid)
+	{
+          err = parse_tfs_record (opd->tmp_uid, field, fields);
+          if (err)
+            return err;
+        }
+      break;
+
     case RT_FPR:
       /* Field 10 has the fingerprint (take only the first one).  */
       if (fields >= 10 && field[9] && *field[9])
@@ -706,6 +814,22 @@ keylist_colon_handler (void *priv, char *line)
               if (!subkey->fpr)
                 return gpg_error_from_syserror ();
             }
+          /* If this is the first subkey, store the fingerprint also
+             in the KEY object.  */
+          if (subkey == key->subkeys)
+            {
+              if (key->fpr && strcmp (key->fpr, subkey->fpr))
+                {
+                  /* FPR already set but mismatch: Should never happen.  */
+                  return trace_gpg_error (GPG_ERR_INTERNAL);
+                }
+              if (!key->fpr)
+                {
+                  key->fpr = strdup (subkey->fpr);
+                  if (!key->fpr)
+                    return gpg_error_from_syserror ();
+                }
+            }
 	}
 
       /* Field 13 has the gpgsm chain ID (take only the first one).  */
@@ -714,6 +838,22 @@ keylist_colon_handler (void *priv, char *line)
 	  key->chain_id = strdup (field[12]);
 	  if (!key->chain_id)
 	    return gpg_error_from_syserror ();
+	}
+      break;
+
+    case RT_GRP:
+      /* Field 10 has the keygrip.  */
+      if (fields >= 10 && field[9] && *field[9])
+	{
+          /* Need to apply it to the last subkey because all subkeys
+             have a keygrip. */
+          subkey = key->_last_subkey;
+          if (!subkey->keygrip)
+            {
+              subkey->keygrip = strdup (field[9]);
+              if (!subkey->keygrip)
+                return gpg_error_from_syserror ();
+            }
 	}
       break;
 

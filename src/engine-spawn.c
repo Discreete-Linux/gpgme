@@ -312,24 +312,26 @@ static char *
 engspawn_get_version (const char *file_name)
 {
   (void)file_name;
-  return strdup ("1.0");
+  return NULL;
 }
 
 
 static const char *
 engspawn_get_req_version (void)
 {
-  return "1.0";
+  return NULL;
 }
 
 
 static gpgme_error_t
-engspawn_new (void **engine, const char *file_name, const char *home_dir)
+engspawn_new (void **engine, const char *file_name, const char *home_dir,
+              const char *version)
 {
   engine_spawn_t esp;
 
   (void)file_name;
   (void)home_dir;
+  (void)version;
 
   esp = calloc (1, sizeof *esp);
   if (!esp)
@@ -440,6 +442,7 @@ struct engine_ops _gpgme_engine_ops_spawn =
     /* Member functions.  */
     engspawn_release,
     NULL,		/* reset */
+    NULL,               /* set_status_cb */
     NULL,		/* set_status_handler */
     NULL,		/* set_command_handler */
     NULL,		/* set_colon_line_handler */
@@ -457,6 +460,8 @@ struct engine_ops _gpgme_engine_ops_spawn =
     NULL,		/* import */
     NULL,		/* keylist */
     NULL,		/* keylist_ext */
+    NULL,               /* keysign */
+    NULL,               /* tofu_policy */
     NULL,		/* sign */
     NULL,		/* trustlist */
     NULL,		/* verify */

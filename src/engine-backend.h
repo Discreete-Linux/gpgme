@@ -44,11 +44,13 @@ struct engine_ops
   const char *(*get_req_version) (void);
 
   gpgme_error_t (*new) (void **r_engine,
-			const char *file_name, const char *home_dir);
+			const char *file_name, const char *home_dir,
+                        const char *version);
 
   /* Member functions.  */
   void (*release) (void *engine);
   gpgme_error_t (*reset) (void *engine);
+  void (*set_status_cb) (void *engine, gpgme_status_cb_t cb, void *cb_value);
   void (*set_status_handler) (void *engine, engine_status_handler_t fnc,
 			      void *fnc_value);
   gpgme_error_t (*set_command_handler) (void *engine,
@@ -80,7 +82,12 @@ struct engine_ops
   gpgme_error_t (*export_ext) (void *engine, const char *pattern[],
 			       gpgme_export_mode_t mode, gpgme_data_t keydata,
 			       int use_armor);
-  gpgme_error_t (*genkey) (void *engine, gpgme_data_t help_data, int use_armor,
+  gpgme_error_t (*genkey) (void *engine,
+                           const char *userid, const char *algo,
+                           unsigned long reserved, unsigned long expires,
+                           gpgme_key_t key, unsigned int flags,
+                           gpgme_data_t help_data,
+                           unsigned int extraflags,
 			   gpgme_data_t pubkey, gpgme_data_t seckey);
   gpgme_error_t (*import) (void *engine, gpgme_data_t keydata,
                            gpgme_key_t *keyarray);
@@ -91,6 +98,13 @@ struct engine_ops
 				int secret_only, int reserved,
 				gpgme_keylist_mode_t mode,
 				int engine_flags);
+  gpgme_error_t (*keysign) (void *engine,
+                            gpgme_key_t key, const char *userid,
+                            unsigned long expires, unsigned int flags,
+                            gpgme_ctx_t ctx);
+  gpgme_error_t (*tofu_policy) (void *engine,
+                                gpgme_key_t key,
+                                gpgme_tofu_policy_t policy);
   gpgme_error_t (*sign) (void *engine, gpgme_data_t in, gpgme_data_t out,
 			 gpgme_sig_mode_t mode, int use_armor,
 			 int use_textmode, int include_certs,

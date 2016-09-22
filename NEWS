@@ -1,3 +1,108 @@
+Noteworthy changes in version 1.7.0 (2016-09-21) [C26/A15/R0]
+------------------------------------------------
+
+ * New language bindings for Python 2 and 3.
+
+ * New language Bindings for C++ and the Qt-Framework API.
+
+ * New functions gpgme_op_createkey and gpgme_op_createsubkey to make
+   key creation easier (requires GnuPG 2.1).
+
+ * New functions gpgme_op_adduid and gpgme_op_revuid to make user id
+   management easier (requires GnuPG 2.1).
+
+ * New function gpgme_op_keysign to make key signing easier (requires
+   GnuPG 2.1).
+
+ * New function gpgme_op_interact to replace the now deprecated
+   functions gpgme_op_edit and gpgme_op_card_edit.
+
+ * New function gpgme_pubkey_algo_string to convert a public key
+   algorithm into a GnuPG 2.1 style string.
+
+ * Support for GnuPG 2.1's TOFU trust model.
+
+ * Notation flags are now correctly set on verify.
+
+ * New global flag "require-gnupg" to set a minimal gnupg version.
+
+ * More supported items in gpgme_get_dirinfo.
+
+ * New function gpgme_data_set_flag and flag "size-hint".
+
+ * New function gpgme_set_ctx_flag and flags "full-status" and
+   "raw-description".
+
+ * Improved gpgme_data_identify to distinguish more file types.
+
+ * New flag GPGME_ENCRYPT_SYMMETRIC for gpgme_op_encrypt to allow
+   mixed public key and symmetric encryption.
+
+ * New field KEYGRIP in gpgme_subkey_t.  New fields FPR in gpgme_key_t.
+
+ * New flag GPGME_DATA_ENCODING_MIME to declare that the encrypted or
+   signed data is a valid MIME part.  This is to support future GnuPG
+   versions.
+
+ * Interface changes relative to the 1.6.0 release:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ gpgme_pubkey_algo_string       NEW.
+ GPGME_PK_EDDSA                 NEW.
+ gpgme_set_ctx_flag             NEW.
+ gpgme_data_set_flag            NEW.
+ gpgme_op_createkey             NEW.
+ gpgme_op_createkey_start       NEW.
+ gpgme_op_createsubkey          NEW.
+ gpgme_op_createsubkey_start    NEW.
+ gpgme_op_adduid_start          NEW.
+ gpgme_op_adduid                NEW.
+ gpgme_op_revuid_start          NEW.
+ gpgme_op_revuid                NEW.
+ gpgme_op_keysign_start         NEW.
+ gpgme_op_keysign               NEW.
+ gpgme_op_tofu_policy_start     NEW.
+ gpgme_op_tofu_policy           NEW.
+ gpgme_op_interact_start        NEW.
+ gpgme_op_interact              NEW.
+ gpgme_interact_cb_t            NEW.
+ gpgme_op_edit_start            DEPRECATED.
+ gpgme_op_edit                  DEPRECATED.
+ gpgme_op_card_edit_start       DEPRECATED.
+ gpgme_op_card_edit             DEPRECATED.
+ gpgme_edit_cb_t                DEPRECATED.
+ gpgme_status_code_t            DEPRECATED.
+ gpgme_genkey_result_t          EXTENDED: New fields pubkey and seckey.
+ gpgme_signature_t              EXTENDED: New field key.
+ gpgme_key_t                    EXTENDED: New field fpr.
+ gpgme_subkey_t                 EXTENDED: New field keygrip.
+ gpgme_user_id_t                EXTENDED: New field tofu.
+ gpgme_tofu_policy_t            NEW.
+ gpgme_tofu_info_t              NEW.
+ GPGME_STATUS_KEY_CONSIDERED    NEW.
+ GPGME_STATUS_TOFU_USER         NEW.
+ GPGME_STATUS_TOFU_STATS        NEW.
+ GPGME_STATUS_TOFU_STATS_LONG   NEW.
+ GPGME_STATUS_NOTATION_FLAGS    NEW.
+ GPGME_KEYLIST_MODE_WITH_TOFU   NEW.
+ GPGME_DATA_TYPE_PGP_ENCRYPTED  NEW.
+ GPGME_DATA_TYPE_PGP_SIGNATURE  NEW.
+ GPGME_DATA_ENCODING_MIME       NEW.
+ GPGME_ENCRYPT_SYMMETRIC        NEW.
+ GPGME_CREATE_SIGN              NEW.
+ GPGME_CREATE_ENCR              NEW.
+ GPGME_CREATE_CERT              NEW.
+ GPGME_CREATE_AUTH              NEW.
+ GPGME_CREATE_NOPASSWD          NEW.
+ GPGME_CREATE_SELFSIGNED        NEW.
+ GPGME_CREATE_NOSTORE           NEW.
+ GPGME_CREATE_WANTPUB           NEW.
+ GPGME_CREATE_WANTSEC           NEW.
+ GPGME_CREATE_FORCE             NEW.
+ GPGME_KEYSIGN_LOCAL            NEW.
+ GPGME_KEYSIGN_LFSEP            NEW.
+ GPGME_INTERACT_CARD            NEW.
+
+
 Noteworthy changes in version 1.6.0 (2015-08-26) [C25/A14/R0]
 ------------------------------------------------
 

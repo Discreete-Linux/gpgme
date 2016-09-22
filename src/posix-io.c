@@ -23,6 +23,9 @@
 #endif
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_STDINT_H
+# include <stdint.h>
+#endif
 #include <string.h>
 #include <assert.h>
 #include <errno.h>
@@ -43,6 +46,12 @@
 #endif
 #include <ctype.h>
 #include <sys/resource.h>
+
+#if __linux__
+# include <sys/types.h>
+# include <dirent.h>
+#endif /*__linux__ */
+
 
 #include "util.h"
 #include "priv-io.h"
@@ -273,20 +282,54 @@ _gpgme_io_set_nonblocking (int fd)
 static long int
 get_max_fds (void)
 {
-  char *source = NULL;
+  const char *source = NULL;
   long int fds = -1;
   int rc;
 
-#ifdef RLIMIT_NOFILE
+  /* Under Linux we can figure out the highest used file descriptor by
+   * reading /proc/self/fd.  This is in the common cases much fast than
+   * for example doing 4096 close calls where almost all of them will
+   * fail.  */
+#ifdef __linux__
   {
-    struct rlimit rl;
-    rc = getrlimit (RLIMIT_NOFILE, &rl);
-    if (rc == 0)
+    DIR *dir = NULL;
+    struct dirent *dir_entry;
+    const char *s;
+    int x;
+
+    dir = opendir ("/proc/self/fd");
+    if (dir)
       {
-	source = "RLIMIT_NOFILE";
-	fds = rl.rlim_max;
+        while ((dir_entry = readdir (dir)))
+          {
+            s = dir_entry->d_name;
+            if ( *s < '0' || *s > '9')
+              continue;
+            x = atoi (s);
+            if (x > fds)
+              fds = x;
+          }
+        closedir (dir);
       }
-  }
+    if (fds != -1)
+      {
+        fds++;
+        source = "/proc";
+      }
+    }
+#endif /* __linux__ */
+
+#ifdef RLIMIT_NOFILE
+  if (fds == -1)
+    {
+      struct rlimit rl;
+      rc = getrlimit (RLIMIT_NOFILE, &rl);
+      if (rc == 0)
+        {
+          source = "RLIMIT_NOFILE";
+          fds = rl.rlim_max;
+        }
+    }
 #endif
 #ifdef RLIMIT_OFILE
   if (fds == -1)
@@ -330,6 +373,16 @@ get_max_fds (void)
       /* Arbitrary limit.  */
       fds = 1024;
     }
+
+  /* AIX returns INT32_MAX instead of a proper value.  We assume that
+   * this is always an error and use a more reasonable limit.  */
+#ifdef INT32_MAX
+  if (fds == INT32_MAX)
+    {
+      source = "aix-fix";
+      fds = 1024;
+    }
+#endif
 
   TRACE2 (DEBUG_SYSIO, "gpgme:max_fds", 0, "max fds=%i (%s)", fds, source);
   return fds;
@@ -551,6 +604,12 @@ _gpgme_io_select (struct io_select_fd_s *fds, size_t nfds, int nonblock)
 	continue;
       if (fds[i].for_read)
 	{
+          if (fds[i].fd >= FD_SETSIZE)
+            {
+              TRACE_END (dbg_help, " -BAD- ]");
+              gpg_err_set_errno (EBADF);
+              return TRACE_SYSRES (-1);
+            }
 	  assert (!FD_ISSET (fds[i].fd, &readfds));
 	  FD_SET (fds[i].fd, &readfds);
 	  if (fds[i].fd > max_fd)
@@ -560,6 +619,12 @@ _gpgme_io_select (struct io_select_fd_s *fds, size_t nfds, int nonblock)
         }
       else if (fds[i].for_write)
 	{
+          if (fds[i].fd >= FD_SETSIZE)
+            {
+              TRACE_END (dbg_help, " -BAD- ]");
+              gpg_err_set_errno (EBADF);
+              return TRACE_SYSRES (-1);
+            }
 	  assert (!FD_ISSET (fds[i].fd, &writefds));
 	  FD_SET (fds[i].fd, &writefds);
 	  if (fds[i].fd > max_fd)

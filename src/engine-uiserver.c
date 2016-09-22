@@ -90,6 +90,8 @@ struct engine_uiserver
   {
     engine_status_handler_t fnc;
     void *fnc_value;
+    gpgme_status_cb_t mon_cb;
+    void *mon_cb_value;
   } status;
 
   struct
@@ -121,14 +123,15 @@ static void uiserver_io_event (void *engine,
 static char *
 uiserver_get_version (const char *file_name)
 {
-  return strdup ("1.0");
+  (void)file_name;
+  return NULL;
 }
 
 
 static const char *
 uiserver_get_req_version (void)
 {
-  return "1.0";
+  return NULL;
 }
 
 
@@ -184,6 +187,8 @@ close_notify_handler (int fd, void *opaque)
 static gpgme_error_t
 default_inq_cb (engine_uiserver_t uiserver, const char *line)
 {
+  (void)uiserver;
+
   if (!strncmp (line, "PINENTRY_LAUNCHED", 17) && (line[17]==' '||!line[17]))
     {
       _gpgme_allow_set_foreground_window ((pid_t)strtoul (line+17, NULL, 10));
@@ -236,14 +241,19 @@ uiserver_release (void *engine)
 
 
 static gpgme_error_t
-uiserver_new (void **engine, const char *file_name, const char *home_dir)
+uiserver_new (void **engine, const char *file_name, const char *home_dir,
+              const char *version)
 {
   gpgme_error_t err = 0;
   engine_uiserver_t uiserver;
   char *dft_display = NULL;
   char dft_ttyname[64];
+  char *env_tty = NULL;
   char *dft_ttytype = NULL;
   char *optstr;
+
+  (void)home_dir;
+  (void)version; /* Not yet used.  */
 
   uiserver = calloc (1, sizeof *uiserver);
   if (!uiserver)
@@ -321,11 +331,20 @@ uiserver_new (void **engine, const char *file_name, const char *home_dir)
 	goto leave;
     }
 
-  if (isatty (1))
+  err = _gpgme_getenv ("GPG_TTY", &env_tty);
+  if (isatty (1) || env_tty || err)
     {
-      int rc;
+      int rc = 0;
 
-      rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
+      if (err)
+        goto leave;
+      else if (env_tty)
+        {
+          snprintf (dft_ttyname, sizeof (dft_ttyname), "%s", env_tty);
+          free (env_tty);
+        }
+      else
+        rc = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
 
       /* Even though isatty() returns 1, ttyname_r() may fail in many
 	 ways, e.g., when /dev/pts is not accessible under chroot.  */
@@ -392,7 +411,7 @@ uiserver_set_locale (void *engine, int category, const char *value)
   engine_uiserver_t uiserver = engine;
   gpgme_error_t err;
   char *optstr;
-  char *catstr;
+  const char *catstr;
 
   /* FIXME: If value is NULL, we need to reset the option to default.
      But we can't do this.  So we error out here.  UISERVER needs support
@@ -451,10 +470,11 @@ uiserver_set_protocol (void *engine, gpgme_protocol_t protocol)
 
 
 static gpgme_error_t
-uiserver_assuan_simple_command (assuan_context_t ctx, char *cmd,
-			     engine_status_handler_t status_fnc,
-			     void *status_fnc_value)
+uiserver_assuan_simple_command (engine_uiserver_t uiserver, const char *cmd,
+                                engine_status_handler_t status_fnc,
+                                void *status_fnc_value)
 {
+  assuan_context_t ctx = uiserver->assuan_ctx;
   gpg_error_t err;
   char *line;
   size_t linelen;
@@ -493,8 +513,17 @@ uiserver_assuan_simple_command (assuan_context_t ctx, char *cmd,
 	    *(rest++) = 0;
 
 	  r = _gpgme_parse_status (line + 2);
+          if (uiserver->status.mon_cb && r != GPGME_STATUS_PROGRESS)
+            {
+              /* Note that we call the monitor even if we do
+               * not know the status code (r < 0).  */
+              err = uiserver->status.mon_cb (uiserver->status.mon_cb_value,
+                                             line + 2, rest);
+            }
 
-	  if (r >= 0 && status_fnc)
+          if (err)
+            ;
+	  else if (r >= 0 && status_fnc)
 	    err = status_fnc (status_fnc_value, r, rest);
 	  else
 	    err = gpg_error (GPG_ERR_GENERAL);
@@ -516,7 +545,7 @@ uiserver_set_fd (engine_uiserver_t uiserver, fd_type_t fd_type, const char *opt)
 {
   gpg_error_t err = 0;
   char line[COMMANDLINELEN];
-  char *which;
+  const char *which;
   iocb_data_t *iocb_data;
   int dir;
 
@@ -576,7 +605,7 @@ uiserver_set_fd (engine_uiserver_t uiserver, fd_type_t fd_type, const char *opt)
   else
     snprintf (line, COMMANDLINELEN, "%s FD", which);
 
-  err = uiserver_assuan_simple_command (uiserver->assuan_ctx, line, NULL, NULL);
+  err = uiserver_assuan_simple_command (uiserver, line, NULL, NULL);
 
  leave_set_fd:
   if (err)
@@ -653,8 +682,13 @@ status_handler (void *opaque, int fd)
 	       && (line[2] == '\0' || line[2] == ' '))
 	{
 	  if (uiserver->status.fnc)
-	    err = uiserver->status.fnc (uiserver->status.fnc_value,
-				     GPGME_STATUS_EOF, "");
+            {
+              char emptystring[1] = {0};
+              err = uiserver->status.fnc (uiserver->status.fnc_value,
+                                          GPGME_STATUS_EOF, emptystring);
+              if (gpg_err_code (err) == GPG_ERR_FALSE)
+                err = 0; /* Drop special error code.  */
+            }
 
 	  if (!err && uiserver->colon.fnc && uiserver->colon.any)
             {
@@ -805,7 +839,12 @@ status_handler (void *opaque, int fd)
 	  if (r >= 0)
 	    {
 	      if (uiserver->status.fnc)
-		err = uiserver->status.fnc (uiserver->status.fnc_value, r, rest);
+                {
+                  err = uiserver->status.fnc (uiserver->status.fnc_value,
+                                              r, rest);
+                  if (gpg_err_code (err) == GPG_ERR_FALSE)
+                    err = 0; /* Drop special error code.  */
+                }
 	    }
 	  else
 	    fprintf (stderr, "[UNKNOWN STATUS]%s %s", line + 2, rest);
@@ -915,7 +954,7 @@ uiserver_reset (void *engine)
 
   /* We must send a reset because we need to reset the list of
      signers.  Note that RESET does not reset OPTION commands. */
-  return uiserver_assuan_simple_command (uiserver->assuan_ctx, "RESET", NULL, NULL);
+  return uiserver_assuan_simple_command (uiserver, "RESET", NULL, NULL);
 }
 
 
@@ -984,7 +1023,6 @@ static gpgme_error_t
 set_recipients (engine_uiserver_t uiserver, gpgme_key_t recp[])
 {
   gpgme_error_t err = 0;
-  assuan_context_t ctx = uiserver->assuan_ctx;
   char *line;
   int linelen;
   int invalid_recipients = 0;
@@ -1023,7 +1061,8 @@ set_recipients (engine_uiserver_t uiserver, gpgme_key_t recp[])
       /* FIXME: need to do proper escaping  */
       strcpy (&line[10], uid);
 
-      err = uiserver_assuan_simple_command (ctx, line, uiserver->status.fnc,
+      err = uiserver_assuan_simple_command (uiserver, line,
+                                            uiserver->status.fnc,
                                             uiserver->status.fnc_value);
       /* FIXME: This might requires more work.  */
       if (gpg_err_code (err) == GPG_ERR_NO_PUBKEY)
@@ -1132,6 +1171,9 @@ uiserver_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
   char *cmd;
   gpgme_key_t key;
 
+  (void)use_textmode;
+  (void)include_certs;
+
   if (!uiserver || !in || !out)
     return gpg_error (GPG_ERR_INV_VALUE);
   if (uiserver->protocol == GPGME_PROTOCOL_DEFAULT)
@@ -1160,7 +1202,7 @@ uiserver_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
           char buf[100];
 
           strcpy (stpcpy (buf, "SENDER --info "), s);
-          err = uiserver_assuan_simple_command (uiserver->assuan_ctx, buf,
+          err = uiserver_assuan_simple_command (uiserver, buf,
                                                 uiserver->status.fnc,
                                                 uiserver->status.fnc_value);
         }
@@ -1252,6 +1294,18 @@ uiserver_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
 }
 
 
+/* This sets a status callback for monitoring status lines before they
+ * are passed to a caller set handler.  */
+static void
+uiserver_set_status_cb (void *engine, gpgme_status_cb_t cb, void *cb_value)
+{
+  engine_uiserver_t uiserver = engine;
+
+  uiserver->status.mon_cb = cb;
+  uiserver->status.mon_cb_value = cb_value;
+}
+
+
 static void
 uiserver_set_status_handler (void *engine, engine_status_handler_t fnc,
 			  void *fnc_value)
@@ -1309,6 +1363,7 @@ struct engine_ops _gpgme_engine_ops_uiserver =
     /* Member functions.  */
     uiserver_release,
     uiserver_reset,
+    uiserver_set_status_cb,
     uiserver_set_status_handler,
     NULL,		/* set_command_handler */
     uiserver_set_colon_line_handler,
@@ -1326,6 +1381,8 @@ struct engine_ops _gpgme_engine_ops_uiserver =
     NULL,		/* import */
     NULL,		/* keylist */
     NULL,		/* keylist_ext */
+    NULL,               /* keysign */
+    NULL,               /* tofu_policy */
     uiserver_sign,
     NULL,		/* trustlist */
     uiserver_verify,

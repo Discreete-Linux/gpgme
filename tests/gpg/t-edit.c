@@ -3,17 +3,17 @@
    Copyright (C) 2001, 2002, 2003, 2004 g10 Code GmbH
 
    This file is part of GPGME.
- 
+
    GPGME is free software; you can redistribute it and/or modify it
    under the terms of the GNU Lesser General Public License as
    published by the Free Software Foundation; either version 2.1 of
    the License, or (at your option) any later version.
-   
+
    GPGME is distributed in the hope that it will be useful, but
    WITHOUT ANY WARRANTY; without even the implied warranty of
    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
    Lesser General Public License for more details.
-   
+
    You should have received a copy of the GNU Lesser General Public
    License along with this program; if not, write to the Free Software
    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
@@ -43,7 +43,7 @@ flush_data (gpgme_data_t dh)
 {
   char buf[100];
   int ret;
-  
+
   ret = gpgme_data_seek (dh, 0, SEEK_SET);
   if (ret)
     fail_if_err (gpgme_error_from_errno (errno));
@@ -55,22 +55,22 @@ flush_data (gpgme_data_t dh)
 
 
 gpgme_error_t
-edit_fnc (void *opaque, gpgme_status_code_t status, const char *args, int fd)
+interact_fnc (void *opaque, const char *status, const char *args, int fd)
 {
-  char *result = NULL;
+  const char *result = NULL;
   gpgme_data_t out = (gpgme_data_t) opaque;
 
   fputs ("[-- Response --]\n", stdout);
-  flush_data (out); 
+  flush_data (out);
 
-  fprintf (stdout, "[-- Code: %i, %s --]\n", status, args);
+  fprintf (stdout, "[-- Code: %s, %s --]\n", status, args);
 
   if (fd >= 0)
     {
       if (!strcmp (args, "keyedit.prompt"))
 	{
 	  static int step = 0;
-	  
+
 	  switch (step)
 	    {
 	    case 0:
@@ -103,14 +103,14 @@ edit_fnc (void *opaque, gpgme_status_code_t status, const char *args, int fd)
 
   if (result)
     {
-      gpgme_io_write (fd, result, strlen (result));
-      gpgme_io_write (fd, "\n", 1);
+      gpgme_io_writen (fd, result, strlen (result));
+      gpgme_io_writen (fd, "\n", 1);
     }
   return 0;
 }
 
 
-int 
+int
 main (int argc, char **argv)
 {
   gpgme_ctx_t ctx;
@@ -119,6 +119,9 @@ main (int argc, char **argv)
   gpgme_key_t key = NULL;
   const char *pattern = "Alpha";
   char *agent_info;
+
+  (void)argc;
+  (void)argv;
 
   init_gpgme (GPGME_PROTOCOL_OpenPGP);
 
@@ -138,7 +141,7 @@ main (int argc, char **argv)
   err = gpgme_op_keylist_end (ctx);
   fail_if_err (err);
 
-  err = gpgme_op_edit (ctx, key, edit_fnc, out, out);
+  err = gpgme_op_interact (ctx, key, 0, interact_fnc, out, out);
   fail_if_err (err);
 
   fputs ("[-- Last response --]\n", stdout);

@@ -124,7 +124,7 @@ parse_version_number (const char *str, int *number)
 /* Parse the version string STR in the format MAJOR.MINOR.MICRO (for
    example, 9.3.2) and return the components in MAJOR, MINOR and MICRO
    as integers.  The function returns the tail of the string that
-   follows the version number.  This might be te empty string if there
+   follows the version number.  This might be the empty string if there
    is nothing following the version number, or a patchlevel.  The
    function returns NULL if the version string is not valid.  */
 static const char *
@@ -196,7 +196,7 @@ _gpgme_compare_versions (const char *my_version,
 const char *
 gpgme_check_version (const char *req_version)
 {
-  char *result;
+  const char *result;
   do_subsystem_inits ();
 
   /* Catch-22: We need to get at least the debug subsystem ready
@@ -307,7 +307,7 @@ _gpgme_get_program_version (const char *const file_name)
   char *mark = NULL;
   int rp[2];
   int nread;
-  char *argv[] = {NULL /* file_name */, "--version", 0};
+  char *argv[] = {NULL /* file_name */, (char*)"--version", 0};
   struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */, -1, 0},
 				   {-1, -1} };
   int status;

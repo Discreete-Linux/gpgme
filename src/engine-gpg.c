@@ -42,6 +42,7 @@
 #include "priv-io.h"
 #include "sema.h"
 #include "debug.h"
+#include "data.h"
 
 #include "engine-backend.h"
 
@@ -78,6 +79,7 @@ typedef gpgme_error_t (*colon_preprocessor_t) (char *line, char **rline);
 struct engine_gpg
 {
   char *file_name;
+  char *version;
 
   char *lc_messages;
   char *lc_ctype;
@@ -95,6 +97,8 @@ struct engine_gpg
     int eof;
     engine_status_handler_t fnc;
     void *fnc_value;
+    gpgme_status_cb_t mon_cb;
+    void *mon_cb_value;
     void *tag;
   } status;
 
@@ -202,14 +206,16 @@ close_notify_handler (int fd, void *opaque)
 /* If FRONT is true, push at the front of the list.  Use this for
    options added late in the process.  */
 static gpgme_error_t
-_add_arg (engine_gpg_t gpg, const char *arg, int front, int *arg_locp)
+_add_arg (engine_gpg_t gpg, const char *prefix, const char *arg, size_t arglen,
+          int front, int *arg_locp)
 {
   struct arg_and_data_s *a;
+  size_t prefixlen = prefix? strlen (prefix) : 0;
 
   assert (gpg);
   assert (arg);
 
-  a = malloc (sizeof *a + strlen (arg));
+  a = malloc (sizeof *a + prefixlen + arglen);
   if (!a)
     return gpg_error_from_syserror ();
 
@@ -217,7 +223,10 @@ _add_arg (engine_gpg_t gpg, const char *arg, int front, int *arg_locp)
   a->dup_to = -1;
   a->arg_locp = arg_locp;
 
-  strcpy (a->arg, arg);
+  if (prefixlen)
+    memcpy (a->arg, prefix, prefixlen);
+  memcpy (a->arg + prefixlen, arg, arglen);
+  a->arg[prefixlen + arglen] = 0;
   if (front)
     {
       a->next = gpg->arglist;
@@ -239,24 +248,36 @@ _add_arg (engine_gpg_t gpg, const char *arg, int front, int *arg_locp)
   return 0;
 }
 
+
 static gpgme_error_t
 add_arg_ext (engine_gpg_t gpg, const char *arg, int front)
 {
-  return _add_arg (gpg, arg, front, NULL);
+  return _add_arg (gpg, NULL, arg, strlen (arg), front, NULL);
 }
-
 
 static gpgme_error_t
 add_arg_with_locp (engine_gpg_t gpg, const char *arg, int *locp)
 {
-  return _add_arg (gpg, arg, 0, locp);
+  return _add_arg (gpg, NULL, arg, strlen (arg), 0, locp);
 }
-
 
 static gpgme_error_t
 add_arg (engine_gpg_t gpg, const char *arg)
 {
-  return add_arg_ext (gpg, arg, 0);
+  return _add_arg (gpg, NULL, arg, strlen (arg), 0, NULL);
+}
+
+static gpgme_error_t
+add_arg_pfx (engine_gpg_t gpg, const char *prefix, const char *arg)
+{
+  return _add_arg (gpg, prefix, arg, strlen (arg), 0, NULL);
+}
+
+static gpgme_error_t
+add_arg_len (engine_gpg_t gpg, const char *prefix,
+             const char *arg, size_t arglen)
+{
+  return _add_arg (gpg, prefix, arg, arglen, 0, NULL);
 }
 
 
@@ -290,6 +311,15 @@ add_data (engine_gpg_t gpg, gpgme_data_t data, int dup_to, int inbound)
   gpg->argtail = &a->next;
   return 0;
 }
+
+
+/* Return true if the engine's version is at least VERSION.  */
+static int
+have_gpg_version (engine_gpg_t gpg, const char *version)
+{
+  return _gpgme_compare_versions (gpg->version, version);
+}
+
 
 
 static char *
@@ -386,6 +416,8 @@ gpg_release (void *engine)
 
   if (gpg->file_name)
     free (gpg->file_name);
+  if (gpg->version)
+    free (gpg->version);
 
   if (gpg->lc_messages)
     free (gpg->lc_messages);
@@ -414,13 +446,15 @@ gpg_release (void *engine)
 
 
 static gpgme_error_t
-gpg_new (void **engine, const char *file_name, const char *home_dir)
+gpg_new (void **engine, const char *file_name, const char *home_dir,
+         const char *version)
 {
   engine_gpg_t gpg;
   gpgme_error_t rc = 0;
   char *dft_display = NULL;
   char dft_ttyname[64];
   char *dft_ttytype = NULL;
+  char *env_tty = NULL;
 
   gpg = calloc (1, sizeof *gpg);
   if (!gpg)
@@ -430,6 +464,16 @@ gpg_new (void **engine, const char *file_name, const char *home_dir)
     {
       gpg->file_name = strdup (file_name);
       if (!gpg->file_name)
+	{
+	  rc = gpg_error_from_syserror ();
+	  goto leave;
+	}
+    }
+
+  if (version)
+    {
+      gpg->version = strdup (version);
+      if (!gpg->version)
 	{
 	  rc = gpg_error_from_syserror ();
 	  goto leave;
@@ -517,11 +561,20 @@ gpg_new (void **engine, const char *file_name, const char *home_dir)
 	goto leave;
     }
 
-  if (isatty (1))
+  rc = _gpgme_getenv ("GPG_TTY", &env_tty);
+  if (isatty (1) || env_tty || rc)
     {
-      int err;
+      int err = 0;
 
-      err = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
+      if (rc)
+        goto leave;
+      else if (env_tty)
+        {
+          snprintf (dft_ttyname, sizeof (dft_ttyname), "%s", env_tty);
+          free (env_tty);
+        }
+      else
+        err = ttyname_r (1, dft_ttyname, sizeof (dft_ttyname));
 
       /* Even though isatty() returns 1, ttyname_r() may fail in many
 	 ways, e.g., when /dev/pts is not accessible under chroot.  */
@@ -607,6 +660,17 @@ gpg_set_locale (void *engine, int category, const char *value)
     return gpg_error (GPG_ERR_INV_VALUE);
 
   return 0;
+}
+
+/* This sets a status callback for monitoring status lines before they
+ * are passed to a caller set handler.  */
+static void
+gpg_set_status_cb (void *engine, gpgme_status_cb_t cb, void *cb_value)
+{
+  engine_gpg_t gpg = engine;
+
+  gpg->status.mon_cb = cb;
+  gpg->status.mon_cb_value = cb_value;
 }
 
 
@@ -829,7 +893,7 @@ build_argv (engine_gpg_t gpg, const char *pgmname)
       argc++;
     }
 
-  if (gpg->pinentry_mode)
+  if (gpg->pinentry_mode && have_gpg_version (gpg, "2.1.0"))
     {
       const char *s = NULL;
       switch (gpg->pinentry_mode)
@@ -1019,6 +1083,7 @@ read_status (engine_gpg_t gpg)
   size_t bufsize = gpg->status.bufsize;
   char *buffer = gpg->status.buffer;
   size_t readpos = gpg->status.readpos;
+  gpgme_error_t err;
 
   assert (buffer);
   if (bufsize - readpos < 256)
@@ -1037,15 +1102,20 @@ read_status (engine_gpg_t gpg)
 
   if (!nread)
     {
+      err = 0;
       gpg->status.eof = 1;
+      if (gpg->status.mon_cb)
+        err = gpg->status.mon_cb (gpg->status.mon_cb_value, "", "");
       if (gpg->status.fnc)
-	{
-	  gpgme_error_t err;
-	  err = gpg->status.fnc (gpg->status.fnc_value, GPGME_STATUS_EOF, "");
-	  if (err)
-	    return err;
-	}
-      return 0;
+        {
+          char emptystring[1] = {0};
+          err = gpg->status.fnc (gpg->status.fnc_value,
+                                 GPGME_STATUS_EOF, emptystring);
+          if (gpg_err_code (err) == GPG_ERR_FALSE)
+            err = 0; /* Drop special error code.  */
+        }
+
+      return err;
     }
 
   while (nread > 0)
@@ -1071,6 +1141,15 @@ read_status (engine_gpg_t gpg)
 		    *rest++ = 0;
 
 		  r = _gpgme_parse_status (buffer + 9);
+                  if (gpg->status.mon_cb && r != GPGME_STATUS_PROGRESS)
+                    {
+                      /* Note that we call the monitor even if we do
+                       * not know the status code (r < 0).  */
+                      err = gpg->status.mon_cb (gpg->status.mon_cb_value,
+                                                buffer + 9, rest);
+                      if (err)
+                        return err;
+                    }
 		  if (r >= 0)
 		    {
 		      if (gpg->cmd.used
@@ -1099,9 +1178,10 @@ read_status (engine_gpg_t gpg)
                         }
 		      else if (gpg->status.fnc)
 			{
-			  gpgme_error_t err;
 			  err = gpg->status.fnc (gpg->status.fnc_value,
 						 r, rest);
+                          if (gpg_err_code (err) == GPG_ERR_FALSE)
+                            err = 0; /* Drop special error code.  */
 			  if (err)
 			    return err;
                         }
@@ -1438,6 +1518,35 @@ start (engine_gpg_t gpg)
 }
 
 
+/* Add the --input-size-hint option if requested.  */
+static gpgme_error_t
+add_input_size_hint (engine_gpg_t gpg, gpgme_data_t data)
+{
+  gpgme_error_t err;
+  gpgme_off_t value = _gpgme_data_get_size_hint (data);
+  char numbuf[50];  /* Large enough for even 2^128 in base-10.  */
+  char *p;
+
+  if (!value || !have_gpg_version (gpg, "2.1.15"))
+    return 0;
+
+  err = add_arg (gpg, "--input-size-hint");
+  if (!err)
+    {
+      p = numbuf + sizeof numbuf;
+      *--p = 0;
+      do
+        {
+          *--p = '0' + (value % 10);
+          value /= 10;
+        }
+      while (value);
+      err = add_arg (gpg, p);
+    }
+  return err;
+}
+
+
 static gpgme_error_t
 gpg_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain)
 {
@@ -1453,6 +1562,8 @@ gpg_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain)
     err = add_arg (gpg, "-");
   if (!err)
     err = add_data (gpg, plain, 1, 1);
+  if (!err)
+    err = add_input_size_hint (gpg, ciph);
   if (!err)
     err = add_arg (gpg, "--");
   if (!err)
@@ -1493,6 +1604,8 @@ gpg_passwd (void *engine, gpgme_key_t key, unsigned int flags)
   engine_gpg_t gpg = engine;
   gpgme_error_t err;
 
+  (void)flags;
+
   if (!key || !key->subkeys || !key->subkeys->fpr)
     return gpg_error (GPG_ERR_INV_CERT_OBJ);
 
@@ -1523,7 +1636,8 @@ append_args_from_signers (engine_gpg_t gpg, gpgme_ctx_t ctx /* FIXME */)
 	    err = add_arg (gpg, s);
 	}
       gpgme_key_unref (key);
-      if (err) break;
+      if (err)
+        break;
     }
   return err;
 }
@@ -1672,10 +1786,13 @@ gpg_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
 	     gpgme_data_t plain, gpgme_data_t ciph, int use_armor)
 {
   engine_gpg_t gpg = engine;
-  gpgme_error_t err;
-  int symmetric = !recp;
+  gpgme_error_t err = 0;
 
-  err = add_arg (gpg, symmetric ? "--symmetric" : "--encrypt");
+  if (recp)
+    err = add_arg (gpg, "--encrypt");
+
+  if (!err && ((flags & GPGME_ENCRYPT_SYMMETRIC) || !recp))
+    err = add_arg (gpg, "--symmetric");
 
   if (!err && use_armor)
     err = add_arg (gpg, "--armor");
@@ -1683,7 +1800,11 @@ gpg_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
   if (!err && (flags & GPGME_ENCRYPT_NO_COMPRESS))
     err = add_arg (gpg, "--compress-algo=none");
 
-  if (!symmetric)
+  if (gpgme_data_get_encoding (plain) == GPGME_DATA_ENCODING_MIME
+      && have_gpg_version (gpg, "2.1.14"))
+    err = add_arg (gpg, "--mimemode");
+
+  if (recp)
     {
       /* If we know that all recipients are valid (full or ultimate trust)
 	 we can suppress further checks.  */
@@ -1712,6 +1833,8 @@ gpg_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
 	err = add_arg (gpg, gpgme_data_get_file_name (plain));
     }
   if (!err)
+    err = add_input_size_hint (gpg, plain);
+  if (!err)
     err = add_arg (gpg, "--");
   if (!err)
     err = add_data (gpg, plain, -1, 0);
@@ -1730,10 +1853,13 @@ gpg_encrypt_sign (void *engine, gpgme_key_t recp[],
 		  gpgme_ctx_t ctx /* FIXME */)
 {
   engine_gpg_t gpg = engine;
-  gpgme_error_t err;
-  int symmetric = !recp;
+  gpgme_error_t err = 0;
 
-  err = add_arg (gpg, symmetric ? "--symmetric" : "--encrypt");
+  if (recp)
+    err = add_arg (gpg, "--encrypt");
+
+  if (!err && ((flags & GPGME_ENCRYPT_SYMMETRIC) || !recp))
+    err = add_arg (gpg, "--symmetric");
 
   if (!err)
     err = add_arg (gpg, "--sign");
@@ -1743,7 +1869,11 @@ gpg_encrypt_sign (void *engine, gpgme_key_t recp[],
   if (!err && (flags & GPGME_ENCRYPT_NO_COMPRESS))
     err = add_arg (gpg, "--compress-algo=none");
 
-  if (!symmetric)
+  if (gpgme_data_get_encoding (plain) == GPGME_DATA_ENCODING_MIME
+      && have_gpg_version (gpg, "2.1.14"))
+    err = add_arg (gpg, "--mimemode");
+
+  if (recp)
     {
       /* If we know that all recipients are valid (full or ultimate trust)
 	 we can suppress further checks.  */
@@ -1777,6 +1907,8 @@ gpg_encrypt_sign (void *engine, gpgme_key_t recp[],
       if (!err)
 	err = add_arg (gpg, gpgme_data_get_file_name (plain));
     }
+  if (!err)
+    err = add_input_size_hint (gpg, plain);
   if (!err)
     err = add_arg (gpg, "--");
   if (!err)
@@ -1868,33 +2000,210 @@ gpg_export_ext (void *engine, const char *pattern[], gpgme_export_mode_t mode,
 }
 
 
+
+/* Helper to add algo, usage, and expire to the list of args.  */
 static gpgme_error_t
-gpg_genkey (void *engine, gpgme_data_t help_data, int use_armor,
-	    gpgme_data_t pubkey, gpgme_data_t seckey)
+gpg_add_algo_usage_expire (engine_gpg_t gpg,
+                           const char *algo,
+                           unsigned long expires,
+                           unsigned int flags)
 {
-  engine_gpg_t gpg = engine;
+  gpg_error_t err;
+
+  /* This condition is only required to allow the use of gpg < 2.1.16 */
+  if (algo
+      || (flags & (GPGME_CREATE_SIGN | GPGME_CREATE_ENCR
+                   | GPGME_CREATE_CERT | GPGME_CREATE_AUTH))
+      || expires)
+    {
+      err = add_arg (gpg, algo? algo : "default");
+      if (!err)
+        {
+          char tmpbuf[5*4+1];
+          snprintf (tmpbuf, sizeof tmpbuf, "%s%s%s%s",
+                    (flags & GPGME_CREATE_SIGN)? " sign":"",
+                    (flags & GPGME_CREATE_ENCR)? " encr":"",
+                    (flags & GPGME_CREATE_CERT)? " cert":"",
+                    (flags & GPGME_CREATE_AUTH)? " auth":"");
+          err = add_arg (gpg, *tmpbuf? tmpbuf : "default");
+        }
+      if (!err && expires)
+        {
+          char tmpbuf[8+20];
+          snprintf (tmpbuf, sizeof tmpbuf, "seconds=%lu", expires);
+          err = add_arg (gpg, tmpbuf);
+        }
+    }
+  else
+    err = 0;
+
+  return err;
+}
+
+
+static gpgme_error_t
+gpg_createkey_from_param (engine_gpg_t gpg,
+                          gpgme_data_t help_data, unsigned int extraflags)
+{
   gpgme_error_t err;
 
-  if (!gpg)
-    return gpg_error (GPG_ERR_INV_VALUE);
-
-  /* We need a special mechanism to get the fd of a pipe here, so that
-     we can use this for the %pubring and %secring parameters.  We
-     don't have this yet, so we implement only the adding to the
-     standard keyrings.  */
-  if (pubkey || seckey)
-    return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
-
   err = add_arg (gpg, "--gen-key");
-  if (!err && use_armor)
+  if (!err && (extraflags & GENKEY_EXTRAFLAG_ARMOR))
     err = add_arg (gpg, "--armor");
   if (!err)
     err = add_arg (gpg, "--");
   if (!err)
     err = add_data (gpg, help_data, -1, 0);
+  if (!err)
+    err = start (gpg);
+  return err;
+}
+
+
+static gpgme_error_t
+gpg_createkey (engine_gpg_t gpg,
+               const char *userid, const char *algo,
+               unsigned long expires,
+               unsigned int flags,
+               unsigned int extraflags)
+{
+  gpgme_error_t err;
+
+  err = add_arg (gpg, "--quick-gen-key");
+  if (!err && (extraflags & GENKEY_EXTRAFLAG_ARMOR))
+    err = add_arg (gpg, "--armor");
+  if (!err && (flags & GPGME_CREATE_NOPASSWD))
+    {
+      err = add_arg (gpg, "--passphrase");
+      if (!err)
+        err = add_arg (gpg, "");
+    }
+  if (!err && (flags & GPGME_CREATE_FORCE))
+    err = add_arg (gpg, "--yes");
+  if (!err)
+    err = add_arg (gpg, "--");
+  if (!err)
+    err = add_arg (gpg, userid);
+
+  if (!err)
+    err = gpg_add_algo_usage_expire (gpg, algo, expires, flags);
 
   if (!err)
     err = start (gpg);
+  return err;
+}
+
+
+static gpgme_error_t
+gpg_addkey (engine_gpg_t gpg,
+            const char *algo,
+            unsigned long expires,
+            gpgme_key_t key,
+            unsigned int flags,
+            unsigned int extraflags)
+{
+  gpgme_error_t err;
+
+  if (!key || !key->fpr)
+    return gpg_error (GPG_ERR_INV_ARG);
+
+  err = add_arg (gpg, "--quick-addkey");
+  if (!err && (extraflags & GENKEY_EXTRAFLAG_ARMOR))
+    err = add_arg (gpg, "--armor");
+  if (!err && (flags & GPGME_CREATE_NOPASSWD))
+    {
+      err = add_arg (gpg, "--passphrase");
+      if (!err)
+        err = add_arg (gpg, "");
+    }
+  if (!err)
+    err = add_arg (gpg, "--");
+  if (!err)
+    err = add_arg (gpg, key->fpr);
+
+  if (!err)
+    err = gpg_add_algo_usage_expire (gpg, algo, expires, flags);
+
+  if (!err)
+    err = start (gpg);
+  return err;
+}
+
+
+static gpgme_error_t
+gpg_adduid (engine_gpg_t gpg,
+            gpgme_key_t key,
+            const char *userid,
+            unsigned int extraflags)
+{
+  gpgme_error_t err;
+
+  if (!key || !key->fpr || !userid)
+    return gpg_error (GPG_ERR_INV_ARG);
+
+  if ((extraflags & GENKEY_EXTRAFLAG_REVOKE))
+    err = add_arg (gpg, "--quick-revuid");
+  else
+    err = add_arg (gpg, "--quick-adduid");
+
+  if (!err)
+    err = add_arg (gpg, "--");
+  if (!err)
+    err = add_arg (gpg, key->fpr);
+  if (!err)
+    err = add_arg (gpg, userid);
+
+  if (!err)
+    err = start (gpg);
+  return err;
+}
+
+
+static gpgme_error_t
+gpg_genkey (void *engine,
+            const char *userid, const char *algo,
+            unsigned long reserved, unsigned long expires,
+            gpgme_key_t key, unsigned int flags,
+            gpgme_data_t help_data, unsigned int extraflags,
+	    gpgme_data_t pubkey, gpgme_data_t seckey)
+{
+  engine_gpg_t gpg = engine;
+  gpgme_error_t err;
+
+  (void)reserved;
+
+  if (!gpg)
+    return gpg_error (GPG_ERR_INV_VALUE);
+
+  /* If HELP_DATA is given the use of the old interface
+   * (gpgme_op_genkey) has been requested.  The other modes are:
+   *
+   *  USERID && !KEY          - Create a new keyblock.
+   * !USERID &&  KEY          - Add a new subkey to KEY (gpg >= 2.1.14)
+   *  USERID &&  KEY && !ALGO - Add a new user id to KEY (gpg >= 2.1.14).
+   *
+   */
+  if (help_data)
+    {
+      /* We need a special mechanism to get the fd of a pipe here, so
+         that we can use this for the %pubring and %secring
+         parameters.  We don't have this yet, so we implement only the
+         adding to the standard keyrings.  */
+      if (pubkey || seckey)
+        err = gpg_error (GPG_ERR_NOT_IMPLEMENTED);
+      else
+        err = gpg_createkey_from_param (gpg, help_data, extraflags);
+    }
+  else if (!have_gpg_version (gpg, "2.1.13"))
+    err = gpg_error (GPG_ERR_NOT_SUPPORTED);
+  else if (userid && !key)
+    err = gpg_createkey (gpg, userid, algo, expires, flags, extraflags);
+  else if (!userid && key)
+    err = gpg_addkey (gpg, algo, expires, key, flags, extraflags);
+  else if (userid && key && !algo)
+    err = gpg_adduid (gpg, key, userid, extraflags);
+  else
+    err = gpg_error (GPG_ERR_INV_VALUE);
 
   return err;
 }
@@ -2230,14 +2539,26 @@ gpg_keylist_build_options (engine_gpg_t gpg, int secret_only,
   gpg_error_t err;
 
   err = add_arg (gpg, "--with-colons");
-  if (!err)
-    err = add_arg (gpg, "--fixed-list-mode");
-  if (!err)
-    err = add_arg (gpg, "--with-fingerprint");
-  if (!err)
-    err = add_arg (gpg, "--with-fingerprint");
+
+  /* Since gpg 2.1.15 fingerprints are always printed, thus there is
+   * no more need to explictly request them.  */
+  if (!have_gpg_version (gpg, "2.1.15"))
+    {
+      if (!err)
+        err = add_arg (gpg, "--fixed-list-mode");
+      if (!err)
+        err = add_arg (gpg, "--with-fingerprint");
+      if (!err)
+        err = add_arg (gpg, "--with-fingerprint");
+    }
+
+  if (!err && (mode & GPGME_KEYLIST_MODE_WITH_TOFU)
+      && have_gpg_version (gpg, "2.1.16"))
+    err = add_arg (gpg, "--with-tofu-info");
+
   if (!err && (mode & GPGME_KEYLIST_MODE_WITH_SECRET))
     err = add_arg (gpg, "--with-secret");
+
   if (!err
       && (mode & GPGME_KEYLIST_MODE_SIGS)
       && (mode & GPGME_KEYLIST_MODE_SIG_NOTATIONS))
@@ -2246,6 +2567,7 @@ gpg_keylist_build_options (engine_gpg_t gpg, int secret_only,
       if (!err)
 	err = add_arg (gpg, "show-sig-subpackets=\"20,26\"");
     }
+
   if (!err)
     {
       if ( (mode & GPGME_KEYLIST_MODE_EXTERN) )
@@ -2277,6 +2599,7 @@ gpg_keylist_build_options (engine_gpg_t gpg, int secret_only,
                             ? "--check-sigs" : "--list-keys"));
         }
     }
+
   if (!err)
     err = add_arg (gpg, "--");
 
@@ -2290,6 +2613,8 @@ gpg_keylist (void *engine, const char *pattern, int secret_only,
 {
   engine_gpg_t gpg = engine;
   gpgme_error_t err;
+
+  (void)engine_flags;
 
   err = gpg_keylist_build_options (gpg, secret_only, mode);
 
@@ -2310,6 +2635,8 @@ gpg_keylist_ext (void *engine, const char *pattern[], int secret_only,
   engine_gpg_t gpg = engine;
   gpgme_error_t err;
 
+  (void)engine_flags;
+
   if (reserved)
     return gpg_error (GPG_ERR_INV_VALUE);
 
@@ -2329,12 +2656,119 @@ gpg_keylist_ext (void *engine, const char *pattern[], int secret_only,
 
 
 static gpgme_error_t
+gpg_keysign (void *engine, gpgme_key_t key, const char *userid,
+             unsigned long expire, unsigned int flags,
+             gpgme_ctx_t ctx)
+{
+  engine_gpg_t gpg = engine;
+  gpgme_error_t err;
+  const char *s;
+
+  if (!key || !key->fpr)
+    return gpg_error (GPG_ERR_INV_ARG);
+
+  if (!have_gpg_version (gpg, "2.1.12"))
+    return gpg_error (GPG_ERR_NOT_SUPPORTED);
+
+  if ((flags & GPGME_KEYSIGN_LOCAL))
+    err = add_arg (gpg, "--quick-lsign-key");
+  else
+    err = add_arg (gpg, "--quick-sign-key");
+
+  if (!err)
+    err = append_args_from_signers (gpg, ctx);
+
+  /* If an expiration time has been given use that.  If none has been
+   * given the default from gpg.conf is used.  To make sure not to set
+   * an expiration time at all the flag GPGME_KEYSIGN_NOEXPIRE can be
+   * used.  */
+  if (!err && (expire || (flags & GPGME_KEYSIGN_NOEXPIRE)))
+    {
+      char tmpbuf[8+20];
+
+      if ((flags & GPGME_KEYSIGN_NOEXPIRE))
+        expire = 0;
+      snprintf (tmpbuf, sizeof tmpbuf, "seconds=%lu", expire);
+      err = add_arg (gpg, "--default-cert-expire");
+      if (!err)
+        err = add_arg (gpg, tmpbuf);
+    }
+
+  if (!err)
+    err = add_arg (gpg, "--");
+
+  if (!err)
+    err = add_arg (gpg, key->fpr);
+  if (!err && userid)
+    {
+      if ((flags & GPGME_KEYSIGN_LFSEP))
+        {
+          for (; !err && (s = strchr (userid, '\n')); userid = s + 1)
+            if ((s - userid))
+              err = add_arg_len (gpg, "=", userid, s - userid);
+          if (!err && *userid)
+            err = add_arg_pfx (gpg, "=", userid);
+        }
+      else
+        err = add_arg_pfx (gpg, "=", userid);
+    }
+
+  if (!err)
+    err = start (gpg);
+
+  return err;
+}
+
+
+static gpgme_error_t
+gpg_tofu_policy (void *engine, gpgme_key_t key, gpgme_tofu_policy_t policy)
+{
+  engine_gpg_t gpg = engine;
+  gpgme_error_t err;
+  const char *policystr = NULL;
+
+  if (!key || !key->fpr)
+    return gpg_error (GPG_ERR_INV_ARG);
+
+  switch (policy)
+    {
+    case GPGME_TOFU_POLICY_NONE:                           break;
+    case GPGME_TOFU_POLICY_AUTO:    policystr = "auto";    break;
+    case GPGME_TOFU_POLICY_GOOD:    policystr = "good";    break;
+    case GPGME_TOFU_POLICY_BAD:     policystr = "bad";     break;
+    case GPGME_TOFU_POLICY_ASK:     policystr = "ask";     break;
+    case GPGME_TOFU_POLICY_UNKNOWN: policystr = "unknown"; break;
+    }
+  if (!policystr)
+    return gpg_error (GPG_ERR_INV_VALUE);
+
+  if (!have_gpg_version (gpg, "2.1.10"))
+    return gpg_error (GPG_ERR_NOT_SUPPORTED);
+
+  err = add_arg (gpg, "--tofu-policy");
+  if (!err)
+    err = add_arg (gpg, "--");
+  if (!err)
+    err = add_arg (gpg, policystr);
+  if (!err)
+    err = add_arg (gpg, key->fpr);
+
+  if (!err)
+    err = start (gpg);
+
+  return err;
+}
+
+
+static gpgme_error_t
 gpg_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
 	  gpgme_sig_mode_t mode, int use_armor, int use_textmode,
 	  int include_certs, gpgme_ctx_t ctx /* FIXME */)
 {
   engine_gpg_t gpg = engine;
   gpgme_error_t err;
+
+  (void)include_certs;
 
   if (mode == GPGME_SIG_MODE_CLEAR)
     err = add_arg (gpg, "--clearsign");
@@ -2345,8 +2779,14 @@ gpg_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
 	err = add_arg (gpg, "--detach");
       if (!err && use_armor)
 	err = add_arg (gpg, "--armor");
-      if (!err && use_textmode)
-	err = add_arg (gpg, "--textmode");
+      if (!err)
+        {
+          if (gpgme_data_get_encoding (in) == GPGME_DATA_ENCODING_MIME
+              && have_gpg_version (gpg, "2.1.14"))
+            err = add_arg (gpg, "--mimemode");
+          else if (use_textmode)
+            err = add_arg (gpg, "--textmode");
+        }
     }
 
   if (!err)
@@ -2363,6 +2803,8 @@ gpg_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
     }
 
   /* Tell the gpg object about the data.  */
+  if (!err)
+    err = add_input_size_hint (gpg, in);
   if (!err)
     err = add_arg (gpg, "--");
   if (!err)
@@ -2409,10 +2851,11 @@ gpg_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
   if (plaintext)
     {
       /* Normal or cleartext signature.  */
-
       err = add_arg (gpg, "--output");
       if (!err)
 	err = add_arg (gpg, "-");
+      if (!err)
+        err = add_input_size_hint (gpg, sig);
       if (!err)
 	err = add_arg (gpg, "--");
       if (!err)
@@ -2423,6 +2866,8 @@ gpg_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
   else
     {
       err = add_arg (gpg, "--verify");
+      if (!err)
+        err = add_input_size_hint (gpg, signed_text);
       if (!err)
 	err = add_arg (gpg, "--");
       if (!err)
@@ -2470,6 +2915,7 @@ struct engine_ops _gpgme_engine_ops_gpg =
     /* Member functions.  */
     gpg_release,
     NULL,				/* reset */
+    gpg_set_status_cb,
     gpg_set_status_handler,
     gpg_set_command_handler,
     gpg_set_colon_line_handler,
@@ -2487,6 +2933,8 @@ struct engine_ops _gpgme_engine_ops_gpg =
     gpg_import,
     gpg_keylist,
     gpg_keylist_ext,
+    gpg_keysign,
+    gpg_tofu_policy,    /* tofu_policy */
     gpg_sign,
     gpg_trustlist,
     gpg_verify,

@@ -317,6 +317,72 @@ _gpgme_encode_percent_string (const char *src, char **destp, size_t len)
 }
 
 
+/* Split a string into space delimited fields and remove leading and
+ * trailing spaces from each field.  A pointer to the each field is
+ * stored in ARRAY.  Stop splitting at ARRAYSIZE fields.  The function
+ * modifies STRING.  The number of parsed fields is returned.
+ */
+int
+_gpgme_split_fields (char *string, char **array, int arraysize)
+{
+  int n = 0;
+  char *p, *pend;
+
+  for (p = string; *p == ' '; p++)
+    ;
+  do
+    {
+      if (n == arraysize)
+        break;
+      array[n++] = p;
+      pend = strchr (p, ' ');
+      if (!pend)
+        break;
+      *pend++ = 0;
+      for (p = pend; *p == ' '; p++)
+        ;
+    }
+  while (*p);
+
+  return n;
+}
+
+/* Convert the field STRING into an unsigned long value.  Check for
+ * trailing garbage.  */
+gpgme_error_t
+_gpgme_strtoul_field (const char *string, unsigned long *result)
+{
+  char *endp;
+
+  gpg_err_set_errno (0);
+  *result = strtoul (string, &endp, 0);
+  if (errno)
+    return gpg_error_from_syserror ();
+  if (endp == string || *endp)
+    return gpg_error (GPG_ERR_INV_VALUE);
+  return 0;
+}
+
+
+/* Convert STRING into an offset value.  Note that this functions only
+ * allows for a base-10 length.  This function is similar to atoi()
+ * and thus there is no error checking.  */
+gpgme_off_t
+_gpgme_string_to_off (const char *string)
+{
+  gpgme_off_t value = 0;
+
+  while (*string == ' ' || *string == '\t')
+    string++;
+  for (; *string >= '0' && *string <= '9'; string++)
+    {
+      value *= 10;
+      value += atoi_1 (string);
+    }
+  return value;
+}
+
+
 #ifdef HAVE_W32_SYSTEM
 static time_t
 _gpgme_timegm (struct tm *tm)
@@ -427,6 +493,7 @@ _gpgme_map_pk_algo (int algo, gpgme_protocol_t protocol)
         case 18: algo = GPGME_PK_ECDH; break;
         case 19: algo = GPGME_PK_ECDSA; break;
         case 20: break;
+        case 22: algo = GPGME_PK_EDDSA; break;
         default: algo = 0; break; /* Unknown.  */
         }
     }

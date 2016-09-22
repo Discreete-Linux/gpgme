@@ -38,7 +38,7 @@ typedef enum
     OPDATA_DECRYPT, OPDATA_SIGN, OPDATA_ENCRYPT, OPDATA_PASSPHRASE,
     OPDATA_IMPORT, OPDATA_GENKEY, OPDATA_KEYLIST, OPDATA_EDIT,
     OPDATA_VERIFY, OPDATA_TRUSTLIST, OPDATA_ASSUAN, OPDATA_VFS_MOUNT,
-    OPDATA_PASSWD, OPDATA_EXPORT
+    OPDATA_PASSWD, OPDATA_EXPORT, OPDATA_KEYSIGN, OPDATA_TOFU_POLICY
   } ctx_op_data_id_t;
 
 
@@ -100,6 +100,15 @@ struct gpgme_context
 
   /* True if offline mode should be used.  */
   unsigned int offline : 1;
+
+  /* True if a status callback shall be called for nearly all status
+   * lines.  */
+  unsigned int full_status : 1;
+
+  /* The Tofu info has a human readable string which is presented to
+   * the user in a directly usable format.  By enabling this flag the
+   * unmodified string, as received form gpg, will be returned.  */
+  unsigned int raw_description : 1;
 
   /* Flags for keylist mode.  */
   gpgme_keylist_mode_t keylist_mode;

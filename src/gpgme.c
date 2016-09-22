@@ -1,7 +1,7 @@
 /* gpgme.c - GnuPG Made Easy.
    Copyright (C) 2000 Werner Koch (dd9jn)
    Copyright (C) 2001, 2002, 2003, 2004, 2005, 2007, 2012,
-                 2014 g10 Code GmbH
+                 2014, 2015 g10 Code GmbH
 
    This file is part of GPGME.
 
@@ -71,12 +71,49 @@ gpgme_set_global_flag (const char *name, const char *value)
       _gpgme_dirinfo_disable_gpgconf ();
       return 0;
     }
+  else if (!strcmp (name, "require-gnupg"))
+    return _gpgme_set_engine_minimal_version (value);
   else if (!strcmp (name, "gpgconf-name"))
     return _gpgme_set_default_gpgconf_name (value);
   else if (!strcmp (name, "gpg-name"))
     return _gpgme_set_default_gpg_name (value);
+  else if (!strcmp (name, "w32-inst-dir"))
+    return _gpgme_set_override_inst_dir (value);
   else
     return -1;
+}
+
+
+/* Set the flag NAME for CTX to VALUE.  The supported flags are:
+ *
+ * - full-status :: With a value of "1" the status callback set by
+ *                  gpgme_set_status_cb returns all status lines
+ *                  except for PROGRESS lines.  With the default of
+ *                  "0" the status callback is only called in certain
+ *                  situations.
+ */
+gpgme_error_t
+gpgme_set_ctx_flag (gpgme_ctx_t ctx, const char *name, const char *value)
+{
+  int abool;
+
+  if (!ctx || !name || !value)
+    return gpg_error (GPG_ERR_INV_VALUE);
+
+  abool = *value? !!atoi (value) : 0;
+
+  if (!strcmp (name, "full-status"))
+    {
+      ctx->full_status = abool;
+    }
+  else if (!strcmp (name, "raw-description"))
+    {
+      ctx->raw_description = abool;
+    }
+  else
+    return gpg_error (GPG_ERR_UNKNOWN_NAME);
+
+  return 0;
 }
 
 
@@ -91,7 +128,7 @@ gpgme_new (gpgme_ctx_t *r_ctx)
   TRACE_BEG (DEBUG_CTX, "gpgme_new", r_ctx);
 
   if (_gpgme_selftest)
-    return TRACE_ERR (gpgme_error (_gpgme_selftest));
+    return TRACE_ERR (_gpgme_selftest);
 
   if (!r_ctx)
     return TRACE_ERR (gpg_error (GPG_ERR_INV_VALUE));
@@ -994,41 +1031,70 @@ gpgme_sig_notation_get (gpgme_ctx_t ctx)
   return ctx->sig_notations;
 }
 
+
 
+/* Return a public key algorithm string made of the algorithm and size
+   or the curve name.  May return NULL on error.  Caller must free the
+   result using gpgme_free.  */
+char *
+gpgme_pubkey_algo_string (gpgme_subkey_t subkey)
+{
+  const char *prefix = NULL;
+  char *result;
+
+  if (!subkey)
+    {
+      gpg_err_set_errno (EINVAL);
+      return NULL;
+    }
+
+  switch (subkey->pubkey_algo)
+    {
+    case GPGME_PK_RSA:
+    case GPGME_PK_RSA_E:
+    case GPGME_PK_RSA_S: prefix = "rsa"; break;
+    case GPGME_PK_ELG_E: prefix = "elg"; break;
+    case GPGME_PK_DSA:	 prefix = "dsa"; break;
+    case GPGME_PK_ELG:   prefix = "xxx"; break;
+    case GPGME_PK_ECC:
+    case GPGME_PK_ECDH:
+    case GPGME_PK_ECDSA:
+    case GPGME_PK_EDDSA: prefix = "";    break;
+    }
+
+  if (prefix && *prefix)
+    {
+      char buffer[40];
+      snprintf (buffer, sizeof buffer, "%s%u", prefix, subkey->length);
+      result = strdup (buffer);
+    }
+  else if (prefix && subkey->curve && *subkey->curve)
+    result = strdup (subkey->curve);
+  else if (prefix)
+    result =  strdup ("E_error");
+  else
+    result = strdup  ("unknown");
+
+  return result;
+}
+
+
 const char *
 gpgme_pubkey_algo_name (gpgme_pubkey_algo_t algo)
 {
   switch (algo)
     {
-    case GPGME_PK_RSA:
-      return "RSA";
-
-    case GPGME_PK_RSA_E:
-      return "RSA-E";
-
-    case GPGME_PK_RSA_S:
-      return "RSA-S";
-
-    case GPGME_PK_ELG_E:
-      return "ELG-E";
-
-    case GPGME_PK_DSA:
-      return "DSA";
-
-    case GPGME_PK_ECC:
-      return "ECC";
-
-    case GPGME_PK_ELG:
-      return "ELG";
-
-    case GPGME_PK_ECDSA:
-      return "ECDSA";
-
-    case GPGME_PK_ECDH:
-      return "ECDH";
-
-    default:
-      return NULL;
+    case GPGME_PK_RSA:   return "RSA";
+    case GPGME_PK_RSA_E: return "RSA-E";
+    case GPGME_PK_RSA_S: return "RSA-S";
+    case GPGME_PK_ELG_E: return "ELG-E";
+    case GPGME_PK_DSA:   return "DSA";
+    case GPGME_PK_ECC:   return "ECC";
+    case GPGME_PK_ELG:   return "ELG";
+    case GPGME_PK_ECDSA: return "ECDSA";
+    case GPGME_PK_ECDH:  return "ECDH";
+    case GPGME_PK_EDDSA: return "EdDSA";
+    default:             return NULL;
     }
 }
 

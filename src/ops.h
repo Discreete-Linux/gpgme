@@ -57,9 +57,15 @@ gpgme_error_t _gpgme_op_data_lookup (gpgme_ctx_t ctx, ctx_op_data_id_t type,
 /* Prepare a new operation on CTX.  */
 gpgme_error_t _gpgme_op_reset (gpgme_ctx_t ctx, int synchronous);
 
+/* Parse the KEY_CONSIDERED status line.  */
+gpgme_error_t _gpgme_parse_key_considered (const char *args,
+                                           char **r_fpr, unsigned int *r_flags);
+
 /* Parse the INV_RECP status line in ARGS and return the result in
    KEY.  */
-gpgme_error_t _gpgme_parse_inv_recp (char *args, gpgme_invalid_key_t *key);
+gpgme_error_t _gpgme_parse_inv_recp (char *args, int for_signing,
+                                     const char *kc_fpr, unsigned int kc_flags,
+                                     gpgme_invalid_key_t *key);
 
 /* Parse the PLAINTEXT status line in ARGS and return the result in
    FILENAMEP.  */
@@ -132,8 +138,10 @@ gpgme_error_t _gpgme_progress_status_handler (void *priv,
 gpgme_error_t _gpgme_key_new (gpgme_key_t *r_key);
 gpgme_error_t _gpgme_key_add_subkey (gpgme_key_t key,
 				     gpgme_subkey_t *r_subkey);
-gpgme_error_t _gpgme_key_append_name (gpgme_key_t key, const char *src, int convert);
+gpgme_error_t _gpgme_key_append_name (gpgme_key_t key,
+                                      const char *src, int convert);
 gpgme_key_sig_t _gpgme_key_add_sig (gpgme_key_t key, char *src);
+
 
 
 /* From keylist.c.  */

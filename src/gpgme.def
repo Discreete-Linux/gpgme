@@ -223,5 +223,26 @@ EXPORTS
 
     gpgme_set_status_cb                   @167
     gpgme_get_status_cb                   @168
+
+    gpgme_pubkey_algo_string              @169
+    gpgme_set_ctx_flag                    @170
+
+    gpgme_data_set_flag                   @171
+
+    gpgme_op_createkey_start              @172
+    gpgme_op_createkey                    @173
+    gpgme_op_createsubkey_start           @174
+    gpgme_op_createsubkey                 @175
+    gpgme_op_adduid_start                 @176
+    gpgme_op_adduid                       @177
+    gpgme_op_revuid_start                 @178
+    gpgme_op_revuid                       @179
+    gpgme_op_keysign_start                @180
+    gpgme_op_keysign                      @181
+    gpgme_op_tofu_policy_start            @182
+    gpgme_op_tofu_policy                  @183
+    gpgme_op_interact_start               @184
+    gpgme_op_interact                     @185
+
 ; END
 

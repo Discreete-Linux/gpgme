@@ -63,6 +63,10 @@ static struct engine_ops *engine_ops[] =
 static gpgme_engine_info_t engine_info;
 DEFINE_STATIC_LOCK (engine_info_lock);
 
+/* If non-NULL, the minimal version required for all engines.  */
+static char *engine_minimal_version;
+
+
 
 /* Get the file name of the engine for PROTOCOL.  */
 static const char *
@@ -93,7 +97,8 @@ engine_get_home_dir (gpgme_protocol_t proto)
 
 
 /* Get a malloced string containing the version number of the engine
-   for PROTOCOL.  */
+ * for PROTOCOL.  If this function returns NULL for a valid protocol,
+ * it should be assumed that the engine is a pseudo engine. */
 static char *
 engine_get_version (gpgme_protocol_t proto, const char *file_name)
 {
@@ -107,7 +112,8 @@ engine_get_version (gpgme_protocol_t proto, const char *file_name)
 }
 
 
-/* Get the required version number of the engine for PROTOCOL.  */
+/* Get the required version number of the engine for PROTOCOL.  This
+ * may be NULL. */
 static const char *
 engine_get_req_version (gpgme_protocol_t proto)
 {
@@ -164,14 +170,34 @@ _gpgme_engine_info_release (gpgme_engine_info_t info)
     {
       gpgme_engine_info_t next_info = info->next;
 
-      assert (info->file_name);
-      free (info->file_name);
+      if (info->file_name)
+        free (info->file_name);
       if (info->home_dir)
 	free (info->home_dir);
       if (info->version)
 	free (info->version);
       free (info);
       info = next_info;
+    }
+}
+
+
+/* This is an internal function to set a mimimal required version.
+ * This function must only be called by gpgme_set_global_flag.
+ * Returns 0 on success.  */
+int
+_gpgme_set_engine_minimal_version (const char *value)
+{
+  free (engine_minimal_version);
+  if (value)
+    {
+      engine_minimal_version = strdup (value);
+      return !engine_minimal_version;
+    }
+  else
+    {
+      engine_minimal_version = NULL;
+      return 0;
     }
 }
 
@@ -203,6 +229,7 @@ gpgme_get_engine_info (gpgme_engine_info_t *info)
 	{
 	  const char *ofile_name = engine_get_file_name (proto_list[proto]);
 	  const char *ohome_dir  = engine_get_home_dir (proto_list[proto]);
+          char *version = engine_get_version (proto_list[proto], NULL);
 	  char *file_name;
 	  char *home_dir;
 
@@ -222,9 +249,28 @@ gpgme_get_engine_info (gpgme_engine_info_t *info)
           else
             home_dir = NULL;
 
-	  *lastp = malloc (sizeof (*engine_info));
+	  *lastp = calloc (1, sizeof (*engine_info));
           if (!*lastp && !err)
             err = gpg_error_from_syserror ();
+
+          /* Check against the optional minimal engine version.  */
+          if (!err && version && engine_minimal_version
+              && !_gpgme_compare_versions (version, engine_minimal_version))
+            {
+#if GPG_ERROR_VERSION_NUMBER < 0x011900 /* 1.25 */
+              err = gpg_error (GPG_ERR_NO_ENGINE);
+#else
+              err = gpg_error (GPG_ERR_ENGINE_TOO_OLD);
+#endif
+            }
+
+          /* Now set the dummy version for pseudo engines.  */
+          if (!err && !version)
+            {
+              version = strdup ("1.0.0");
+              if (!version)
+                err = gpg_error_from_syserror ();
+            }
 
 	  if (err)
 	    {
@@ -235,6 +281,8 @@ gpgme_get_engine_info (gpgme_engine_info_t *info)
 		free (file_name);
 	      if (home_dir)
 		free (home_dir);
+	      if (version)
+		free (version);
 
 	      UNLOCK (engine_info_lock);
 	      return err;
@@ -243,8 +291,10 @@ gpgme_get_engine_info (gpgme_engine_info_t *info)
 	  (*lastp)->protocol = proto_list[proto];
 	  (*lastp)->file_name = file_name;
 	  (*lastp)->home_dir = home_dir;
-	  (*lastp)->version = engine_get_version (proto_list[proto], NULL);
+	  (*lastp)->version = version;
 	  (*lastp)->req_version = engine_get_req_version (proto_list[proto]);
+	  if (!(*lastp)->req_version)
+            (*lastp)->req_version = "1.0.0"; /* Dummy for pseudo engines. */
 	  (*lastp)->next = NULL;
 	  lastp = &(*lastp)->next;
 	}
@@ -353,6 +403,7 @@ _gpgme_set_engine_info (gpgme_engine_info_t info, gpgme_protocol_t proto,
 {
   char *new_file_name;
   char *new_home_dir;
+  char *new_version;
 
   /* FIXME: Use some PROTO_MAX definition.  */
   if (proto > DIM (engine_ops))
@@ -401,6 +452,17 @@ _gpgme_set_engine_info (gpgme_engine_info_t info, gpgme_protocol_t proto,
         new_home_dir = NULL;
     }
 
+  new_version = engine_get_version (proto, new_file_name);
+  if (!new_version)
+    {
+      new_version = strdup ("1.0.0"); /* Fake one for dummy entries.  */
+      if (!new_version)
+        {
+          free (new_file_name);
+          free (new_home_dir);
+        }
+    }
+
   /* Remove the old members.  */
   assert (info->file_name);
   free (info->file_name);
@@ -412,7 +474,7 @@ _gpgme_set_engine_info (gpgme_engine_info_t info, gpgme_protocol_t proto,
   /* Install the new members.  */
   info->file_name = new_file_name;
   info->home_dir = new_home_dir;
-  info->version = engine_get_version (proto, new_file_name);
+  info->version = new_version;
 
   return 0;
 }
@@ -463,7 +525,8 @@ _gpgme_engine_new (gpgme_engine_info_t info, engine_t *r_engine)
     {
       gpgme_error_t err;
       err = (*engine->ops->new) (&engine->engine,
-				 info->file_name, info->home_dir);
+				 info->file_name, info->home_dir,
+                                 info->version);
       if (err)
 	{
 	  free (engine);
@@ -500,6 +563,21 @@ _gpgme_engine_release (engine_t engine)
   if (engine->ops->release)
     (*engine->ops->release) (engine->engine);
   free (engine);
+}
+
+
+/* Set a status callback which is used to monitor the status values
+ * before they are passed to a handler set with
+ * _gpgme_engine_set_status_handler.  */
+void
+_gpgme_engine_set_status_cb (engine_t engine,
+                             gpgme_status_cb_t cb, void *cb_value)
+{
+  if (!engine)
+    return;
+
+  if (engine->ops->set_status_cb)
+    (*engine->ops->set_status_cb) (engine->engine, cb, cb_value);
 }
 
 
@@ -695,9 +773,13 @@ _gpgme_engine_op_export_ext (engine_t engine, const char *pattern[],
 
 
 gpgme_error_t
-_gpgme_engine_op_genkey (engine_t engine, gpgme_data_t help_data,
-			 int use_armor, gpgme_data_t pubkey,
-			 gpgme_data_t seckey)
+_gpgme_engine_op_genkey (engine_t engine,
+                         const char *userid, const char *algo,
+                         unsigned long reserved, unsigned long expires,
+                         gpgme_key_t key, unsigned int flags,
+                         gpgme_data_t help_data,
+			 unsigned int extraflags,
+                         gpgme_data_t pubkey, gpgme_data_t seckey)
 {
   if (!engine)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -705,8 +787,40 @@ _gpgme_engine_op_genkey (engine_t engine, gpgme_data_t help_data,
   if (!engine->ops->genkey)
     return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
 
-  return (*engine->ops->genkey) (engine->engine, help_data, use_armor,
+  return (*engine->ops->genkey) (engine->engine,
+                                 userid, algo, reserved, expires, key, flags,
+                                 help_data, extraflags,
 				 pubkey, seckey);
+}
+
+
+gpgme_error_t
+_gpgme_engine_op_keysign (engine_t engine, gpgme_key_t key, const char *userid,
+                          unsigned long expires, unsigned int flags,
+                          gpgme_ctx_t ctx)
+{
+  if (!engine)
+    return gpg_error (GPG_ERR_INV_VALUE);
+
+  if (!engine->ops->keysign)
+    return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
+
+  return (*engine->ops->keysign) (engine->engine,
+                                  key, userid, expires, flags, ctx);
+}
+
+
+gpgme_error_t
+_gpgme_engine_op_tofu_policy (engine_t engine,
+                              gpgme_key_t key,  gpgme_tofu_policy_t policy)
+{
+  if (!engine)
+    return gpg_error (GPG_ERR_INV_VALUE);
+
+  if (!engine->ops->tofu_policy)
+    return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
+
+  return (*engine->ops->tofu_policy) (engine->engine, key, policy);
 }
 
 
