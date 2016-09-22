@@ -1,0 +1,7 @@
+debian/tmp/usr/lib/python2.7/site-packages/pyme*.egg-info usr/lib/python2.7/dist-packages
+debian/tmp/usr/lib/python2.7/site-packages/pyme/*.py usr/lib/python2.7/dist-packages/pyme
+debian/tmp/usr/lib/python2.7/site-packages/pyme/_gpgme*.so usr/lib/python2.7/dist-packages/pyme
+debian/tmp/usr/lib/python2.7/site-packages/pyme/constants/*.py usr/lib/python2.7/dist-packages/pyme/constants
+debian/tmp/usr/lib/python2.7/site-packages/pyme/constants/data/*.py usr/lib/python2.7/dist-packages/pyme/constants/data
+debian/tmp/usr/lib/python2.7/site-packages/pyme/constants/keylist/*.py usr/lib/python2.7/dist-packages/pyme/constants/keylist
+debian/tmp/usr/lib/python2.7/site-packages/pyme/constants/sig/*.py usr/lib/python2.7/dist-packages/pyme/constants/sig

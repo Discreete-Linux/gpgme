@@ -3,12 +3,12 @@
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
 
 %:
-	dh $@ --with autoreconf --parallel
+	dh $@ --with autoreconf,python2,python3 --parallel
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
 	    --enable-static \
-	    --enable-languages=no \
+	    --enable-languages=python \
 	    --infodir=/usr/share/info
 
 override_dh_install:
