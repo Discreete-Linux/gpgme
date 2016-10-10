@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
+export QT_SELECT := qt5
 
 %:
 	dh $@ --with autoreconf,python2,python3 --parallel
@@ -8,7 +9,7 @@ export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
 override_dh_auto_configure:
 	dh_auto_configure -- \
 	    --enable-static \
-	    --enable-languages=python \
+	    --enable-languages="python cpp qt" \
 	    --infodir=/usr/share/info
 
 override_dh_install:

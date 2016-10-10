@@ -1,1 +1,2 @@
-usr/lib/*/lib*.so.*
+usr/lib/*/libgpgme-*.so.*
+usr/lib/*/libgpgme.so.*
