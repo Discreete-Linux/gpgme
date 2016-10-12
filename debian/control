@@ -36,6 +36,7 @@ Depends:
  libgpg-error-dev,
  libgpgme11 (= ${binary:Version}),
  ${misc:Depends},
+ ${shlibs:Depends},
 Breaks:
  libgpgme11-dev,
 Replaces:
@@ -146,8 +147,11 @@ Package: libgpgmepp-dev
 Section: libdevel
 Architecture: any
 Depends:
+ libgpgmepp6 (= ${binary:Version}),
+ libqgpgme6 (= ${binary:Version}),
+ qtbase5-dev,
  ${misc:Depends},
- qt5-base,
+ ${shlibs:Depends},
 Breaks:
  kdepimlibs5-dev (<= 4:4.14.10-5),
 Replaces:
