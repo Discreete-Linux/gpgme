@@ -7,7 +7,7 @@ Uploaders:
  Daniel Kahn Gillmor <dkg@fifthhorseman.net>,
 Build-Depends:
  automake (>= 1.14),
- debhelper (>> 9~),
+ debhelper (>= 10~),
  dh-autoreconf,
  dh-python,
  gnupg-agent,
