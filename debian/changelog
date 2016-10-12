@@ -1,3 +1,14 @@
+gpgme1.0 (1.7.0-3) experimental; urgency=medium
+
+  * improve dependencies for libgpgmepp-dev package
+  * fix Vcs-Browser link
+  * fix debian/watch
+  * Add an epoch to python-pyme
+  * ship documentation as well in an arch:all package
+  * avoid irreproducible documentation
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Wed, 12 Oct 2016 18:46:16 -0400
+
 gpgme1.0 (1.7.0-2) experimental; urgency=medium
 
   [ Daniel Kahn Gillmor ]
