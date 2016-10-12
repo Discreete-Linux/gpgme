@@ -22,6 +22,13 @@ Build-Depends:
  scdaemon,
  swig,
  texinfo,
+Build-Depends-Indep:
+ doxygen,
+ graphviz,
+ texlive-fonts-recommended,
+ texlive-latex-base,
+ texlive-latex-extra,
+ texlive-latex-recommended,
 Standards-Version: 3.9.8
 Homepage: https://www.gnupg.org/related_software/gpgme/
 Vcs-Git: https://anonscm.debian.org/git/pkg-gnupg/gpgme.git
@@ -152,6 +159,8 @@ Depends:
  qtbase5-dev,
  ${misc:Depends},
  ${shlibs:Depends},
+Recommends:
+ libgpgmepp-doc (= ${binary:Version}),
 Breaks:
  kdepimlibs5-dev (<= 4:4.14.10-5),
 Replaces:
@@ -165,3 +174,20 @@ Description: C++ and Qt bindings for GPGME (development files)
  .
  This package contains the headers and other files needed to compile
  against either of these libraries.
+
+Package: libgpgmepp-doc
+Section: doc
+Architecture: all
+Depends:
+ ${misc:Depends},
+Suggests:
+ libgpgmepp-dev,
+Description: C++ and Qt bindings for GPGME (documentation for developers)
+ GpgME++ (aka GpgMEpp) is a C++ wrapper (or C++ bindings) for the
+ GnuPG project's GPGME (GnuPG Made Easy) library.
+ .
+ QGpgME is a library that provides GPGME integration with QEventLoop
+ and some Qt datatypes (e.g. QByteArray).
+ .
+ This package contains documentation for developers describing how to
+ use these packages.

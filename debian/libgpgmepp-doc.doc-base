@@ -1,0 +1,18 @@
+Document: libgpgmepp-qgpgme
+Title: Programmer documentation for GpgMEpp and QGpgME
+Abstract: 
+ GpgMEpp is the canonical C++ binding for GPGME, "GnuPG Made Easy".
+ QGpgME is a binding to Qt on top of GpgMEpp, and is integrated into
+ the Qt event model.
+ .
+ This is documentation designed to help programmers and system
+ designers make use of these higher-level bindings to use GnuPG in an
+ automated fashion.
+Section: Programming/C++
+
+Format: html
+Index: /usr/share/doc/libgpgmepp-doc/html/index.html
+Files: /usr/share/doc/libgpgmepp-doc/html/* /usr/share/doc/libgpgmepp-doc/html/*/*
+
+Format: pdf
+Files: /usr/share/doc/libgpgmepp-doc/refman.pdf.gz
