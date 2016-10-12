@@ -3,3 +3,4 @@
 0003-tests-Fix-select-usage-in-t-eventloop.patch
 0004-gpg-Add-option-exit-on-status-write-error.patch
 0005-tests-Add-test-for-cancellation.patch
+0006-install-cmake-files-without-executable-bit-set.patch
