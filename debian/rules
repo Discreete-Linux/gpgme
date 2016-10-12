@@ -2,6 +2,7 @@
 
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all,-pie
 export QT_SELECT := qt5
+export DEBIAN_VERSION = $(shell dpkg-parsechangelog | sed -n -e '/^Version:/s/.*: //p')
 
 %:
 	dh $@ --with autoreconf,python2,python3 --parallel
@@ -17,3 +18,14 @@ override_dh_install:
 
 override_dh_makeshlibs:
 	dh_makeshlibs -V
+
+# python-pyme needs an epoch number because previous versions had an
+# epoch.  If we ever add an epoch to the source package, remove this
+# stanza.
+override_dh_gencontrol-arch:
+	dh_gencontrol
+	dpkg-gencontrol -ppython-pyme \
+	-v1:$(DEBIAN_VERSION) \
+	-Tdebian/python-pyme.substvars \
+	-Pdebian/python-pyme \
+	-Odebian/python-pyme/DEBIAN/control
