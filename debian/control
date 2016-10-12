@@ -25,7 +25,7 @@ Build-Depends:
 Standards-Version: 3.9.8
 Homepage: https://www.gnupg.org/related_software/gpgme/
 Vcs-Git: https://anonscm.debian.org/git/pkg-gnupg/gpgme.git
-Vcs-Browser: https://anonscm.debian.org/git/kg-gnupg/gpgme.git
+Vcs-Browser: https://anonscm.debian.org/git/pkg-gnupg/gpgme.git
 
 Package: libgpgme-dev
 Section: libdevel
