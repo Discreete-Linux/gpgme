@@ -142,3 +142,22 @@ Description: C++ wrapper library for GPGME
  .
  This is the official upstream C++ binding for GPGME.
 
+Package: libgpgmepp-dev
+Section: libdevel
+Architecture: any
+Depends:
+ ${misc:Depends},
+ qt5-base,
+Breaks:
+ kdepimlibs5-dev (<= 4:4.14.10-5),
+Replaces:
+ kdepimlibs5-dev (<= 4:4.14.10-5),
+Description: C++ and Qt bindings for GPGME (development files)
+ GpgME++ (aka GpgMEpp) is a C++ wrapper (or C++ bindings) for the
+ GnuPG project's GPGME (GnuPG Made Easy) library.
+ .
+ QGpgME is a library that provides GPGME integration with QEventLoop
+ and some Qt datatypes (e.g. QByteArray).
+ .
+ This package contains the headers and other files needed to compile
+ against either of these libraries.

@@ -1,0 +1,8 @@
+usr/include/QGpgME
+usr/include/gpgme++
+usr/include/qgpgme
+usr/lib/*/cmake
+usr/lib/*/libgpgmepp.a
+usr/lib/*/libgpgmepp.so
+usr/lib/*/libqgpgme.a
+usr/lib/*/libqgpgme.so
