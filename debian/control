@@ -25,7 +25,7 @@ Homepage: https://www.gnupg.org/related_software/gpgme/
 Vcs-Git: https://anonscm.debian.org/git/pkg-gnupg/gpgme.git
 Vcs-Browser: https://anonscm.debian.org/git/kg-gnupg/gpgme.git
 
-Package: libgpgme11-dev
+Package: libgpgme-dev
 Section: libdevel
 Architecture: any
 Depends:
@@ -34,9 +34,12 @@ Depends:
  libgpg-error-dev,
  libgpgme11 (= ${binary:Version}),
  ${misc:Depends},
-Conflicts:
- libgpgme-dev,
- libgpgme10-dev,
+Breaks:
+ libgpgme11-dev,
+Replaces:
+ libgpgme11-dev,
+Provides:
+ libgpgme11-dev,
 Description: GPGME - GnuPG Made Easy (development files)
  GPGME is a wrapper library which provides a C API to access some of the
  GnuPG functions, such as encrypt, decrypt, sign, verify, ...
