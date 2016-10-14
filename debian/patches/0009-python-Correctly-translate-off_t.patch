@@ -1,0 +1,64 @@
+From: Justus Winter <justus@g10code.com>
+Date: Mon, 26 Sep 2016 13:04:35 +0200
+Subject: python: Correctly translate off_t.
+
+* lang/python/gpgme.i: Improve int/long translations, correctly handle
+off_t with large file support.
+
+Signed-off-by: Justus Winter <justus@g10code.com>
+---
+ lang/python/gpgme.i | 39 ++++++++++++++++++++++++++++++++++-----
+ 1 file changed, 34 insertions(+), 5 deletions(-)
+
+diff --git a/lang/python/gpgme.i b/lang/python/gpgme.i
+index a4672e1..934ebea 100644
+--- a/lang/python/gpgme.i
++++ b/lang/python/gpgme.i
+@@ -291,13 +291,42 @@
+ 
+ /* SWIG has problems interpreting ssize_t, off_t or gpgme_error_t in
+    gpgme.h.  */
+-/* XXX: This is wrong at least for off_t if compiled with LFS.  */
+-%typemap(out) ssize_t, off_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
++%typemap(out) ssize_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
+   $result = PyLong_FromLong($1);
+ }
+-/* XXX: This is wrong at least for off_t if compiled with LFS.  */
+-%typemap(in) ssize_t, off_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
+-  $1 = PyLong_AsLong($input);
++
++%typemap(in) ssize_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
++  if (PyLong_Check($input))
++    $1 = PyLong_AsLong($input);
++#if PY_MAJOR_VERSION < 3
++  else if (PyInt_Check($input))
++    $1 = PyInt_AsLong($input);
++#endif
++  else
++    PyErr_SetString(PyExc_TypeError, "Numeric argument expected");
++}
++
++%typemap(out) off_t {
++#if _FILE_OFFSET_BITS == 64
++  $result = PyLong_FromLongLong($1);
++#else
++  $result = PyLong_FromLong($1);
++#endif
++}
++
++%typemap(in) off_t {
++  if (PyLong_Check($input))
++#if _FILE_OFFSET_BITS == 64
++    $1 = PyLong_AsLongLong($input);
++#else
++    $1 = PyLong_AsLong($input);
++#endif
++#if PY_MAJOR_VERSION < 3
++  else if (PyInt_Check($input))
++    $1 = PyInt_AsLong($input);
++#endif
++  else
++    PyErr_SetString(PyExc_TypeError, "Numeric argument expected");
+ }
+ 
+ // Those are for gpgme_data_read() and gpgme_strerror_r()
