@@ -1,3 +1,12 @@
+gpgme1.0 (1.7.0-4) experimental; urgency=medium
+
+  * avoid failures on 32-bit platforms (along with more
+    upsteam python fixes)
+  * avoid shipping unready pdf documentation
+  * ensure that python-pyme-dbgsym has the right versioning
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Fri, 14 Oct 2016 16:28:30 -0400
+
 gpgme1.0 (1.7.0-3) experimental; urgency=medium
 
   * improve dependencies for libgpgmepp-dev package
