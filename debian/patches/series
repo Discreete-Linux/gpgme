@@ -5,3 +5,4 @@
 0005-tests-Add-test-for-cancellation.patch
 0006-install-cmake-files-without-executable-bit-set.patch
 0007-make-documentation-reproducible-by-omitting-HTML_TIM.patch
+0008-python-Include-config.h.patch
