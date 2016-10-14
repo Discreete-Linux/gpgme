@@ -29,6 +29,10 @@ override_dh_gencontrol-arch:
 	-Tdebian/python-pyme.substvars \
 	-Pdebian/python-pyme \
 	-Odebian/python-pyme/DEBIAN/control
+	# and add an epoch to the generated dbgsym as well:
+	sed -i -e 's/Version: /Version: 1:/' \
+	-e 's/Depends: python-pyme (= /Depends: python-pyme (= 1:/' \
+	debian/.debhelper/python-pyme/dbgsym-root/DEBIAN/control
 
 override_dh_installdocs:
 	dh_installdocs -X.md5
