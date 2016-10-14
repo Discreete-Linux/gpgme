@@ -30,9 +30,5 @@ override_dh_gencontrol-arch:
 	-Pdebian/python-pyme \
 	-Odebian/python-pyme/DEBIAN/control
 
-override_dh_auto_build-indep:
-	make -C lang/qt/doc
-	make -C lang/qt/doc/generated/latex
-
 override_dh_installdocs:
 	dh_installdocs -X.md5

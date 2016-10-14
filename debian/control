@@ -25,10 +25,6 @@ Build-Depends:
 Build-Depends-Indep:
  doxygen,
  graphviz,
- texlive-fonts-recommended,
- texlive-latex-base,
- texlive-latex-extra,
- texlive-latex-recommended,
 Standards-Version: 3.9.8
 Homepage: https://www.gnupg.org/related_software/gpgme/
 Vcs-Git: https://anonscm.debian.org/git/pkg-gnupg/gpgme.git

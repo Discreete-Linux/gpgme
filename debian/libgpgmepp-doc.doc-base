@@ -13,6 +13,3 @@ Section: Programming/C++
 Format: html
 Index: /usr/share/doc/libgpgmepp-doc/html/index.html
 Files: /usr/share/doc/libgpgmepp-doc/html/* /usr/share/doc/libgpgmepp-doc/html/*/*
-
-Format: pdf
-Files: /usr/share/doc/libgpgmepp-doc/refman.pdf.gz
