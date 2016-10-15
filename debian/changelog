@@ -1,3 +1,10 @@
+gpgme1.0 (1.7.0-5) experimental; urgency=medium
+
+  * apply debian patches ahead of upstream patches.
+  * more fixes from upstream for 32-bit platforms
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Fri, 14 Oct 2016 21:36:25 -0400
+
 gpgme1.0 (1.7.0-4) experimental; urgency=medium
 
   * avoid failures on 32-bit platforms (along with more
