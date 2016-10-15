@@ -1,0 +1,34 @@
+From: Werner Koch <wk@gnupg.org>
+Date: Thu, 22 Sep 2016 12:46:06 +0200
+Subject: core: Fix error checking in _gpgme_mkstemp.
+
+* src/w32-util.c (_gpgme_mkstemp): Fix error checking.
+(dlopen): Mark FLAGS as unused.
+
+Signed-off-by: Werner Koch <wk@gnupg.org>
+---
+ src/w32-util.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/w32-util.c b/src/w32-util.c
+index edac750..9d42139 100644
+--- a/src/w32-util.c
++++ b/src/w32-util.c
+@@ -98,6 +98,8 @@ static GPG_ERR_INLINE void *
+ dlopen (const char * name, int flag)
+ {
+   void * hd = LoadLibrary (name);
++
++  (void)flag;
+   return hd;
+ }
+ 
+@@ -754,7 +756,7 @@ _gpgme_mkstemp (int *fd, char **name)
+   if (!tmpname)
+     return -1;
+   *fd = my_mkstemp (tmpname);
+-  if (fd < 0)
++  if (*fd < 0)
+     {
+       free (tmpname);
+       return -1;

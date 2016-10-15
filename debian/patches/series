@@ -9,3 +9,6 @@
 0009-python-Correctly-translate-off_t.patch
 0010-python-Correctly-translate-to-size_t.patch
 0011-python-Get-rid-of-the-last-C-style-comments.patch
+0012-core-New-helper-function-_gpgme_strconcat.patch
+0013-core-Fix-error-checking-in-_gpgme_mkstemp.patch
+0014-cpp-qt-Include-config.h.patch

@@ -1,0 +1,1245 @@
+From: Andre Heinecke <aheinecke@intevation.de>
+Date: Fri, 23 Sep 2016 15:22:29 +0200
+Subject: cpp, qt: Include config.h
+
+lang/cpp/src/callbacks.cpp,
+lang/cpp/src/configuration.cpp,
+lang/cpp/src/context.cpp,
+lang/cpp/src/context_glib.cpp,
+lang/cpp/src/context_qt.cpp,
+lang/cpp/src/context_vanilla.cpp,
+lang/cpp/src/data.cpp,
+lang/cpp/src/decryptionresult.cpp,
+lang/cpp/src/defaultassuantransaction.cpp,
+lang/cpp/src/editinteractor.cpp,
+lang/cpp/src/encryptionresult.cpp,
+lang/cpp/src/engineinfo.cpp,
+lang/cpp/src/eventloopinteractor.cpp,
+lang/cpp/src/exception.cpp,
+lang/cpp/src/gpgadduserideditinteractor.cpp,
+lang/cpp/src/gpgagentgetinfoassuantransaction.cpp,
+lang/cpp/src/gpgsetexpirytimeeditinteractor.cpp,
+lang/cpp/src/gpgsetownertrusteditinteractor.cpp,
+lang/cpp/src/gpgsignkeyeditinteractor.cpp,
+lang/cpp/src/importresult.cpp,
+lang/cpp/src/key.cpp,
+lang/cpp/src/keygenerationresult.cpp,
+lang/cpp/src/keylistresult.cpp,
+lang/cpp/src/scdgetinfoassuantransaction.cpp,
+lang/cpp/src/signingresult.cpp,
+lang/cpp/src/tofuinfo.cpp,
+lang/cpp/src/trustitem.cpp,
+lang/cpp/src/verificationresult.cpp,
+lang/cpp/src/vfsmountresult.cpp,
+lang/qt/src/dataprovider.cpp,
+lang/qt/src/defaultkeygenerationjob.cpp,
+lang/qt/src/gpgme_backend_debug.cpp,
+lang/qt/src/job.cpp,
+lang/qt/src/qgpgmeadduseridjob.cpp,
+lang/qt/src/qgpgmebackend.cpp,
+lang/qt/src/qgpgmechangeexpiryjob.cpp,
+lang/qt/src/qgpgmechangeownertrustjob.cpp,
+lang/qt/src/qgpgmechangepasswdjob.cpp,
+lang/qt/src/qgpgmedecryptjob.cpp,
+lang/qt/src/qgpgmedecryptverifyjob.cpp,
+lang/qt/src/qgpgmedeletejob.cpp,
+lang/qt/src/qgpgmedownloadjob.cpp,
+lang/qt/src/qgpgmeencryptjob.cpp,
+lang/qt/src/qgpgmeexportjob.cpp,
+lang/qt/src/qgpgmeimportfromkeyserverjob.cpp,
+lang/qt/src/qgpgmeimportjob.cpp,
+lang/qt/src/qgpgmekeyformailboxjob.cpp,
+lang/qt/src/qgpgmekeygenerationjob.cpp,
+lang/qt/src/qgpgmekeylistjob.cpp,
+lang/qt/src/qgpgmelistallkeysjob.cpp,
+lang/qt/src/qgpgmenewcryptoconfig.cpp,
+lang/qt/src/qgpgmerefreshkeysjob.cpp,
+lang/qt/src/qgpgmesecretkeyexportjob.cpp,
+lang/qt/src/qgpgmesignencryptjob.cpp,
+lang/qt/src/qgpgmesignjob.cpp,
+lang/qt/src/qgpgmesignkeyjob.cpp,
+lang/qt/src/qgpgmetofupolicyjob.cpp,
+lang/qt/src/qgpgmeverifydetachedjob.cpp,
+lang/qt/src/qgpgmeverifyopaquejob.cpp,
+lang/qt/src/qgpgmewkspublishjob.cpp,
+lang/qt/src/threadedjobmixin.cpp,
+lang/qt/tests/run-keyformailboxjob.cpp,
+lang/qt/tests/t-encrypt.cpp,
+lang/qt/tests/t-keylist.cpp,
+lang/qt/tests/t-keylocate.cpp,
+lang/qt/tests/t-ownertrust.cpp,
+lang/qt/tests/t-support.cpp,
+lang/qt/tests/t-tofuinfo.cpp,
+lang/qt/tests/t-wkspublish.cpp: Include config.h
+
+--
+This fixes problems with mismatching definitions. Most
+notably _FILE_OFFSET_BITS is now always set correctly.
+---
+ lang/cpp/src/callbacks.cpp                        |  4 +++
+ lang/cpp/src/configuration.cpp                    |  4 +++
+ lang/cpp/src/context.cpp                          |  4 +++
+ lang/cpp/src/context_glib.cpp                     | 39 +++++++++++++++++++++++
+ lang/cpp/src/context_qt.cpp                       | 39 +++++++++++++++++++++++
+ lang/cpp/src/context_vanilla.cpp                  |  4 +++
+ lang/cpp/src/data.cpp                             |  4 +++
+ lang/cpp/src/decryptionresult.cpp                 |  4 +++
+ lang/cpp/src/defaultassuantransaction.cpp         |  4 +++
+ lang/cpp/src/editinteractor.cpp                   |  4 +++
+ lang/cpp/src/encryptionresult.cpp                 |  4 +++
+ lang/cpp/src/engineinfo.cpp                       |  4 +++
+ lang/cpp/src/eventloopinteractor.cpp              |  4 +++
+ lang/cpp/src/exception.cpp                        |  4 +++
+ lang/cpp/src/gpgadduserideditinteractor.cpp       |  4 +++
+ lang/cpp/src/gpgagentgetinfoassuantransaction.cpp |  4 +++
+ lang/cpp/src/gpgsetexpirytimeeditinteractor.cpp   |  4 +++
+ lang/cpp/src/gpgsetownertrusteditinteractor.cpp   |  4 +++
+ lang/cpp/src/gpgsignkeyeditinteractor.cpp         |  4 +++
+ lang/cpp/src/importresult.cpp                     |  4 +++
+ lang/cpp/src/key.cpp                              |  4 +++
+ lang/cpp/src/keygenerationresult.cpp              |  4 +++
+ lang/cpp/src/keylistresult.cpp                    |  4 +++
+ lang/cpp/src/scdgetinfoassuantransaction.cpp      |  4 +++
+ lang/cpp/src/signingresult.cpp                    |  4 +++
+ lang/cpp/src/tofuinfo.cpp                         |  4 +++
+ lang/cpp/src/trustitem.cpp                        |  4 +++
+ lang/cpp/src/verificationresult.cpp               |  4 +++
+ lang/cpp/src/vfsmountresult.cpp                   |  4 +++
+ lang/qt/src/dataprovider.cpp                      |  4 +++
+ lang/qt/src/defaultkeygenerationjob.cpp           |  4 +++
+ lang/qt/src/gpgme_backend_debug.cpp               |  4 +++
+ lang/qt/src/job.cpp                               |  4 +++
+ lang/qt/src/qgpgmeadduseridjob.cpp                |  4 +++
+ lang/qt/src/qgpgmebackend.cpp                     |  4 +++
+ lang/qt/src/qgpgmechangeexpiryjob.cpp             |  4 +++
+ lang/qt/src/qgpgmechangeownertrustjob.cpp         |  4 +++
+ lang/qt/src/qgpgmechangepasswdjob.cpp             |  4 +++
+ lang/qt/src/qgpgmedecryptjob.cpp                  |  4 +++
+ lang/qt/src/qgpgmedecryptverifyjob.cpp            |  4 +++
+ lang/qt/src/qgpgmedeletejob.cpp                   |  4 +++
+ lang/qt/src/qgpgmedownloadjob.cpp                 |  4 +++
+ lang/qt/src/qgpgmeencryptjob.cpp                  |  4 +++
+ lang/qt/src/qgpgmeexportjob.cpp                   |  4 +++
+ lang/qt/src/qgpgmeimportfromkeyserverjob.cpp      |  4 +++
+ lang/qt/src/qgpgmeimportjob.cpp                   |  4 +++
+ lang/qt/src/qgpgmekeyformailboxjob.cpp            |  4 +++
+ lang/qt/src/qgpgmekeygenerationjob.cpp            |  4 +++
+ lang/qt/src/qgpgmekeylistjob.cpp                  |  4 +++
+ lang/qt/src/qgpgmelistallkeysjob.cpp              |  4 +++
+ lang/qt/src/qgpgmenewcryptoconfig.cpp             |  4 +++
+ lang/qt/src/qgpgmerefreshkeysjob.cpp              |  4 +++
+ lang/qt/src/qgpgmesecretkeyexportjob.cpp          |  4 +++
+ lang/qt/src/qgpgmesignencryptjob.cpp              |  4 +++
+ lang/qt/src/qgpgmesignjob.cpp                     |  4 +++
+ lang/qt/src/qgpgmesignkeyjob.cpp                  |  4 +++
+ lang/qt/src/qgpgmetofupolicyjob.cpp               |  4 +++
+ lang/qt/src/qgpgmeverifydetachedjob.cpp           |  4 +++
+ lang/qt/src/qgpgmeverifyopaquejob.cpp             |  4 +++
+ lang/qt/src/qgpgmewkspublishjob.cpp               |  4 +++
+ lang/qt/src/threadedjobmixin.cpp                  |  4 +++
+ lang/qt/tests/run-keyformailboxjob.cpp            |  4 +++
+ lang/qt/tests/t-encrypt.cpp                       |  4 +++
+ lang/qt/tests/t-keylist.cpp                       |  4 +++
+ lang/qt/tests/t-keylocate.cpp                     |  4 +++
+ lang/qt/tests/t-ownertrust.cpp                    |  4 +++
+ lang/qt/tests/t-support.cpp                       |  4 +++
+ lang/qt/tests/t-tofuinfo.cpp                      |  4 +++
+ lang/qt/tests/t-wkspublish.cpp                    |  4 +++
+ 69 files changed, 346 insertions(+)
+ create mode 100644 lang/cpp/src/context_glib.cpp
+ create mode 100644 lang/cpp/src/context_qt.cpp
+
+diff --git a/lang/cpp/src/callbacks.cpp b/lang/cpp/src/callbacks.cpp
+index 4b4dd80..3631c53 100644
+--- a/lang/cpp/src/callbacks.cpp
++++ b/lang/cpp/src/callbacks.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "callbacks.h"
+ #include "util.h"
+ 
+diff --git a/lang/cpp/src/configuration.cpp b/lang/cpp/src/configuration.cpp
+index 7ef2883..293746a 100644
+--- a/lang/cpp/src/configuration.cpp
++++ b/lang/cpp/src/configuration.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "configuration.h"
+ #include "error.h"
+ #include "util.h"
+diff --git a/lang/cpp/src/context.cpp b/lang/cpp/src/context.cpp
+index 00f397b..d516737 100644
+--- a/lang/cpp/src/context.cpp
++++ b/lang/cpp/src/context.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <context.h>
+ #include <eventloopinteractor.h>
+ #include <trustitem.h>
+diff --git a/lang/cpp/src/context_glib.cpp b/lang/cpp/src/context_glib.cpp
+new file mode 100644
+index 0000000..14093bf
+--- /dev/null
++++ b/lang/cpp/src/context_glib.cpp
+@@ -0,0 +1,39 @@
++/*
++  context_glib.cpp - wraps a gpgme key context, gpgme-glib-specific functions
++  Copyright (C) 2007 Klarälvdalens Datakonsult AB
++
++  This file is part of GPGME++.
++
++  GPGME++ is free software; you can redistribute it and/or
++  modify it under the terms of the GNU Library General Public
++  License as published by the Free Software Foundation; either
++  version 2 of the License, or (at your option) any later version.
++
++  GPGME++ is distributed in the hope that it will be useful,
++  but WITHOUT ANY WARRANTY; without even the implied warranty of
++  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++  GNU Library General Public License for more details.
++
++  You should have received a copy of the GNU Library General Public License
++  along with GPGME++; see the file COPYING.LIB.  If not, write to the
++  Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++  Boston, MA 02110-1301, USA.
++*/
++
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
++#include <global.h>
++
++extern "C" GIOChannel *gpgme_get_fdptr(int);
++
++GIOChannel *GpgME::getGIOChannel(int fd)
++{
++    return gpgme_get_fdptr(fd);
++}
++
++QIODevice *GpgME::getQIODevice(int fd)
++{
++    return 0;
++}
+diff --git a/lang/cpp/src/context_qt.cpp b/lang/cpp/src/context_qt.cpp
+new file mode 100644
+index 0000000..5d716c5
+--- /dev/null
++++ b/lang/cpp/src/context_qt.cpp
+@@ -0,0 +1,39 @@
++/*
++  context_qt.cpp - wraps a gpgme key context, gpgme-qt-specific functions
++  Copyright (C) 2007 Klarälvdalens Datakonsult AB
++
++  This file is part of GPGME++.
++
++  GPGME++ is free software; you can redistribute it and/or
++  modify it under the terms of the GNU Library General Public
++  License as published by the Free Software Foundation; either
++  version 2 of the License, or (at your option) any later version.
++
++  GPGME++ is distributed in the hope that it will be useful,
++  but WITHOUT ANY WARRANTY; without even the implied warranty of
++  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
++  GNU Library General Public License for more details.
++
++  You should have received a copy of the GNU Library General Public License
++  along with GPGME++; see the file COPYING.LIB.  If not, write to the
++  Free Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
++  Boston, MA 02110-1301, USA.
++*/
++
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
++#include <global.h>
++
++extern "C" QIODevice *gpgme_get_fdptr(int);
++
++GIOChannel *GpgME::getGIOChannel(int)
++{
++    return 0;
++}
++
++QIODevice *GpgME::getQIODevice(int fd)
++{
++    return gpgme_get_fdptr(fd);
++}
+diff --git a/lang/cpp/src/context_vanilla.cpp b/lang/cpp/src/context_vanilla.cpp
+index 984d41b..77a488a 100644
+--- a/lang/cpp/src/context_vanilla.cpp
++++ b/lang/cpp/src/context_vanilla.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <global.h>
+ 
+ GIOChannel *GpgME::getGIOChannel(int)
+diff --git a/lang/cpp/src/data.cpp b/lang/cpp/src/data.cpp
+index 9527b2f..84ed336 100644
+--- a/lang/cpp/src/data.cpp
++++ b/lang/cpp/src/data.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "data_p.h"
+ #include <error.h>
+ #include <interfaces/dataprovider.h>
+diff --git a/lang/cpp/src/decryptionresult.cpp b/lang/cpp/src/decryptionresult.cpp
+index 78a2b1b..f59d24c 100644
+--- a/lang/cpp/src/decryptionresult.cpp
++++ b/lang/cpp/src/decryptionresult.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <decryptionresult.h>
+ #include "result_p.h"
+ #include "util.h"
+diff --git a/lang/cpp/src/defaultassuantransaction.cpp b/lang/cpp/src/defaultassuantransaction.cpp
+index 5bcf970..549092d 100644
+--- a/lang/cpp/src/defaultassuantransaction.cpp
++++ b/lang/cpp/src/defaultassuantransaction.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "defaultassuantransaction.h"
+ #include "error.h"
+ #include "data.h"
+diff --git a/lang/cpp/src/editinteractor.cpp b/lang/cpp/src/editinteractor.cpp
+index 07dc26d..31591fa 100644
+--- a/lang/cpp/src/editinteractor.cpp
++++ b/lang/cpp/src/editinteractor.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "editinteractor.h"
+ #include "callbacks.h"
+ #include "error.h"
+diff --git a/lang/cpp/src/encryptionresult.cpp b/lang/cpp/src/encryptionresult.cpp
+index c4e7df5..b4298d7 100644
+--- a/lang/cpp/src/encryptionresult.cpp
++++ b/lang/cpp/src/encryptionresult.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <encryptionresult.h>
+ #include "result_p.h"
+ #include "util.h"
+diff --git a/lang/cpp/src/engineinfo.cpp b/lang/cpp/src/engineinfo.cpp
+index c3b3e04..763aab9 100644
+--- a/lang/cpp/src/engineinfo.cpp
++++ b/lang/cpp/src/engineinfo.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "engineinfo.h"
+ 
+ #include <gpgme.h>
+diff --git a/lang/cpp/src/eventloopinteractor.cpp b/lang/cpp/src/eventloopinteractor.cpp
+index 7ec258c..7faa50c 100644
+--- a/lang/cpp/src/eventloopinteractor.cpp
++++ b/lang/cpp/src/eventloopinteractor.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <eventloopinteractor.h>
+ 
+ #include <context.h>
+diff --git a/lang/cpp/src/exception.cpp b/lang/cpp/src/exception.cpp
+index c687024..cf42f91 100644
+--- a/lang/cpp/src/exception.cpp
++++ b/lang/cpp/src/exception.cpp
+@@ -21,6 +21,10 @@
+ */
+ 
+ // -*- c++ -*-
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "exception.h"
+ 
+ #include <gpgme.h>
+diff --git a/lang/cpp/src/gpgadduserideditinteractor.cpp b/lang/cpp/src/gpgadduserideditinteractor.cpp
+index 43c8592..f7851a5 100644
+--- a/lang/cpp/src/gpgadduserideditinteractor.cpp
++++ b/lang/cpp/src/gpgadduserideditinteractor.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "gpgadduserideditinteractor.h"
+ 
+ #include "error.h"
+diff --git a/lang/cpp/src/gpgagentgetinfoassuantransaction.cpp b/lang/cpp/src/gpgagentgetinfoassuantransaction.cpp
+index 4739aa2..4b30b31 100644
+--- a/lang/cpp/src/gpgagentgetinfoassuantransaction.cpp
++++ b/lang/cpp/src/gpgagentgetinfoassuantransaction.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "gpgagentgetinfoassuantransaction.h"
+ #include "error.h"
+ #include "data.h"
+diff --git a/lang/cpp/src/gpgsetexpirytimeeditinteractor.cpp b/lang/cpp/src/gpgsetexpirytimeeditinteractor.cpp
+index 8af897c..5e8ba80 100644
+--- a/lang/cpp/src/gpgsetexpirytimeeditinteractor.cpp
++++ b/lang/cpp/src/gpgsetexpirytimeeditinteractor.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "gpgsetexpirytimeeditinteractor.h"
+ #include "error.h"
+ 
+diff --git a/lang/cpp/src/gpgsetownertrusteditinteractor.cpp b/lang/cpp/src/gpgsetownertrusteditinteractor.cpp
+index 15b1269..581605f 100644
+--- a/lang/cpp/src/gpgsetownertrusteditinteractor.cpp
++++ b/lang/cpp/src/gpgsetownertrusteditinteractor.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "gpgsetownertrusteditinteractor.h"
+ #include "error.h"
+ 
+diff --git a/lang/cpp/src/gpgsignkeyeditinteractor.cpp b/lang/cpp/src/gpgsignkeyeditinteractor.cpp
+index fded90f..7effc64 100644
+--- a/lang/cpp/src/gpgsignkeyeditinteractor.cpp
++++ b/lang/cpp/src/gpgsignkeyeditinteractor.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "gpgsignkeyeditinteractor.h"
+ #include "error.h"
+ #include "key.h"
+diff --git a/lang/cpp/src/importresult.cpp b/lang/cpp/src/importresult.cpp
+index 97e8239..4329fc0 100644
+--- a/lang/cpp/src/importresult.cpp
++++ b/lang/cpp/src/importresult.cpp
+@@ -21,6 +21,10 @@
+ */
+ 
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <importresult.h>
+ #include "result_p.h"
+ 
+diff --git a/lang/cpp/src/key.cpp b/lang/cpp/src/key.cpp
+index cfa1ba3..ea22862 100644
+--- a/lang/cpp/src/key.cpp
++++ b/lang/cpp/src/key.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <key.h>
+ 
+ #include "util.h"
+diff --git a/lang/cpp/src/keygenerationresult.cpp b/lang/cpp/src/keygenerationresult.cpp
+index 7837e20..52d5222 100644
+--- a/lang/cpp/src/keygenerationresult.cpp
++++ b/lang/cpp/src/keygenerationresult.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <keygenerationresult.h>
+ #include "result_p.h"
+ 
+diff --git a/lang/cpp/src/keylistresult.cpp b/lang/cpp/src/keylistresult.cpp
+index 4512d3b..e6fb77f 100644
+--- a/lang/cpp/src/keylistresult.cpp
++++ b/lang/cpp/src/keylistresult.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <keylistresult.h>
+ #include "result_p.h"
+ 
+diff --git a/lang/cpp/src/scdgetinfoassuantransaction.cpp b/lang/cpp/src/scdgetinfoassuantransaction.cpp
+index 073d772..fb59bcc 100644
+--- a/lang/cpp/src/scdgetinfoassuantransaction.cpp
++++ b/lang/cpp/src/scdgetinfoassuantransaction.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "scdgetinfoassuantransaction.h"
+ #include "error.h"
+ #include "data.h"
+diff --git a/lang/cpp/src/signingresult.cpp b/lang/cpp/src/signingresult.cpp
+index 4f2ef72..3252c03 100644
+--- a/lang/cpp/src/signingresult.cpp
++++ b/lang/cpp/src/signingresult.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <signingresult.h>
+ #include "result_p.h"
+ #include "util.h"
+diff --git a/lang/cpp/src/tofuinfo.cpp b/lang/cpp/src/tofuinfo.cpp
+index bb67fc8..1372316 100644
+--- a/lang/cpp/src/tofuinfo.cpp
++++ b/lang/cpp/src/tofuinfo.cpp
+@@ -19,6 +19,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "tofuinfo.h"
+ 
+ #include <istream>
+diff --git a/lang/cpp/src/trustitem.cpp b/lang/cpp/src/trustitem.cpp
+index fc7e4a6..0565030 100644
+--- a/lang/cpp/src/trustitem.cpp
++++ b/lang/cpp/src/trustitem.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <trustitem.h>
+ 
+ #include <gpgme.h>
+diff --git a/lang/cpp/src/verificationresult.cpp b/lang/cpp/src/verificationresult.cpp
+index c62625d..be33ca2 100644
+--- a/lang/cpp/src/verificationresult.cpp
++++ b/lang/cpp/src/verificationresult.cpp
+@@ -20,6 +20,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <verificationresult.h>
+ #include <notation.h>
+ #include "result_p.h"
+diff --git a/lang/cpp/src/vfsmountresult.cpp b/lang/cpp/src/vfsmountresult.cpp
+index c9fdd5e..d3607d1 100644
+--- a/lang/cpp/src/vfsmountresult.cpp
++++ b/lang/cpp/src/vfsmountresult.cpp
+@@ -21,6 +21,10 @@
+   Boston, MA 02110-1301, USA.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <vfsmountresult.h>
+ #include "result_p.h"
+ 
+diff --git a/lang/qt/src/dataprovider.cpp b/lang/qt/src/dataprovider.cpp
+index 533b67d..df56133 100644
+--- a/lang/qt/src/dataprovider.cpp
++++ b/lang/qt/src/dataprovider.cpp
+@@ -21,6 +21,10 @@
+ 
+ // -*- c++ -*-
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <dataprovider.h>
+ 
+ #include <error.h>
+diff --git a/lang/qt/src/defaultkeygenerationjob.cpp b/lang/qt/src/defaultkeygenerationjob.cpp
+index 8257a72..d26e824 100644
+--- a/lang/qt/src/defaultkeygenerationjob.cpp
++++ b/lang/qt/src/defaultkeygenerationjob.cpp
+@@ -28,6 +28,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "defaultkeygenerationjob.h"
+ #include "protocol.h"
+ #include "keygenerationjob.h"
+diff --git a/lang/qt/src/gpgme_backend_debug.cpp b/lang/qt/src/gpgme_backend_debug.cpp
+index 6dfb313..6efe932 100644
+--- a/lang/qt/src/gpgme_backend_debug.cpp
++++ b/lang/qt/src/gpgme_backend_debug.cpp
+@@ -1,5 +1,9 @@
+ // This file is autogenerated by CMake: DO NOT EDIT
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "gpgme_backend_debug.h"
+ 
+ 
+diff --git a/lang/qt/src/job.cpp b/lang/qt/src/job.cpp
+index 8936ea5..38dbc99 100644
+--- a/lang/qt/src/job.cpp
++++ b/lang/qt/src/job.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "job.h"
+ 
+ #include "keylistjob.h"
+diff --git a/lang/qt/src/qgpgmeadduseridjob.cpp b/lang/qt/src/qgpgmeadduseridjob.cpp
+index eb3bfab..4fc80d1 100644
+--- a/lang/qt/src/qgpgmeadduseridjob.cpp
++++ b/lang/qt/src/qgpgmeadduseridjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmeadduseridjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmebackend.cpp b/lang/qt/src/qgpgmebackend.cpp
+index 797e58a..f06244b 100644
+--- a/lang/qt/src/qgpgmebackend.cpp
++++ b/lang/qt/src/qgpgmebackend.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmebackend.h"
+ 
+ 
+diff --git a/lang/qt/src/qgpgmechangeexpiryjob.cpp b/lang/qt/src/qgpgmechangeexpiryjob.cpp
+index 43ceee3..cf417ab 100644
+--- a/lang/qt/src/qgpgmechangeexpiryjob.cpp
++++ b/lang/qt/src/qgpgmechangeexpiryjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmechangeexpiryjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmechangeownertrustjob.cpp b/lang/qt/src/qgpgmechangeownertrustjob.cpp
+index 55131d9..d9a613f 100644
+--- a/lang/qt/src/qgpgmechangeownertrustjob.cpp
++++ b/lang/qt/src/qgpgmechangeownertrustjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmechangeownertrustjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmechangepasswdjob.cpp b/lang/qt/src/qgpgmechangepasswdjob.cpp
+index 0aec927..b04273c 100644
+--- a/lang/qt/src/qgpgmechangepasswdjob.cpp
++++ b/lang/qt/src/qgpgmechangepasswdjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmechangepasswdjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmedecryptjob.cpp b/lang/qt/src/qgpgmedecryptjob.cpp
+index 7116449..449e9aa 100644
+--- a/lang/qt/src/qgpgmedecryptjob.cpp
++++ b/lang/qt/src/qgpgmedecryptjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmedecryptjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmedecryptverifyjob.cpp b/lang/qt/src/qgpgmedecryptverifyjob.cpp
+index d46a9b5..e6d3ff2 100644
+--- a/lang/qt/src/qgpgmedecryptverifyjob.cpp
++++ b/lang/qt/src/qgpgmedecryptverifyjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmedecryptverifyjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmedeletejob.cpp b/lang/qt/src/qgpgmedeletejob.cpp
+index 323aec4..9145298 100644
+--- a/lang/qt/src/qgpgmedeletejob.cpp
++++ b/lang/qt/src/qgpgmedeletejob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmedeletejob.h"
+ 
+ #include "context.h"
+diff --git a/lang/qt/src/qgpgmedownloadjob.cpp b/lang/qt/src/qgpgmedownloadjob.cpp
+index 48cc907..b0dca56 100644
+--- a/lang/qt/src/qgpgmedownloadjob.cpp
++++ b/lang/qt/src/qgpgmedownloadjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmedownloadjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmeencryptjob.cpp b/lang/qt/src/qgpgmeencryptjob.cpp
+index 82c8ed8..d13acab 100644
+--- a/lang/qt/src/qgpgmeencryptjob.cpp
++++ b/lang/qt/src/qgpgmeencryptjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmeencryptjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmeexportjob.cpp b/lang/qt/src/qgpgmeexportjob.cpp
+index dfc5fc9..e6073f0 100644
+--- a/lang/qt/src/qgpgmeexportjob.cpp
++++ b/lang/qt/src/qgpgmeexportjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmeexportjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmeimportfromkeyserverjob.cpp b/lang/qt/src/qgpgmeimportfromkeyserverjob.cpp
+index 0f19679..acefbb2 100644
+--- a/lang/qt/src/qgpgmeimportfromkeyserverjob.cpp
++++ b/lang/qt/src/qgpgmeimportfromkeyserverjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmeimportfromkeyserverjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmeimportjob.cpp b/lang/qt/src/qgpgmeimportjob.cpp
+index f125b12..dcabad3 100644
+--- a/lang/qt/src/qgpgmeimportjob.cpp
++++ b/lang/qt/src/qgpgmeimportjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmeimportjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmekeyformailboxjob.cpp b/lang/qt/src/qgpgmekeyformailboxjob.cpp
+index 803d0e6..7054c78 100644
+--- a/lang/qt/src/qgpgmekeyformailboxjob.cpp
++++ b/lang/qt/src/qgpgmekeyformailboxjob.cpp
+@@ -30,6 +30,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmekeyformailboxjob.h"
+ #include "qgpgmekeylistjob.h"
+ 
+diff --git a/lang/qt/src/qgpgmekeygenerationjob.cpp b/lang/qt/src/qgpgmekeygenerationjob.cpp
+index cba6b76..31f3342 100644
+--- a/lang/qt/src/qgpgmekeygenerationjob.cpp
++++ b/lang/qt/src/qgpgmekeygenerationjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmekeygenerationjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmekeylistjob.cpp b/lang/qt/src/qgpgmekeylistjob.cpp
+index 1169c46..887a902 100644
+--- a/lang/qt/src/qgpgmekeylistjob.cpp
++++ b/lang/qt/src/qgpgmekeylistjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmekeylistjob.h"
+ 
+ #include "key.h"
+diff --git a/lang/qt/src/qgpgmelistallkeysjob.cpp b/lang/qt/src/qgpgmelistallkeysjob.cpp
+index fd8bfc3..7ba8bc9 100644
+--- a/lang/qt/src/qgpgmelistallkeysjob.cpp
++++ b/lang/qt/src/qgpgmelistallkeysjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmelistallkeysjob.h"
+ 
+ #include "key.h"
+diff --git a/lang/qt/src/qgpgmenewcryptoconfig.cpp b/lang/qt/src/qgpgmenewcryptoconfig.cpp
+index 7303f10..62566d5 100644
+--- a/lang/qt/src/qgpgmenewcryptoconfig.cpp
++++ b/lang/qt/src/qgpgmenewcryptoconfig.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmenewcryptoconfig.h"
+ 
+ #include <QDebug>
+diff --git a/lang/qt/src/qgpgmerefreshkeysjob.cpp b/lang/qt/src/qgpgmerefreshkeysjob.cpp
+index 3d221f6..93ac63a 100644
+--- a/lang/qt/src/qgpgmerefreshkeysjob.cpp
++++ b/lang/qt/src/qgpgmerefreshkeysjob.cpp
+@@ -33,6 +33,10 @@
+ 
+ #define MAX_CMD_LENGTH 32768
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmerefreshkeysjob.h"
+ 
+ #include <QDebug>
+diff --git a/lang/qt/src/qgpgmesecretkeyexportjob.cpp b/lang/qt/src/qgpgmesecretkeyexportjob.cpp
+index f4ec698..d740852 100644
+--- a/lang/qt/src/qgpgmesecretkeyexportjob.cpp
++++ b/lang/qt/src/qgpgmesecretkeyexportjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmesecretkeyexportjob.h"
+ 
+ #include <QDebug>
+diff --git a/lang/qt/src/qgpgmesignencryptjob.cpp b/lang/qt/src/qgpgmesignencryptjob.cpp
+index d2e45b1..9dcc619 100644
+--- a/lang/qt/src/qgpgmesignencryptjob.cpp
++++ b/lang/qt/src/qgpgmesignencryptjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmesignencryptjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmesignjob.cpp b/lang/qt/src/qgpgmesignjob.cpp
+index 4e2312b..e165f52 100644
+--- a/lang/qt/src/qgpgmesignjob.cpp
++++ b/lang/qt/src/qgpgmesignjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmesignjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmesignkeyjob.cpp b/lang/qt/src/qgpgmesignkeyjob.cpp
+index e6c1478..27aff5e 100644
+--- a/lang/qt/src/qgpgmesignkeyjob.cpp
++++ b/lang/qt/src/qgpgmesignkeyjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmesignkeyjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmetofupolicyjob.cpp b/lang/qt/src/qgpgmetofupolicyjob.cpp
+index a24c946..34630a1 100644
+--- a/lang/qt/src/qgpgmetofupolicyjob.cpp
++++ b/lang/qt/src/qgpgmetofupolicyjob.cpp
+@@ -28,6 +28,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmetofupolicyjob.h"
+ 
+ #include "context.h"
+diff --git a/lang/qt/src/qgpgmeverifydetachedjob.cpp b/lang/qt/src/qgpgmeverifydetachedjob.cpp
+index 8efef05..ee74861 100644
+--- a/lang/qt/src/qgpgmeverifydetachedjob.cpp
++++ b/lang/qt/src/qgpgmeverifydetachedjob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmeverifydetachedjob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmeverifyopaquejob.cpp b/lang/qt/src/qgpgmeverifyopaquejob.cpp
+index b513f82..aea406a 100644
+--- a/lang/qt/src/qgpgmeverifyopaquejob.cpp
++++ b/lang/qt/src/qgpgmeverifyopaquejob.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmeverifyopaquejob.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/src/qgpgmewkspublishjob.cpp b/lang/qt/src/qgpgmewkspublishjob.cpp
+index 8f97cb5..96f5a1d 100644
+--- a/lang/qt/src/qgpgmewkspublishjob.cpp
++++ b/lang/qt/src/qgpgmewkspublishjob.cpp
+@@ -28,6 +28,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "qgpgmewkspublishjob.h"
+ 
+ #include "context.h"
+diff --git a/lang/qt/src/threadedjobmixin.cpp b/lang/qt/src/threadedjobmixin.cpp
+index cd6ab5f..66d21fb 100644
+--- a/lang/qt/src/threadedjobmixin.cpp
++++ b/lang/qt/src/threadedjobmixin.cpp
+@@ -31,6 +31,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "threadedjobmixin.h"
+ 
+ #include "dataprovider.h"
+diff --git a/lang/qt/tests/run-keyformailboxjob.cpp b/lang/qt/tests/run-keyformailboxjob.cpp
+index 9ac7668..73bedbd 100644
+--- a/lang/qt/tests/run-keyformailboxjob.cpp
++++ b/lang/qt/tests/run-keyformailboxjob.cpp
+@@ -29,6 +29,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "keyformailboxjob.h"
+ #include "keylistjob.h"
+ #include "protocol.h"
+diff --git a/lang/qt/tests/t-encrypt.cpp b/lang/qt/tests/t-encrypt.cpp
+index 3d4cfa9..bc6b878 100644
+--- a/lang/qt/tests/t-encrypt.cpp
++++ b/lang/qt/tests/t-encrypt.cpp
+@@ -28,6 +28,10 @@
+     you do not wish to do so, delete this exception statement from
+     your version.
+ */
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <QDebug>
+ #include <QTest>
+ #include <QTemporaryDir>
+diff --git a/lang/qt/tests/t-keylist.cpp b/lang/qt/tests/t-keylist.cpp
+index 767c96b..2578576 100644
+--- a/lang/qt/tests/t-keylist.cpp
++++ b/lang/qt/tests/t-keylist.cpp
+@@ -29,6 +29,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <QDebug>
+ #include <QTest>
+ #include <QSignalSpy>
+diff --git a/lang/qt/tests/t-keylocate.cpp b/lang/qt/tests/t-keylocate.cpp
+index e75f24d..63cb836 100644
+--- a/lang/qt/tests/t-keylocate.cpp
++++ b/lang/qt/tests/t-keylocate.cpp
+@@ -28,6 +28,10 @@
+     you do not wish to do so, delete this exception statement from
+     your version.
+ */
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <QDebug>
+ #include <QTest>
+ #include <QSignalSpy>
+diff --git a/lang/qt/tests/t-ownertrust.cpp b/lang/qt/tests/t-ownertrust.cpp
+index b9efffd..db863b2 100644
+--- a/lang/qt/tests/t-ownertrust.cpp
++++ b/lang/qt/tests/t-ownertrust.cpp
+@@ -29,6 +29,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <QDebug>
+ #include <QTest>
+ #include <QSignalSpy>
+diff --git a/lang/qt/tests/t-support.cpp b/lang/qt/tests/t-support.cpp
+index 86372f7..857d0a3 100644
+--- a/lang/qt/tests/t-support.cpp
++++ b/lang/qt/tests/t-support.cpp
+@@ -29,6 +29,10 @@
+     your version.
+ */
+ 
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include "t-support.h"
+ 
+ #include <QTest>
+diff --git a/lang/qt/tests/t-tofuinfo.cpp b/lang/qt/tests/t-tofuinfo.cpp
+index d76ff7b..2c87e4a 100644
+--- a/lang/qt/tests/t-tofuinfo.cpp
++++ b/lang/qt/tests/t-tofuinfo.cpp
+@@ -28,6 +28,10 @@
+     you do not wish to do so, delete this exception statement from
+     your version.
+ */
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <QDebug>
+ #include <QTest>
+ #include <QTemporaryDir>
+diff --git a/lang/qt/tests/t-wkspublish.cpp b/lang/qt/tests/t-wkspublish.cpp
+index 17d3447..4558fdc 100644
+--- a/lang/qt/tests/t-wkspublish.cpp
++++ b/lang/qt/tests/t-wkspublish.cpp
+@@ -28,6 +28,10 @@
+     you do not wish to do so, delete this exception statement from
+     your version.
+ */
++#ifdef HAVE_CONFIG_H
++ #include "config.h"
++#endif
++
+ #include <QDebug>
+ #include <QTest>
+ #include <QSignalSpy>
