@@ -1,10 +1,10 @@
 0001-avoid-identifying-as-beta.patch
+0007-make-documentation-reproducible-by-omitting-HTML_TIM.patch
 0002-doc-Fix-minor-errors-in-I-O-callback-example.patch
 0003-tests-Fix-select-usage-in-t-eventloop.patch
 0004-gpg-Add-option-exit-on-status-write-error.patch
 0005-tests-Add-test-for-cancellation.patch
 0006-install-cmake-files-without-executable-bit-set.patch
-0007-make-documentation-reproducible-by-omitting-HTML_TIM.patch
 0008-python-Include-config.h.patch
 0009-python-Correctly-translate-off_t.patch
 0010-python-Correctly-translate-to-size_t.patch
