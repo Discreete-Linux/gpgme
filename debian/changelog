@@ -1,3 +1,9 @@
+gpgme1.0 (1.7.1-1) experimental; urgency=medium
+
+  * new upstream release.
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Thu, 20 Oct 2016 00:06:13 -0400
+
 gpgme1.0 (1.7.0-5) experimental; urgency=medium
 
   * apply debian patches ahead of upstream patches.
