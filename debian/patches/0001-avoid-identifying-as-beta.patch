@@ -11,10 +11,10 @@ This patch avoids that situation.
  1 file changed, 2 insertions(+), 5 deletions(-)
 
 diff --git a/configure.ac b/configure.ac
-index c9d16af..1a8d33a 100644
+index 6580b7c..16950e8 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -37,13 +37,10 @@ m4_define(mym4_version_micro, [0])
+@@ -37,13 +37,10 @@ m4_define(mym4_version_micro, [1])
  # processing is done by autoconf and not during the configure run.
  m4_define(mym4_version,
            [mym4_version_major.mym4_version_minor.mym4_version_micro])
