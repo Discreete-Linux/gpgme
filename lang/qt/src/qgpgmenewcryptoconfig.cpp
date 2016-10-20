@@ -31,6 +31,10 @@
     your version.
 */
 
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include "qgpgmenewcryptoconfig.h"
 
 #include <QDebug>
@@ -80,7 +84,7 @@ QGpgMENewCryptoConfig::~QGpgMENewCryptoConfig()
     clear();
 }
 
-void QGpgMENewCryptoConfig::reloadConfiguration(bool showErrors)
+void QGpgMENewCryptoConfig::reloadConfiguration(bool)
 {
     clear();
 

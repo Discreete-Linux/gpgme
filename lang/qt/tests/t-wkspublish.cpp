@@ -28,6 +28,10 @@
     you do not wish to do so, delete this exception statement from
     your version.
 */
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include <QDebug>
 #include <QTest>
 #include <QSignalSpy>
@@ -122,7 +126,7 @@ private Q_SLOTS:
         // First check if it is supported
         auto job = openpgp()->wksPublishJob();
         connect(job, &WKSPublishJob::result, this,
-                [this] (Error err, QByteArray out, QByteArray errout, QString, Error) {
+                [this] (Error err, QByteArray, QByteArray, QString, Error) {
             Q_ASSERT(err);
             Q_EMIT asyncDone();
         });
@@ -140,7 +144,7 @@ private:
         // First check if it is supported
         auto job = openpgp()->wksPublishJob();
         connect(job, &WKSPublishJob::result, this,
-                [this] (Error err, QByteArray out, QByteArray errout, QString, Error) {
+                [this] (Error err, QByteArray, QByteArray, QString, Error) {
             if (GpgME::engineInfo(GpgME::GpgEngine).engineVersion() < "2.0.16") {
                 std::cout << err;
                 Q_ASSERT(err);
@@ -161,7 +165,7 @@ private:
         }
         auto job = openpgp()->wksPublishJob();
         connect(job, &WKSPublishJob::result, this,
-                [this] (Error err, QByteArray out, QByteArray errout, QString, Error) {
+                [this] (Error err, QByteArray, QByteArray, QString, Error) {
             Q_ASSERT(err);
             Q_EMIT asyncDone();
         });
@@ -193,7 +197,7 @@ private:
         auto keygenjob = openpgp()->keyGenerationJob();
         QByteArray fpr;
         connect(keygenjob, &KeyGenerationJob::result, this,
-                [this, &fpr](KeyGenerationResult result, QByteArray pubkeyData, QString, Error)
+                [this, &fpr](KeyGenerationResult result, QByteArray, QString, Error)
         {
             Q_ASSERT(!result.error());
             fpr = QByteArray(result.fingerprint());
@@ -207,7 +211,7 @@ private:
         /* Then try to create a request. */
         auto job = openpgp()->wksPublishJob();
         connect(job, &WKSPublishJob::result, this,
-                [this] (Error err, QByteArray out, QByteArray errout, QString, Error) {
+                [this] (Error err, QByteArray out, QByteArray, QString, Error) {
             Q_ASSERT(!err);
             Q_EMIT asyncDone();
             const QString outstr = QString(out);
@@ -222,7 +226,7 @@ private:
         Q_ASSERT(spy.wait());
     }
 
-    void testWKSPublishRecieve() {
+    void testWKSPublishReceive() {
         if (GpgME::engineInfo(GpgME::GpgEngine).engineVersion() < "2.0.16") {
             /* Not supported */
             return;
@@ -243,7 +247,7 @@ private:
         /* Get a response. */
         auto job = openpgp()->wksPublishJob();
         connect(job, &WKSPublishJob::result, this,
-                [this] (Error err, QByteArray out, QByteArray errout, QString, Error) {
+                [this] (Error err, QByteArray out, QByteArray, QString, Error) {
             Q_ASSERT(!err);
             Q_EMIT asyncDone();
             const QString outstr = QString(out);
@@ -254,7 +258,7 @@ private:
             Q_ASSERT(outstr.contains(
                      QStringLiteral("From: " TEST_ADDRESS)));
         });
-        job->startRecieve(QByteArray(testResponse));
+        job->startReceive(QByteArray(testResponse));
         Q_ASSERT(spy.wait());
     }
 

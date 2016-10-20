@@ -20,6 +20,10 @@
   Boston, MA 02110-1301, USA.
 */
 
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include <key.h>
 
 #include "util.h"
@@ -29,6 +33,7 @@
 #include <gpgme.h>
 
 #include <string.h>
+#include <strings.h>
 #include <istream>
 #include <iterator>
 
@@ -273,6 +278,7 @@ const char *Key::primaryFingerprint() const
         /* Return the first subkeys fingerprint */
         return key->subkeys->fpr;
     }
+    return nullptr;
 }
 
 unsigned int Key::keyListMode() const
@@ -870,6 +876,25 @@ const char *UserID::Signature::policyURL() const
         }
     }
     return 0;
+}
+
+std::string UserID::addrSpecFromString(const char *userid)
+{
+    if (!userid) {
+        return std::string();
+    }
+    char *normalized = gpgme_addrspec_from_uid (userid);
+    if (normalized) {
+        std::string ret(normalized);
+        gpgme_free(normalized);
+        return ret;
+    }
+    return std::string();
+}
+
+std::string UserID::addrSpec() const
+{
+    return addrSpecFromString(email());
 }
 
 std::ostream &operator<<(std::ostream &os, const UserID &uid)

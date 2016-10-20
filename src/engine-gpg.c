@@ -544,6 +544,8 @@ gpg_new (void **engine, const char *file_name, const char *home_dir,
     rc = add_arg (gpg, "utf8");
   if (!rc)
     rc = add_arg (gpg, "--enable-progress-filter");
+  if (!rc && have_gpg_version (gpg, "2.1.11"))
+    rc = add_arg (gpg, "--exit-on-status-write-error");
   if (rc)
     goto leave;
 
@@ -2541,7 +2543,7 @@ gpg_keylist_build_options (engine_gpg_t gpg, int secret_only,
   err = add_arg (gpg, "--with-colons");
 
   /* Since gpg 2.1.15 fingerprints are always printed, thus there is
-   * no more need to explictly request them.  */
+   * no more need to explicitly request them.  */
   if (!have_gpg_version (gpg, "2.1.15"))
     {
       if (!err)

@@ -110,7 +110,7 @@
     Py_XDECREF(pyVector$argnum[i]);
 }
 
-// Release returned buffers as necessary.
+/* Release returned buffers as necessary.  */
 %typemap(newfree) char * "free($1);";
 %newobject gpgme_data_release_and_get_mem;
 
@@ -133,7 +133,7 @@
       /* input = $input, 1 = $1, 1_descriptor = $1_descriptor */
       /* &1_descriptor = $&1_descriptor *1_descriptor = $*1_descriptor */
 
-      // Following code is from swig's python.swg
+      /* Following code is from swig's python.swg.  */
       if ((SWIG_ConvertPtr(pypointer,(void **) &$1[i], $*1_descriptor,SWIG_POINTER_EXCEPTION | $disown )) == -1) {
 	Py_DECREF(pypointer);
 	return NULL;
@@ -147,7 +147,7 @@
   if ($1) free($1);
 }
 
-// Special handling for references to our objects.
+/* Special handling for references to our objects.  */
 %typemap(in) gpgme_data_t DATAIN (gpgme_data_t wrapper = NULL,
                                   PyObject *bytesio = NULL,
                                   Py_buffer view, int have_view = 0) {
@@ -167,7 +167,7 @@
 
     /* input = $input, 1 = $1, 1_descriptor = $1_descriptor */
 
-    // Following code is from swig's python.swg
+    /* Following code is from swig's python.swg.  */
 
     if ((SWIG_ConvertPtr(pypointer,(void **) &$1, $1_descriptor,
          SWIG_POINTER_EXCEPTION | $disown )) == -1) {
@@ -183,7 +183,7 @@
    representation of struct gpgme_data for an very efficient check if
    the buffer has been modified.  */
 %{
-#include "src/data.h"	/* For struct gpgme_data.  */
+#include "data.h"	/* For struct gpgme_data.  */
 %}
 #endif
 
@@ -291,23 +291,67 @@
 
 /* SWIG has problems interpreting ssize_t, off_t or gpgme_error_t in
    gpgme.h.  */
-/* XXX: This is wrong at least for off_t if compiled with LFS.  */
-%typemap(out) ssize_t, off_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
+%typemap(out) ssize_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
   $result = PyLong_FromLong($1);
 }
-/* XXX: This is wrong at least for off_t if compiled with LFS.  */
-%typemap(in) ssize_t, off_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
-  $1 = PyLong_AsLong($input);
+
+%typemap(in) ssize_t, gpgme_error_t, gpgme_err_code_t, gpgme_err_source_t, gpg_error_t {
+  if (PyLong_Check($input))
+    $1 = PyLong_AsLong($input);
+#if PY_MAJOR_VERSION < 3
+  else if (PyInt_Check($input))
+    $1 = PyInt_AsLong($input);
+#endif
+  else
+    PyErr_SetString(PyExc_TypeError, "Numeric argument expected");
 }
 
-// Those are for gpgme_data_read() and gpgme_strerror_r()
+%typemap(out) off_t {
+#if _FILE_OFFSET_BITS == 64
+  $result = PyLong_FromLongLong($1);
+#else
+  $result = PyLong_FromLong($1);
+#endif
+}
+
+%typemap(in) off_t {
+  if (PyLong_Check($input))
+#if _FILE_OFFSET_BITS == 64
+    $1 = PyLong_AsLongLong($input);
+#else
+    $1 = PyLong_AsLong($input);
+#endif
+#if PY_MAJOR_VERSION < 3
+  else if (PyInt_Check($input))
+    $1 = PyInt_AsLong($input);
+#endif
+  else
+    PyErr_SetString(PyExc_TypeError, "Numeric argument expected");
+}
+
+/* Those are for gpgme_data_read() and gpgme_strerror_r().  */
 %typemap(in) (void *buffer, size_t size), (char *buf, size_t buflen) {
-   $2 = PyLong_AsLong($input);
-   if ($2 < 0) {
-     PyErr_SetString(PyExc_ValueError, "Positive integer expected");
-     return NULL;
-   }
-   $1 = ($1_ltype) malloc($2+1);
+  {
+    long tmp$argnum;
+    if (PyLong_Check($input))
+      tmp$argnum = PyLong_AsLong($input);
+#if PY_MAJOR_VERSION < 3
+    else if (PyInt_Check($input))
+      tmp$argnum = PyInt_AsLong($input);
+#endif
+    else
+      {
+        PyErr_SetString(PyExc_TypeError, "Numeric argument expected");
+        return NULL;
+      }
+
+    if (tmp$argnum < 0) {
+      PyErr_SetString(PyExc_ValueError, "Positive integer expected");
+      return NULL;
+    }
+    $2 = (size_t) tmp$argnum;
+    $1 = ($1_ltype) malloc($2+1);
+  }
 }
 %typemap(argout) (void *buffer, size_t size), (char *buf, size_t buflen) {
   Py_XDECREF($result);   /* Blow away any previous result */
@@ -357,7 +401,7 @@
   Py_XDECREF(encodedInput$argnum);
 }
 
-// Make types containing 'next' field to be lists
+/* Make types containing 'next' field to be lists.  */
 %ignore next;
 %typemap(out) gpgme_sig_notation_t, gpgme_subkey_t,
    gpgme_key_sig_t, gpgme_user_id_t, gpgme_invalid_key_t,
@@ -547,6 +591,10 @@
    some structs, which we provide prior to including the version for
    SWIG.  */
 %{
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
 #include <gpgme.h>
 %}
 
@@ -575,11 +623,15 @@ struct _gpgme_sig_notation
 
 /* Now include our local modified version.  Any structs defined above
    are ignored.  */
+#ifdef HAVE_CONFIG_H
+%include "config.h"
+#endif
+
 %include "gpgme.h"
 
 %include "errors.i"
 
-// Generating and handling pointers-to-pointers.
+/* Generating and handling pointers-to-pointers.  */
 
 %pointer_functions(gpgme_ctx_t, gpgme_ctx_t_p);
 %pointer_functions(gpgme_data_t, gpgme_data_t_p);
@@ -588,7 +640,7 @@ struct _gpgme_sig_notation
 %pointer_functions(gpgme_trust_item_t, gpgme_trust_item_t_p);
 %pointer_functions(gpgme_engine_info_t, gpgme_engine_info_t_p);
 
-// Helper functions.
+/* Helper functions.  */
 
 %{
 #include <stdio.h>

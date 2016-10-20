@@ -76,15 +76,15 @@ libsuffix=.so
 endif
 
 GpgmeppConfig.cmake: GpgmeppConfig.cmake.in
-	sed -e 's|[@]resolved_libdir@|$(libdir)|g' < "$<" > "$@"
-	sed -e 's|[@]libsuffix@|$(libsuffix)|g' < "$@" > "$@".2
-	mv "$@".2 "$@"
+	sed -e 's|[@]resolved_libdir@|$(libdir)|g' < "$<" | \
+	sed -e 's|[@]libsuffix@|$(libsuffix)|g' | \
+	sed -e 's|[@]resolved_includedir@|$(includedir)|g' > $@
 
 install-cmake-files: GpgmeppConfig.cmake GpgmeppConfigVersion.cmake
 	-$(INSTALL) -d $(DESTDIR)$(libdir)/cmake/Gpgmepp
-	$(INSTALL) GpgmeppConfig.cmake \
+	$(INSTALL) -m 644 GpgmeppConfig.cmake \
         $(DESTDIR)$(libdir)/cmake/Gpgmepp/GpgmeppConfig.cmake
-	$(INSTALL) GpgmeppConfigVersion.cmake \
+	$(INSTALL) -m 644 GpgmeppConfigVersion.cmake \
         $(DESTDIR)$(libdir)/cmake/Gpgmepp/GpgmeppConfigVersion.cmake
 
 uninstall-cmake-files:

@@ -19,6 +19,10 @@
   Boston, MA 02110-1301, USA.
 */
 
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include "tofuinfo.h"
 
 #include <istream>
@@ -109,6 +113,7 @@ GpgME::TofuInfo::Policy GpgME::TofuInfo::policy() const
         case GPGME_TOFU_POLICY_ASK:
             return PolicyAsk;
         case GPGME_TOFU_POLICY_UNKNOWN:
+        default:
             return PolicyUnknown;
     }
 }

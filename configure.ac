@@ -29,7 +29,7 @@ min_automake_version="1.14"
 # for the LT versions.
 m4_define(mym4_version_major, [1])
 m4_define(mym4_version_minor, [7])
-m4_define(mym4_version_micro, [0])
+m4_define(mym4_version_micro, [1])
 
 # Below is m4 magic to extract and compute the revision number, the
 # decimalized short revision number, a beta version string, and a flag
@@ -55,19 +55,17 @@ AC_INIT([gpgme],[mym4_full_version],[http://bugs.gnupg.org])
 #   (Interfaces added:			AGE++)
 #   (Interfaces removed/changed:	AGE=0)
 #
-LIBGPGME_LT_CURRENT=26
-# Subtract 2 from this value if you want to make the LFS transition an
-# ABI break.  [Note to self: Remove this comment with the next regular break.]
-LIBGPGME_LT_AGE=15
+LIBGPGME_LT_CURRENT=27
+LIBGPGME_LT_AGE=16
 LIBGPGME_LT_REVISION=0
 
-LIBGPGMEPP_LT_CURRENT=6
-LIBGPGMEPP_LT_AGE=0
-LIBGPGMEPP_LT_REVISION=1
+LIBGPGMEPP_LT_CURRENT=8
+LIBGPGMEPP_LT_AGE=2
+LIBGPGMEPP_LT_REVISION=0
 
-LIBQGPGME_LT_CURRENT=6
+LIBQGPGME_LT_CURRENT=7
 LIBQGPGME_LT_AGE=0
-LIBQGPGME_LT_REVISION=1
+LIBQGPGME_LT_REVISION=0
 
 # If the API is changed in an incompatible way: increment the next counter.
 GPGME_CONFIG_API_VERSION=1
@@ -588,6 +586,7 @@ if test "$GCC" = yes; then
           CFLAGS="$CFLAGS -Wno-missing-field-initializers"
           CFLAGS="$CFLAGS -Wno-sign-compare"
         fi
+        CXXFLAGS="$CXXFLAGS -Wall -Wextra -Wno-shadow"
 
         AC_MSG_CHECKING([if gcc supports -Wpointer-arith])
         _gcc_cflags_save=$CFLAGS
@@ -886,9 +885,9 @@ AC_CONFIG_FILES([lang/Makefile lang/cl/Makefile lang/cl/gpgme.asd])
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([lang/qt/doc/Doxyfile])])
 AC_CONFIG_FILES(lang/qt/doc/Makefile)
 AC_CONFIG_FILES([lang/python/Makefile
-		 lang/python/setup.py
 		 lang/python/pyme/version.py
 		 lang/python/tests/Makefile])
+AC_CONFIG_FILES([lang/python/setup.py], [chmod a+x lang/python/setup.py])
 AC_OUTPUT
 
 echo "

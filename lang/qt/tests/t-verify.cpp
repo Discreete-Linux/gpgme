@@ -1,4 +1,4 @@
-/* t-support.h
+/* t-verifiy.cpp
 
     This file is part of qgpgme, the Qt API binding for gpgme
     Copyright (c) 2016 Intevation GmbH
@@ -28,36 +28,66 @@
     you do not wish to do so, delete this exception statement from
     your version.
 */
-#ifndef T_SUPPORT_H
-#define T_SUPPORT_H
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
 
-#include "interfaces/passphraseprovider.h"
-#include <QObject>
+#include <QDebug>
+#include <QTest>
 
-namespace GpgME
-{
-class TestPassphraseProvider : public PassphraseProvider
-{
-public:
-    char *getPassphrase(const char * /*useridHint*/, const char * /*description*/,
-                        bool /*previousWasBad*/, bool &/*canceled*/) Q_DECL_OVERRIDE
-    {
-        return strdup("abc");
-    }
-};
-} // namespace GpgME
 
-void killAgent(const QString &dir = qgetenv("GNUPGHOME"));
+#include "protocol.h"
 
-class QGpgMETest : public QObject
+#include "verifyopaquejob.h"
+#include "verificationresult.h"
+#include "key.h"
+#include "t-support.h"
+
+using namespace QGpgME;
+using namespace GpgME;
+
+static const char testMsg1[] =
+"-----BEGIN PGP MESSAGE-----\n"
+"\n"
+"owGbwMvMwCSoW1RzPCOz3IRxjXQSR0lqcYleSUWJTZOvjVdpcYmCu1+oQmaJIleH\n"
+"GwuDIBMDGysTSIqBi1MApi+nlGGuwDeHao53HBr+FoVGP3xX+kvuu9fCMJvl6IOf\n"
+"y1kvP4y+8D5a11ang0udywsA\n"
+"=Crq6\n"
+"-----END PGP MESSAGE-----\n";
+
+
+class VerifyTest: public QGpgMETest
 {
     Q_OBJECT
-protected:
-    bool copyKeyrings(const QString &from, const QString& to);
 
-public Q_SLOTS:
-    void initTestCase();
-    void cleanupTestCase();
+private Q_SLOTS:
+
+    /* Check that a signature always has a key. */
+    void testSignatureKey()
+    {
+        const QByteArray signedData(testMsg1);
+        auto verifyJob = openpgp()->verifyOpaqueJob(true);
+        QByteArray verified;
+
+        auto result = verifyJob->exec(signedData, verified);
+        Q_ASSERT(!result.error());
+        delete verifyJob;
+
+        Q_ASSERT(result.numSignatures() == 1);
+        auto sig = result.signatures()[0];
+
+        const auto key = sig.key(true, false);
+        Q_ASSERT(!key.isNull());
+
+        bool found = false;
+        for (const auto subkey: key.subkeys()) {
+            if (!strcmp (subkey.fingerprint(), sig.fingerprint())) {
+                found = true;
+            }
+        }
+        Q_ASSERT(found);
+    }
 };
 
-#endif // T_SUPPORT_H
+QTEST_MAIN(VerifyTest)
+#include "t-verify.moc"
