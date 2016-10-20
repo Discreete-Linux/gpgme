@@ -22,7 +22,7 @@ EXTRA_DIST = QGpgmeConfig.cmake.in.in QGpgmeConfigVersion.cmake.in \
              gpgme_backend_debug.h qgpgme_version.h.in
 
 qgpgme_sources = \
-    dataprovider.cpp job.cpp qgpgmeadduseridjob.cpp \
+    dataprovider.cpp job.cpp multideletejob.cpp qgpgmeadduseridjob.cpp \
     qgpgmebackend.cpp qgpgmechangeexpiryjob.cpp qgpgmechangeownertrustjob.cpp \
     qgpgmechangepasswdjob.cpp qgpgmedecryptjob.cpp \
     qgpgmedecryptverifyjob.cpp qgpgmedeletejob.cpp qgpgmedownloadjob.cpp \
@@ -39,6 +39,7 @@ qgpgme_sources = \
 
 # If you add one here make sure that you also add one in camelcase
 qgpgme_headers= \
+    abstractimportjob.h \
     adduseridjob.h \
     changeexpiryjob.h \
     changeownertrustjob.h \
@@ -56,6 +57,7 @@ qgpgme_headers= \
     protocol.h \
     qgpgme_export.h \
     qgpgmenewcryptoconfig.h \
+    specialjob.h \
     signjob.h \
     signkeyjob.h \
     signencryptjob.h \
@@ -75,6 +77,7 @@ qgpgme_headers= \
 
 camelcase_headers= \
     AddUserIDJob \
+    AbstractImportJob \
     ChangeExpiryJob \
     ChangeOwnerTrustJob \
     ChangePasswdJob \
@@ -89,6 +92,7 @@ camelcase_headers= \
     MultiDeleteJob \
     Protocol \
     QGpgMENewCryptoConfig \
+    SpecialJob \
     SignJob \
     SignKeyJob \
     SignEncryptJob \
@@ -109,7 +113,6 @@ camelcase_headers= \
 
 private_qgpgme_headers = \
     qgpgme_export.h \
-    abstractimportjob.h \
     protocol_p.h \
     qgpgmeadduseridjob.h \
     qgpgmebackend.h \
@@ -137,7 +140,6 @@ private_qgpgme_headers = \
     qgpgmekeyformailboxjob.h \
     qgpgmewkspublishjob.h \
     qgpgmetofupolicyjob.h \
-    specialjob.h \
     threadedjobmixin.h
 
 qgpgme_moc_sources = \
@@ -221,9 +223,9 @@ libsuffix=.so
 endif
 
 QGpgmeConfig.cmake: QGpgmeConfig.cmake.in
-	sed -e 's|[@]resolved_libdir@|$(libdir)|g' < "$<" > "$@"
-	sed -e 's|[@]libsuffix@|$(libsuffix)|g' < "$@" > "$@".2
-	mv "$@".2 "$@"
+	sed -e 's|[@]resolved_libdir@|$(libdir)|g' < "$<" | \
+	sed -e 's|[@]libsuffix@|$(libsuffix)|g' | \
+	sed -e 's|[@]resolved_includedir@|$(includedir)|g' > $@
 
 $(camelcase_headers): Makefile.am
 	echo -n "#include \"qgpgme/" > "$@"
@@ -232,9 +234,9 @@ $(camelcase_headers): Makefile.am
 
 install-cmake-files: QGpgmeConfig.cmake QGpgmeConfigVersion.cmake
 	-$(INSTALL) -d $(DESTDIR)$(libdir)/cmake/Gpgmepp
-	$(INSTALL) QGpgmeConfig.cmake \
+	$(INSTALL) -m 644 QGpgmeConfig.cmake \
         $(DESTDIR)$(libdir)/cmake/Gpgmepp/QGpgmeConfig.cmake
-	$(INSTALL) QGpgmeConfigVersion.cmake \
+	$(INSTALL) -m 644 QGpgmeConfigVersion.cmake \
         $(DESTDIR)$(libdir)/cmake/Gpgmepp/QGpgmeConfigVersion.cmake
 
 uninstall-cmake-files:

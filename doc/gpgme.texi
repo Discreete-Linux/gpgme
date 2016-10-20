@@ -5109,6 +5109,23 @@ pointer, and @code{GPG_ERR_NO_DATA} if @var{cipher} does not contain
 any data to decrypt.
 @end deftypefun
 
+When processing mails it is sometimes useful to extract the actual
+mail address (the ``addr-spec'') from a string.  GPGME provides this
+helper function which uses the same semantics as the internal
+functions in GPGME and GnuPG:
+
+@deftypefun @w{char *} gpgme_addrspec_from_uid (@w{const char *@var{uid}})
+
+Return the mail address (called ``addr-spec'' in RFC-5322) from the
+string @var{uid} which is assumed to be a user id (called ``address''
+in RFC-5322).  All plain ASCII characters (i.e. those with bit 7
+cleared) in the result are converted to lowercase.  Caller must free
+the result using @code{gpgme_free}.  Returns @code{NULL} if no valid
+address was found (in which case @code{ERRNO} is set to @code{EINVAL})
+or for other errors.
+
+@end deftypefun
+
 
 @node Sign
 @subsection Sign
@@ -6016,6 +6033,7 @@ do_select (struct event_loop *loop)
   fd_set wfds;
   int i, n;
   int any = 0;
+  struct timeval tv;
   struct one_fd *fdlist = loop->fds;
 
   pthread_mutex_lock (&loop->lock);
@@ -6024,11 +6042,14 @@ do_select (struct event_loop *loop)
   for (i = 0; i < MAX_FDS; i++)
     if (fdlist[i].fd != -1)
       FD_SET (fdlist[i].fd, fdlist[i].dir ? &rfds : &wfds);
-  pthread_mutex_unlock (&loop->unlock);
+  pthread_mutex_unlock (&loop->lock);
+
+  tv.tv_sec = 0;
+  tv.tv_usec = 1000;
 
   do
     @{
-      n = select (FD_SETSIZE, &rfds, &wfds, NULL, 0);
+      n = select (FD_SETSIZE, &rfds, &wfds, NULL, &tv);
     @}
   while (n < 0 && errno == EINTR);
 
@@ -6082,6 +6103,7 @@ main (int argc, char *argv[])
   gpgme_error_t err;
   gpgme_data_t sig, text;
   int i;
+  pthread_mutexattr_t attr;
   struct gpgme_io_cbs io_cbs =
   @{
     add_io_cb,
@@ -6091,12 +6113,19 @@ main (int argc, char *argv[])
     &result
   @};
 
-  init_gpgme (void);
+  init_gpgme ();
 
   /* Initialize the loop structure.  */
-  pthread_mutex_init (&loop.lock, NULL);
+
+  /* The mutex must be recursive, since remove_io_cb (which acquires a
+     lock) can be called while holding a lock acquired in do_select.  */
+  pthread_mutexattr_init (&attr);
+  pthread_mutexattr_settype (&attr, PTHREAD_MUTEX_RECURSIVE);
+  pthread_mutex_init (&loop.lock, &attr);
+  pthread_mutexattr_destroy (&attr);
+
   for (i = 0; i < MAX_FDS; i++)
-    loop->fds[i].fd = -1;
+    loop.fds[i].fd = -1;
 
   /* Initialize the result structure.  */
   result.done = 0;

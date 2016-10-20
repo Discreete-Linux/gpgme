@@ -1,5 +1,5 @@
 /* dataprovider.cpp
-   Copyright (C) 2004 Klar�vdalens Datakonsult AB
+   Copyright (C) 2004 Klarävdalens Datakonsult AB
     Copyright (c) 2016 Intevation GmbH
 
    This file is part of QGPGME.
@@ -20,6 +20,10 @@
    Boston, MA 02110-1301, USA. */
 
 // -*- c++ -*-
+
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
 
 #include <dataprovider.h>
 

@@ -1,3 +1,356 @@
+2016-10-18  Werner Koch  <wk@gnupg.org>
+
+	Release 1.7.1.
+	* configure.ac: Set LT version to C27/A16/R0.  Note that the LT
+	versions for cpp and Qt have already been updated.
+
+2016-10-14  Werner Koch  <wk@gnupg.org>
+
+	tests: Make t-cancel more portable.
+	* tests/gpg/t-cancel.c: Include sys/time.h and protect sys/select.h.
+
+	python: Call ln(1) in a portable way.
+	* lang/python/Makefile.am: Specify target dir for ln.
+
+2016-10-14  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Fix init of string from null.
+	* lang/cpp/src/key.cpp (UserID::addrSpecFromString): Check return
+	value before creating the string.
+
+2016-10-13  Justus Winter  <justus@g10code.com>
+
+	python: Make 'get_key' more idiomatic.
+	* lang/python/pyme/core.py (Context.get_key): Raise errors.KeyNotFound
+	if the key is not found.  This error is both a KeyError for idiomatic
+	error handling as well as a GPGMEError so we don't break existing
+	code.
+	* lang/python/pyme/errors.py (KeyNotFound): New class.
+	* lang/python/tests/support.py (no_such_key): New variable.
+	* lang/python/tests/t-keylist.py: Test the new behavior.
+
+	python: Return public keys by default.
+	* lang/python/pyme/core.py (Core.get_key): Return public keys by
+	default, improve docstring.
+	* lang/python/examples/testCMSgetkey.py: Update example.
+	* lang/python/examples/verifydetails.py: Likewise.
+
+	GnuPG-bug-id: 2751
+
+	python: Fix example.
+	* lang/python/examples/inter-edit.py: Fix example.
+
+	Fixes-commit: a458e7fe
+
+2016-10-13  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Fix version number.
+	* configure.ac (LIBGPGMEPP_LT_CURRENT): Bump.
+
+	qt, cpp: Fix permissions of Config files.
+	* lang/cpp/src/Makefile.am,
+	lang/qt/src/Makefile.am: Do not install config files as executable.
+
+	qt: Install SpecialJob.
+	* lang/qt/src/Makefile.am: Install SpecialJob
+	* NEWS: mention it.
+
+	qt, cpp: Fix expected targets in Config files.
+	* lang/cpp/src/GpgmeppConfig.cmake.in.in,
+	lang/qt/src/QGpgmeConfig.cmake.in.in: Remove KF5 variants.
+
+2016-10-11  Daniel Vrátil  <dvratil@kde.org>
+
+	qt: Add missing implementation of MultiDeleteJob.
+	* lang/qt/src/multideletejob.h: Fix include, cryptobackend.h is now
+	called protocol.h
+	* lang/qt/src/multideletejob.cpp: New file.
+	* lang/qt/src/Makefile.am: Add multideletejob.cpp.
+
+	qt: Install abstractimportjob.h.
+	* lang/cpp/src/Makefile.am: Install abstractimportjob.h since it's
+	included from importjob.h
+
+2016-10-11  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Add API for gpgme_addrspec_from_uid.
+	* lang/cpp/src/key.cpp (UserID::addrSpecFromString): New static
+	function to expose addrspec from uid.
+	(UserID::addrSpec): New. Get addrSpec from Userid.
+	* NEWS: Update accordingly.
+
+2016-10-10  Andre Heinecke  <aheinecke@intevation.de>
+
+	Add NEWS for cpp and qt, bump cpp version.
+	* NEWS: Add entries for cpp and qt changes.
+	* configure.ac: Bump cpp version because of added API.
+
+	Add convenience function to get key from sig.
+	* lang/cpp/src/verificationresult.cpp (Signature::key(bool, bool)):
+	New. Can be used to search / update the key associcated with this
+	signature.
+
+	cpp: Return null key if the signature had no key.
+	* lang/cpp/src/verificationresult.cpp (Private): Add null key
+	to list when there is no key associated with the signature.
+
+	qt: Add simple verify test.
+	* lang/qt/tests/t-verify.cpp: New. Small test if a signature
+	returns a key with fingerprint.
+	* lang/qt/tests/Makefile.am: Add new test.
+
+	core: Fix w32 crash in find_program_in_dir.
+	* src/w32-util.c (find_program_in_dir): Fix call to _gpgme_strconcat.
+
+2016-10-08  Werner Koch  <wk@gnupg.org>
+
+	core: New helper function gpgme_addrspec_from_uid.
+	* src/gpgme.h.in: Add gpgme_addrspec_from_uid.
+	* src/gpgme.def, src/libgpgme.vers: Ditto.
+	* src/mbox-util.c (gpgme_addrspec_from_uid): New.
+
+2016-10-06  Justus Winter  <justus@g10code.com>
+
+	Add missing includes.
+	* lang/cpp/src/key.cpp: Include <strings.h> for 'strcasecmp'.
+	* tests/gpg/t-cancel.c: Include <sys/select.h> for 'fd_set' and
+	friends.
+
+2016-10-05  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Bump Revision.
+	* configure.ac (LIBGPGMEPP_LT_REVISION): Bump revision.
+
+	qt: Fix spelling error in WKSPublishJob.
+	* src/qgpgmewkspublishjob.cpp,
+	src/qgpgmewkspublishjob.h,
+	src/wkspublishjob.h,
+	tests/t-wkspublish.cpp: Fix spelling of received.
+	* src/configure.ac (LIBQGPGME_LT_CURRENT): Bump
+	accordingly.
+
+	qt: Disable tests that require a password for 2.0.
+	* lang/qt/tests/t-encrypt.cpp: Disable tests that require
+	a password for 2.0.
+
+	Add warning flags for c++ compiler, too.
+	* configure.ac (CXXFLAGS): Add Wall and Wextra.
+
+	qt: Fix unused variable warnings.
+	* qt/src/qgpgmenewcryptoconfig.cpp,
+	qt/src/threadedjobmixin.h,
+	qt/tests/t-encrypt.cpp,
+	qt/tests/t-support.h,
+	qt/tests/t-wkspublish.cpp: Mark additional variables as unused.
+
+	cpp: Add support for URL Data encodings.
+	* lang/cpp/src/data.h (Data::Encoding): Extend enum.
+	* lang/cpp/src/data.cpp (Data::encoding),
+	Data::setEncoding): Support new values.
+
+	cpp: Fix gcc diagnostic push / pop.
+	* lang/cpp/src/context.cpp: Fix pragmas.
+
+	qt: Disable t-wkspublish test.
+	* lang/qt/tests/Makefile.am (TESTS): Remove t-wkspublish.
+
+2016-09-30  Alon Bar-Lev  <alon.barlev@gmail.com>
+
+	python: Link 'data.h' and 'config.h' into the builddir.
+	* lang/python/Makefile.am: Link to the files.
+	* lang/python/gpgme.i: Update path.
+	* lang/python/setup.py.in: Do not add the top builddir to the include
+	path.
+
+	python: Add 'prepare' target.
+	* lang/python/Makefile.am: Add 'prepare' target.
+
+2016-09-29  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp, qt: Handle modified includedir installation.
+	* lang/cpp/src/Makefile.am,
+	lang/qt/src/Makefile.am: Replace resolved_includedir.
+	* lang/cpp/src/GpgmeppConfig.cmake.in.in,
+	lang/qt/src/QGpgmeConfig.cmake.in.in: Use resolved_includedir
+	instead of relying on a common installation prefix.
+
+2016-09-27  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	Clarify licensing.
+	* src/b64dec.c, src/mbox-util.c, src/mbox-util.h: These three files
+	  are explicitly licensed under LGPL, but their comments suggest that
+	  details about the warranty can be found in the GPL.  Adjust comments
+	  to refer to the correct license.
+
+2016-09-27  Justus Winter  <justus@g10code.com>
+
+	tests: Fix check for gpg versions not reporting the critical flag.
+	* lang/python/tests/t-sig-notation.py: Also blacklist 2.0.x.
+	* tests/gpg/t-sig-notation.c: Likewise.
+
+2016-09-26  Justus Winter  <justus@g10code.com>
+
+	python: Correctly translate to size_t.
+	* lang/python/gpgme.i: Correctly translate Python number to size_t.
+
+	python: Correctly translate off_t.
+	* lang/python/gpgme.i: Improve int/long translations, correctly handle
+	off_t with large file support.
+
+	python: Include 'config.h'.
+	* lang/python/Makefile.am: Pass 'top_builddir' to 'setup.py'.
+	* lang/python/gpgme.i: Include 'config.h'.
+	* lang/python/helpers.c: Likewise.
+	* lang/python/helpers.h: Likewise.
+	* lang/python/setup.py.in: Make sure that 'config.h' can be found.
+
+2016-09-23  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	Fix spelling.
+	 * lang/cpp/src/context.h, lang/qt/src/protocol.h,
+	   lang/qt/src/wkspublishjob.h, src/data-identify.c, src/engine-gpg.c:
+	   minor spelling cleanup.
+
+	move some file encodings to UTF-8.
+	* THANKS, doc/ChangeLog-2011, tests/ChangeLog-2011,
+	  tests/gpg/geheim.txt: convert from iso 8859-1 to utf-8.
+	* lang/qt/src/dataprovider.cpp, lang/qt/src/qgpgmerefreshkeysjob.cpp,
+	  lang/qt/src/qgpgmesecretkeyexportjob.cpp: replace U+FFFD REPLACEMENT
+	  CHARACTER with proper U+00E4 LATIN SMALL LETTER A WITH DIAERESIS.
+
+2016-09-23  Andre Heinecke  <aheinecke@intevation.de>
+
+	tests: Check data after decryption.
+	* tests/gpgsm/t-decrypt.c (main): Check data matches expected.
+	Only print result if it does not.
+
+	cpp, qt: Include config.h.
+	lang/cpp/src/callbacks.cpp,
+	lang/cpp/src/configuration.cpp,
+	lang/cpp/src/context.cpp,
+	lang/cpp/src/context_glib.cpp,
+	lang/cpp/src/context_qt.cpp,
+	lang/cpp/src/context_vanilla.cpp,
+	lang/cpp/src/data.cpp,
+	lang/cpp/src/decryptionresult.cpp,
+	lang/cpp/src/defaultassuantransaction.cpp,
+	lang/cpp/src/editinteractor.cpp,
+	lang/cpp/src/encryptionresult.cpp,
+	lang/cpp/src/engineinfo.cpp,
+	lang/cpp/src/eventloopinteractor.cpp,
+	lang/cpp/src/exception.cpp,
+	lang/cpp/src/gpgadduserideditinteractor.cpp,
+	lang/cpp/src/gpgagentgetinfoassuantransaction.cpp,
+	lang/cpp/src/gpgsetexpirytimeeditinteractor.cpp,
+	lang/cpp/src/gpgsetownertrusteditinteractor.cpp,
+	lang/cpp/src/gpgsignkeyeditinteractor.cpp,
+	lang/cpp/src/importresult.cpp,
+	lang/cpp/src/key.cpp,
+	lang/cpp/src/keygenerationresult.cpp,
+	lang/cpp/src/keylistresult.cpp,
+	lang/cpp/src/scdgetinfoassuantransaction.cpp,
+	lang/cpp/src/signingresult.cpp,
+	lang/cpp/src/tofuinfo.cpp,
+	lang/cpp/src/trustitem.cpp,
+	lang/cpp/src/verificationresult.cpp,
+	lang/cpp/src/vfsmountresult.cpp,
+	lang/qt/src/dataprovider.cpp,
+	lang/qt/src/defaultkeygenerationjob.cpp,
+	lang/qt/src/gpgme_backend_debug.cpp,
+	lang/qt/src/job.cpp,
+	lang/qt/src/qgpgmeadduseridjob.cpp,
+	lang/qt/src/qgpgmebackend.cpp,
+	lang/qt/src/qgpgmechangeexpiryjob.cpp,
+	lang/qt/src/qgpgmechangeownertrustjob.cpp,
+	lang/qt/src/qgpgmechangepasswdjob.cpp,
+	lang/qt/src/qgpgmedecryptjob.cpp,
+	lang/qt/src/qgpgmedecryptverifyjob.cpp,
+	lang/qt/src/qgpgmedeletejob.cpp,
+	lang/qt/src/qgpgmedownloadjob.cpp,
+	lang/qt/src/qgpgmeencryptjob.cpp,
+	lang/qt/src/qgpgmeexportjob.cpp,
+	lang/qt/src/qgpgmeimportfromkeyserverjob.cpp,
+	lang/qt/src/qgpgmeimportjob.cpp,
+	lang/qt/src/qgpgmekeyformailboxjob.cpp,
+	lang/qt/src/qgpgmekeygenerationjob.cpp,
+	lang/qt/src/qgpgmekeylistjob.cpp,
+	lang/qt/src/qgpgmelistallkeysjob.cpp,
+	lang/qt/src/qgpgmenewcryptoconfig.cpp,
+	lang/qt/src/qgpgmerefreshkeysjob.cpp,
+	lang/qt/src/qgpgmesecretkeyexportjob.cpp,
+	lang/qt/src/qgpgmesignencryptjob.cpp,
+	lang/qt/src/qgpgmesignjob.cpp,
+	lang/qt/src/qgpgmesignkeyjob.cpp,
+	lang/qt/src/qgpgmetofupolicyjob.cpp,
+	lang/qt/src/qgpgmeverifydetachedjob.cpp,
+	lang/qt/src/qgpgmeverifyopaquejob.cpp,
+	lang/qt/src/qgpgmewkspublishjob.cpp,
+	lang/qt/src/threadedjobmixin.cpp,
+	lang/qt/tests/run-keyformailboxjob.cpp,
+	lang/qt/tests/t-encrypt.cpp,
+	lang/qt/tests/t-keylist.cpp,
+	lang/qt/tests/t-keylocate.cpp,
+	lang/qt/tests/t-ownertrust.cpp,
+	lang/qt/tests/t-support.cpp,
+	lang/qt/tests/t-tofuinfo.cpp,
+	lang/qt/tests/t-wkspublish.cpp: Include config.h
+
+2016-09-22  Werner Koch  <wk@gnupg.org>
+
+	w32: Silence some warnings about unused parameters.
+	* src/assuan-support.c (my_recvmsg, my_sendmsg, my_waitpid)
+	(my_socketpair) [W32]: Mark unused parameters.
+
+	core: Fix error checking in _gpgme_mkstemp.
+	* src/w32-util.c (_gpgme_mkstemp): Fix error checking.
+	(dlopen): Mark FLAGS as unused.
+
+	core: New helper function _gpgme_strconcat.
+	* src/conversion.c: Include stdarg.h.
+	(do_strconcat): New.
+	(_gpgme_strconcat): New.
+	* src/util.h: Provide fallback for GPGRT_ATTR_SENTINEL.
+	(_gpgme_strconcat): New with sentinel.
+
+	* src/w32-util.c (find_program_in_dir): Replace malloc and stpcpy by
+	_gpgme_strconcat.
+	(find_program_at_standard_place): Ditto.
+	(_gpgme_set_default_gpg_name): Ditto.
+	(_gpgme_set_default_gpgconf_name): Ditto.
+	(_gpgme_mkstemp): Ditto.
+	(_gpgme_set_override_inst_dir): Repalce malloc and strcpy by strdup.
+
+2016-09-22  Daiki Ueno  <ueno@gnu.org>
+
+	tests: Add test for cancellation.
+	* tests/gpg/t-cancel.c: New file.
+	* tests/gpg/Makefile.am (tests_skipped): New variable, default to
+	t-genkey and t-cancel.
+	(noinst_PROGRAMS): Add $(tests_skipped).
+	* tests/gpg/.gitignore: Add t-cancel.
+
+	gpg: Add option --exit-on-status-write-error.
+	* src/engine-gpg.c (gpg_new): Add --exit-on-status-write-error if the
+	engine version is latest enough to expect progress output from gpg.
+
+	tests: Fix select usage in t-eventloop.
+	* tests/gpg/t-eventloop.c (do_select): Supply timeout value to select.
+
+	doc: Fix minor errors in I/O callback example.
+	* gpgme.texi (I/O Callback Example): Fix typos, add timeout to select,
+	and initialize mutex as recursive.
+
+2016-09-21  Andreas Stieger  <astieger@suse.com>
+
+	cpp: Avoid missing returns in non-void functions.
+	* lang/cpp/src/context.cpp
+	  (Context::signaturePolicyURL): return nullptr on default
+	  (to_tofu_policy_t): add default case for unknown
+	* lang/cpp/src/key.cpp
+	  (Key::primaryFingerprint): return nullptr on default
+	* lang/cpp/src/tofuinfo.cpp
+	  (GpgME::TofuInfo::policy): add default case for unknown
+
 2016-09-21  Werner Koch  <wk@gnupg.org>
 
 	Release 1.7.0.

@@ -20,11 +20,16 @@
   Boston, MA 02110-1301, USA.
 */
 
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include <verificationresult.h>
 #include <notation.h>
 #include "result_p.h"
 #include "util.h"
 #include "key.h"
+#include "context.h"
 
 #include <gpgme.h>
 
@@ -68,6 +73,8 @@ public:
             // copy keys
             if (scopy->key) {
                 keys.push_back(Key(scopy->key, true));
+            } else {
+                keys.push_back(Key());
             }
             // copy notations:
             nota.push_back(std::vector<Nota>());
@@ -115,6 +122,7 @@ public:
     std::vector<GpgME::Key> keys;
     std::vector<char *> purls;
     std::string file_name;
+    Protocol proto;
 };
 
 GpgME::VerificationResult::VerificationResult(gpgme_ctx_t ctx, int error)
@@ -139,6 +147,10 @@ void GpgME::VerificationResult::init(gpgme_ctx_t ctx)
         return;
     }
     d.reset(new Private(res));
+    gpgme_protocol_t proto = gpgme_get_protocol(ctx);
+    d->proto = proto == GPGME_PROTOCOL_OpenPGP ? OpenPGP :
+               proto == GPGME_PROTOCOL_CMS ? CMS :
+               UnknownProtocol;
 }
 
 make_standard_stuff(VerificationResult)
@@ -378,6 +390,32 @@ GpgME::Key GpgME::Signature::key() const
         return Key();
     }
     return d->keys[idx];
+}
+
+GpgME::Key GpgME::Signature::key(bool search, bool update) const
+{
+    if (isNull()) {
+        return Key();
+    }
+
+    GpgME::Key ret = key();
+    if (ret.isNull() && search) {
+        auto ctx = Context::createForProtocol (d->proto);
+        if (ctx) {
+            ctx->setKeyListMode(KeyListMode::Local |
+                        KeyListMode::Signatures |
+                        KeyListMode::SignatureNotations |
+                        KeyListMode::Validate |
+                        KeyListMode::WithTofu);
+            Error e;
+            ret = d->keys[idx] = ctx->key(fingerprint(), e, false);
+            delete ctx;
+        }
+    }
+    if (update) {
+        ret.update();
+    }
+    return ret;
 }
 
 class GpgME::Notation::Private

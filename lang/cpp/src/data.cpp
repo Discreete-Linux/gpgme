@@ -20,6 +20,10 @@
   Boston, MA 02110-1301, USA.
 */
 
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include "data_p.h"
 #include <error.h>
 #include <interfaces/dataprovider.h>
@@ -157,6 +161,9 @@ GpgME::Data::Encoding GpgME::Data::encoding() const
     case GPGME_DATA_ENCODING_BASE64: return Base64Encoding;
     case GPGME_DATA_ENCODING_ARMOR:  return ArmorEncoding;
     case GPGME_DATA_ENCODING_MIME:   return MimeEncoding;
+    case GPGME_DATA_ENCODING_URL:    return UrlEncoding;
+    case GPGME_DATA_ENCODING_URLESC: return UrlEscEncoding;
+    case GPGME_DATA_ENCODING_URL0:   return Url0Encoding;
     }
     return AutoEncoding;
 }
@@ -170,6 +177,9 @@ GpgME::Error GpgME::Data::setEncoding(Encoding enc)
     case Base64Encoding: ge = GPGME_DATA_ENCODING_BASE64; break;
     case ArmorEncoding:  ge = GPGME_DATA_ENCODING_ARMOR;  break;
     case MimeEncoding:   ge = GPGME_DATA_ENCODING_MIME;  break;
+    case UrlEncoding:    ge = GPGME_DATA_ENCODING_URL; break;
+    case UrlEscEncoding: ge = GPGME_DATA_ENCODING_URLESC; break;
+    case Url0Encoding:   ge = GPGME_DATA_ENCODING_URL0; break;
     }
     return Error(gpgme_data_set_encoding(d->data, ge));
 }

@@ -20,6 +20,10 @@
   Boston, MA 02110-1301, USA.
 */
 
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include <context.h>
 #include <eventloopinteractor.h>
 #include <trustitem.h>
@@ -695,7 +699,7 @@ Error Context::startPasswd(const Key &key)
 }
 
 
-#pragma GCC push_diagnostics
+#pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wdeprecated-declarations"
 
 Error Context::edit(const Key &key, std::unique_ptr<EditInteractor> func, Data &data)
@@ -755,7 +759,7 @@ Error Context::startCardEditing(const Key &key, std::unique_ptr<EditInteractor> 
                               dp ? dp->data : 0));
 }
 
-#pragma GCC pop_diagnostics
+#pragma GCC diagnostic pop
 
 EditInteractor *Context::lastCardEditInteractor() const
 {
@@ -1051,6 +1055,7 @@ const char *Context::signaturePolicyURL() const
             return n->value;
         }
     }
+    return nullptr;
 }
 
 Notation Context::signatureNotation(unsigned int idx) const
@@ -1344,6 +1349,7 @@ static gpgme_tofu_policy_t to_tofu_policy_t(unsigned int policy)
         case TofuInfo::PolicyAsk:
             return GPGME_TOFU_POLICY_ASK;
         case TofuInfo::PolicyUnknown:
+        default:
             return GPGME_TOFU_POLICY_UNKNOWN;
     }
 }

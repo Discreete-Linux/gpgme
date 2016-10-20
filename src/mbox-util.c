@@ -12,7 +12,7 @@
  * This file is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * GNU Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program; if not, see <http://www.gnu.org/licenses/>.
@@ -255,3 +255,21 @@ _gpgme_mailbox_from_userid (const char *userid)
 
 /*   return 1; */
 /* } */
+
+
+/*
+ * Exported public API
+ */
+
+
+/* Return the mail address ("addr-spec" as per RFC-5322) from a string
+ * which is assumed to be an user id ("address" in RFC-5322).  All
+ * plain ASCII characters (those with bit 7 cleared) in the result
+ * are converted to lowercase.  Caller must free the result using
+ * gpgme_free.  Returns NULL if no valid address was found (in which
+ * case ERRNO is set to EINVAL) or for other errors.  */
+char *
+gpgme_addrspec_from_uid (const char *uid)
+{
+  return _gpgme_mailbox_from_userid (uid);
+}

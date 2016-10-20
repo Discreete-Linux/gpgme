@@ -46,23 +46,32 @@ COPY_FILES_PYME = \
 
 # For VPATH builds we need to copy some files because Python's
 # distutils are not VPATH-aware.
-copystamp: $(COPY_FILES) $(COPY_FILES_PYME)
+copystamp: $(COPY_FILES) $(COPY_FILES_PYME) data.h config.h
 	if test "$(srcdir)" != "$(builddir)" ; then \
 	  cp -R $(COPY_FILES) . ; \
 	  cp -R $(COPY_FILES_PYME) pyme ; \
 	fi
 	touch $@
 
+data.h:
+	ln -s "$(top_srcdir)/src/data.h" .
+
+config.h:
+	ln -s "$(top_builddir)/config.h" .
+
 all-local: copystamp
 	for PYTHON in $(PYTHONS); do \
-	  CFLAGS="$(CFLAGS) -I$(top_srcdir)" \
+	  CFLAGS="$(CFLAGS)" \
 	    $$PYTHON setup.py build --verbose ; \
 	done
 
 dist/pyme3-$(VERSION).tar.gz dist/pyme3-$(VERSION).tar.gz.asc: copystamp
-	CFLAGS="$(CFLAGS) -I$(top_srcdir)" \
+	CFLAGS="$(CFLAGS)" \
 	  $(PYTHON) setup.py sdist --verbose
 	gpg2 --detach-sign --armor dist/pyme3-$(VERSION).tar.gz
+
+.PHONY: prepare
+prepare: copystamp
 
 .PHONY: sdist
 sdist: dist/pyme3-$(VERSION).tar.gz dist/pyme3-$(VERSION).tar.gz.asc
@@ -72,7 +81,7 @@ upload: dist/pyme3-$(VERSION).tar.gz dist/pyme3-$(VERSION).tar.gz.asc
 	twine upload $^
 
 CLEANFILES = gpgme.h errors.i gpgme_wrap.c pyme/gpgme.py \
-	  copystamp
+	  data.h config.h copystamp
 
 # Remove the rest.
 #

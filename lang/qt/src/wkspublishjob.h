@@ -45,7 +45,7 @@ namespace QGpgME {
  * Handles Web Key Service Publishing. Needs WKS tools installed and
  * server support.
  *
- * Remember that after a result is emited the job is auto deleted
+ * Remember that after a result is emitted the job is auto deleted
  * so you can only use it for a single action.
  */
 class QGPGME_EXPORT WKSPublishJob: public Job
@@ -82,7 +82,7 @@ public:
      *
      * @param response The response of the server.
      **/
-    virtual void startRecieve(const QByteArray &response) = 0;
+    virtual void startReceive(const QByteArray &response) = 0;
 
 Q_SIGNALS:
     /* Result of the operation returned Data and returned Error are

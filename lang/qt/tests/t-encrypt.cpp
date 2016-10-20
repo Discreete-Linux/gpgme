@@ -28,6 +28,10 @@
     you do not wish to do so, delete this exception statement from
     your version.
 */
+#ifdef HAVE_CONFIG_H
+ #include "config.h"
+#endif
+
 #include <QDebug>
 #include <QTest>
 #include <QTemporaryDir>
@@ -48,6 +52,23 @@
 
 using namespace QGpgME;
 using namespace GpgME;
+
+static bool decryptSupported()
+{
+    /* With GnuPG 2.0.x (at least 2.0.26 by default on jessie)
+     * the passphrase_cb does not work. So the test popped up
+     * a pinentry. So tests requiring decryption don't work. */
+    static auto version = GpgME::engineInfo(GpgME::GpgEngine).engineVersion();
+    if (version < "2.0.0") {
+        /* With 1.4 it just works */
+        return true;
+    }
+    if (version < "2.1.0") {
+        /* With 2.1 it works with loopback mode */
+        return false;
+    }
+    return true;
+}
 
 class EncryptionTest : public QGpgMETest
 {
@@ -78,6 +99,9 @@ private Q_SLOTS:
         Q_ASSERT(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
 
         /* Now decrypt */
+        if (!decryptSupported()) {
+            return;
+        }
         auto ctx = Context::createForProtocol(OpenPGP);
         TestPassphraseProvider provider;
         ctx->setPassphraseProvider(&provider);
@@ -113,7 +137,7 @@ private Q_SLOTS:
 
         bool initSeen = false;
         bool finishSeen = false;
-        connect(job, &Job::progress, this, [this, &initSeen, &finishSeen] (const QString& what, int current, int total) {
+        connect(job, &Job::progress, this, [this, &initSeen, &finishSeen] (const QString&, int current, int total) {
                 // We only check for progress 0 and max progress as the other progress
                 // lines depend on the system speed and are as such unreliable to test.
                 Q_ASSERT(total == PROGRESS_TEST_SIZE);
@@ -125,8 +149,8 @@ private Q_SLOTS:
                 }
                 Q_ASSERT(current >= 0 && current <= total);
             });
-        connect(job, &EncryptJob::result, this, [this, &initSeen, &finishSeen] (const GpgME::EncryptionResult &result,
-                                                                                const QByteArray &cipherText,
+        connect(job, &EncryptJob::result, this, [this, &initSeen, &finishSeen] (const GpgME::EncryptionResult &,
+                                                                                const QByteArray &,
                                                                                 const QString,
                                                                                 const GpgME::Error) {
                 Q_ASSERT(initSeen);
@@ -146,6 +170,9 @@ private Q_SLOTS:
 
     void testSymmetricEncryptDecrypt()
     {
+        if (!decryptSupported()) {
+            return;
+        }
         auto ctx = Context::createForProtocol(OpenPGP);
         TestPassphraseProvider provider;
         ctx->setPassphraseProvider(&provider);
@@ -178,6 +205,9 @@ private:
      * So this test is disabled until gnupg(?) is fixed for this. */
     void testMixedEncryptDecrypt()
     {
+        if (!decryptSupported()) {
+            return;
+        }
         auto listjob = openpgp()->keyListJob(false, false, false);
         std::vector<Key> keys;
         auto keylistresult = listjob->exec(QStringList() << QStringLiteral("alfa@example.net"),
