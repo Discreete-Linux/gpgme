@@ -1,6 +1,7 @@
 libgpgme-pthread.so.11 libgpgme11 #MINVER#
  GPGME_1.0@GPGME_1.0 1.1.2
  GPGME_1.1@GPGME_1.1 1.1.2
+ gpgme_addrspec_from_uid@GPGME_1.1 1.7.1
  gpgme_cancel@GPGME_1.0 1.1.2
  gpgme_cancel_async@GPGME_1.1 1.1.8
  gpgme_check_version@GPGME_1.0 1.1.2
@@ -187,6 +188,7 @@ libgpgme-pthread.so.11 libgpgme11 #MINVER#
 libgpgme.so.11 libgpgme11 #MINVER#
  GPGME_1.0@GPGME_1.0 1.1.2
  GPGME_1.1@GPGME_1.1 1.1.2
+ gpgme_addrspec_from_uid@GPGME_1.1 1.7.1
  gpgme_cancel@GPGME_1.0 1.1.2
  gpgme_cancel_async@GPGME_1.1 1.1.8
  gpgme_check_version@GPGME_1.0 1.1.2

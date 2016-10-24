@@ -274,6 +274,7 @@ libgpgmepp.so.6 libgpgmepp6 #MINVER#
  _ZN5GpgME6SubkeyC2ERKSt10shared_ptrI10_gpgme_keyEP13_gpgme_subkey@Base 1.7.0
  _ZN5GpgME6SubkeyC2ERKSt10shared_ptrI10_gpgme_keyEj@Base 1.7.0
  _ZN5GpgME6SubkeyC2Ev@Base 1.7.0
+ _ZN5GpgME6UserID18addrSpecFromStringB5cxx11EPKc@Base 1.7.1
  _ZN5GpgME6UserID9SignatureC1ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_idP14_gpgme_key_sig@Base 1.7.0
  _ZN5GpgME6UserID9SignatureC1ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_idj@Base 1.7.0
  _ZN5GpgME6UserID9SignatureC1Ev@Base 1.7.0
@@ -651,6 +652,7 @@ libgpgmepp.so.6 libgpgmepp6 #MINVER#
  _ZNK5GpgME6UserID5emailEv@Base 1.7.0
  _ZNK5GpgME6UserID6parentEv@Base 1.7.0
  _ZNK5GpgME6UserID7commentEv@Base 1.7.0
+ _ZNK5GpgME6UserID8addrSpecB5cxx11Ev@Base 1.7.1
  _ZNK5GpgME6UserID8tofuInfoEv@Base 1.7.0
  _ZNK5GpgME6UserID8validityEv@Base 1.7.0
  _ZNK5GpgME6UserID9Signature10signerNameEv@Base 1.7.0
@@ -734,6 +736,7 @@ libgpgmepp.so.6 libgpgmepp6 #MINVER#
  _ZNK5GpgME9Signature21hashAlgorithmAsStringEv@Base 1.7.0
  _ZNK5GpgME9Signature25isVerifiedUsingChainModelEv@Base 1.7.0
  _ZNK5GpgME9Signature26publicKeyAlgorithmAsStringEv@Base 1.7.0
+ _ZNK5GpgME9Signature3keyEbb@Base 1.7.1
  _ZNK5GpgME9Signature3keyEv@Base 1.7.0
  _ZNK5GpgME9Signature6isNullEv@Base 1.7.0
  _ZNK5GpgME9Signature6statusEv@Base 1.7.0
@@ -876,6 +879,7 @@ libgpgmepp.so.6 libgpgmepp6 #MINVER#
  (optional=templinst)_ZNSt6vectorIN5GpgME17InvalidSigningKeyESaIS1_EED1Ev@Base 1.7.0
  (optional=templinst)_ZNSt6vectorIN5GpgME17InvalidSigningKeyESaIS1_EED2Ev@Base 1.7.0
  (optional=templinst)_ZNSt6vectorIN5GpgME18VerificationResult7Private4NotaESaIS3_EE19_M_emplace_back_auxIJRKS3_EEEvDpOT_@Base 1.7.0
+ _ZNSt6vectorIN5GpgME3KeyESaIS1_EE12emplace_backIJS1_EEEvDpOT_@Base 1.7.1
  (optional=templinst)_ZNSt6vectorIN5GpgME3KeyESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
  (optional=templinst)_ZNSt6vectorIN5GpgME3KeyESaIS1_EED1Ev@Base 1.7.0
  (optional=templinst)_ZNSt6vectorIN5GpgME3KeyESaIS1_EED2Ev@Base 1.7.0
