@@ -122,7 +122,7 @@ Description: Python interface to the GPGME GnuPG encryption library (Python 2)
  .
  This is the official upstream Python 2 binding for GPGME.
 
-Package: libqgpgme6
+Package: libqgpgme7
 Architecture: any
 Multi-Arch: same
 Depends:
@@ -151,7 +151,7 @@ Section: libdevel
 Architecture: any
 Depends:
  libgpgmepp6 (= ${binary:Version}),
- libqgpgme6 (= ${binary:Version}),
+ libqgpgme7 (= ${binary:Version}),
  qtbase5-dev,
  ${misc:Depends},
  ${shlibs:Depends},
