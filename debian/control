@@ -158,9 +158,9 @@ Depends:
 Recommends:
  libgpgmepp-doc (= ${binary:Version}),
 Breaks:
- kdepimlibs5-dev (<= 4:4.14.10-5),
+ kdepimlibs5-dev
 Replaces:
- kdepimlibs5-dev (<= 4:4.14.10-5),
+ kdepimlibs5-dev
 Description: C++ and Qt bindings for GPGME (development files)
  GpgME++ (aka GpgMEpp) is a C++ wrapper (or C++ bindings) for the
  GnuPG project's GPGME (GnuPG Made Easy) library.
