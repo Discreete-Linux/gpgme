@@ -1,3 +1,10 @@
+gpgme1.0 (1.7.1-2) experimental; urgency=medium
+
+  * more general cleanup of upstream tarball in debian/gbp.conf
+  * ensure that source version makes it through to python-pyme-dbgsym
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 25 Oct 2016 12:21:41 -0400
+
 gpgme1.0 (1.7.1-1) experimental; urgency=medium
 
   * new upstream release.
