@@ -5,7 +5,7 @@ export QT_SELECT := qt5
 export DEBIAN_VERSION = $(shell dpkg-parsechangelog | sed -n -e '/^Version:/s/.*: //p')
 
 %:
-	dh $@ --with autoreconf,python2,python3 --parallel --with pkgkde_symbolshelper
+	dh $@ --with autoreconf,python2,python3,pkgkde_symbolshelper
 
 override_dh_auto_configure:
 	dh_auto_configure -- \
