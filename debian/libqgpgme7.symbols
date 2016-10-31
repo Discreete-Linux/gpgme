@@ -1,3 +1,4 @@
+# SymbolsHelper-Confirmed: 1.7.1 amd64
 libqgpgme.so.7 libqgpgme7 #MINVER#
  _Z18GPGPME_BACKEND_LOGv@Base 1.7.1
  _ZN10QByteArrayD1Ev@Base 1.7.1
@@ -491,9 +492,9 @@ libqgpgme.so.7 libqgpgme7 #MINVER#
  _ZN6QGpgME21QGpgMEVerifyOpaqueJobD0Ev@Base 1.7.1
  _ZN6QGpgME21QGpgMEVerifyOpaqueJobD1Ev@Base 1.7.1
  _ZN6QGpgME21QGpgMEVerifyOpaqueJobD2Ev@Base 1.7.1
- _ZN6QGpgME21QIODeviceDataProvider4readEPvm@Base 1.7.1
- _ZN6QGpgME21QIODeviceDataProvider4seekEli@Base 1.7.1
- _ZN6QGpgME21QIODeviceDataProvider5writeEPKvm@Base 1.7.1
+ (subst)_ZN6QGpgME21QIODeviceDataProvider4readEPv{size_t}@Base 1.7.1
+ (subst)_ZN6QGpgME21QIODeviceDataProvider4seekE{int64_t}i@Base 1.7.1
+ (subst)_ZN6QGpgME21QIODeviceDataProvider5writeEPKv{size_t}@Base 1.7.1
  _ZN6QGpgME21QIODeviceDataProvider7releaseEv@Base 1.7.1
  _ZN6QGpgME21QIODeviceDataProviderC1ERKSt10shared_ptrI9QIODeviceE@Base 1.7.1
  _ZN6QGpgME21QIODeviceDataProviderC2ERKSt10shared_ptrI9QIODeviceE@Base 1.7.1

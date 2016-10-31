@@ -162,7 +162,7 @@ libgpgmepp.so.6 libgpgmepp6 #MINVER#
  _ZN5GpgME19KeyGenerationResultC2ERKNS_5ErrorE@Base 1.7.0
  _ZN5GpgME19KeyGenerationResultC2Ev@Base 1.7.0
  _ZN5GpgME23data_provider_callbacksE@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransaction4dataEPKcm@Base 1.7.0
+ (subst)_ZN5GpgME24DefaultAssuanTransaction4dataEPKc{size_t}@Base 1.7.0
  _ZN5GpgME24DefaultAssuanTransaction6statusEPKcS2_@Base 1.7.0
  _ZN5GpgME24DefaultAssuanTransaction7inquireEPKcS2_RNS_5ErrorE@Base 1.7.0
  _ZN5GpgME24DefaultAssuanTransactionC1Ev@Base 1.7.0
