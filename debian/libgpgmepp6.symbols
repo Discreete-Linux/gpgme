@@ -1,1022 +1,1021 @@
-# SymbolsHelper-Confirmed: 1.7.0 amd64
 libgpgmepp.so.6 libgpgmepp6 #MINVER#
- _ZN5GpgME10EngineInfoC1EP18_gpgme_engine_info@Base 1.7.0
- _ZN5GpgME10EngineInfoC1Ev@Base 1.7.0
- _ZN5GpgME10EngineInfoC2EP18_gpgme_engine_info@Base 1.7.0
- _ZN5GpgME10EngineInfoC2Ev@Base 1.7.0
- _ZN5GpgME10engineInfoENS_6EngineE@Base 1.7.0
- _ZN5GpgME10engineInfoENS_8ProtocolE@Base 1.7.0
- _ZN5GpgME10hasFeatureEm@Base 1.7.0
- _ZN5GpgME10hasFeatureEmm@Base 1.7.0
- _ZN5GpgME10verify_uidERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_id@Base 1.7.0
- _ZN5GpgME11checkEngineENS_6EngineE@Base 1.7.0
- _ZN5GpgME11checkEngineENS_8ProtocolE@Base 1.7.0
- _ZN5GpgME11find_subkeyERKSt10shared_ptrI10_gpgme_keyEj@Base 1.7.0
- _ZN5GpgME12ImportResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME12ImportResultC1EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME12ImportResultC1EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME12ImportResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME12ImportResultC1Ev@Base 1.7.0
- _ZN5GpgME12ImportResultC2EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME12ImportResultC2EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME12ImportResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME12ImportResultC2Ev@Base 1.7.0
- _ZN5GpgME12getQIODeviceEi@Base 1.7.0
- _ZN5GpgME13Configuration6Option11setNewValueERKNS0_8ArgumentE@Base 1.7.0
- _ZN5GpgME13Configuration6Option18resetToActiveValueEv@Base 1.7.0
- _ZN5GpgME13Configuration6Option19resetToDefaultValueEv@Base 1.7.0
- _ZN5GpgME13Configuration8Argument19__safe_bool_dummy__7nonnullEv@Base 1.7.0
- _ZN5GpgME13Configuration8ArgumentC1ERKS1_@Base 1.7.0
- _ZN5GpgME13Configuration8ArgumentC1ERKSt10shared_ptrI15gpgme_conf_compEP14gpgme_conf_optP14gpgme_conf_argb@Base 1.7.0
- _ZN5GpgME13Configuration8ArgumentC2ERKS1_@Base 1.7.0
- _ZN5GpgME13Configuration8ArgumentC2ERKSt10shared_ptrI15gpgme_conf_compEP14gpgme_conf_optP14gpgme_conf_argb@Base 1.7.0
- _ZN5GpgME13Configuration8ArgumentD1Ev@Base 1.7.0
- _ZN5GpgME13Configuration8ArgumentD2Ev@Base 1.7.0
- _ZN5GpgME13Configuration9Component4loadERNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13ConfigurationlsERSoNS0_4FlagE@Base 1.7.0
- _ZN5GpgME13ConfigurationlsERSoNS0_4TypeE@Base 1.7.0
- _ZN5GpgME13ConfigurationlsERSoNS0_5LevelE@Base 1.7.0
- _ZN5GpgME13ConfigurationlsERSoRKNS0_6OptionE@Base 1.7.0
- _ZN5GpgME13ConfigurationlsERSoRKNS0_8ArgumentE@Base 1.7.0
- _ZN5GpgME13ConfigurationlsERSoRKNS0_9ComponentE@Base 1.7.0
- _ZN5GpgME13KeyListResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME13KeyListResult6detachEv@Base 1.7.0
- _ZN5GpgME13KeyListResult9mergeWithERKS0_@Base 1.7.0
- _ZN5GpgME13KeyListResultC1EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13KeyListResultC1EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME13KeyListResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13KeyListResultC1ERKNS_5ErrorERK24_gpgme_op_keylist_result@Base 1.7.0
- _ZN5GpgME13KeyListResultC1Ev@Base 1.7.0
- _ZN5GpgME13KeyListResultC2EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13KeyListResultC2EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME13KeyListResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13KeyListResultC2ERKNS_5ErrorERK24_gpgme_op_keylist_result@Base 1.7.0
- _ZN5GpgME13KeyListResultC2Ev@Base 1.7.0
- _ZN5GpgME13SigningResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME13SigningResultC1EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13SigningResultC1EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME13SigningResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13SigningResultC1Ev@Base 1.7.0
- _ZN5GpgME13SigningResultC2EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13SigningResultC2EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME13SigningResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME13SigningResultC2Ev@Base 1.7.0
- _ZN5GpgME13SigningResultD1Ev@Base 1.7.0
- _ZN5GpgME13SigningResultD2Ev@Base 1.7.0
- _ZN5GpgME13getGIOChannelEi@Base 1.7.0
- _ZN5GpgME13verify_subkeyERKSt10shared_ptrI10_gpgme_keyEP13_gpgme_subkey@Base 1.7.0
- _ZN5GpgME14EditInteractor15setDebugChannelEP8_IO_FILE@Base 1.7.0
- _ZN5GpgME14EditInteractor7PrivateC1EPS0_@Base 1.7.0
- _ZN5GpgME14EditInteractor7PrivateC2EPS0_@Base 1.7.0
- _ZN5GpgME14EditInteractor7PrivateD1Ev@Base 1.7.0
- _ZN5GpgME14EditInteractor7PrivateD2Ev@Base 1.7.0
- _ZN5GpgME14EditInteractorC1Ev@Base 1.7.0
- _ZN5GpgME14EditInteractorC2Ev@Base 1.7.0
- _ZN5GpgME14EditInteractorD0Ev@Base 1.7.0
- _ZN5GpgME14EditInteractorD1Ev@Base 1.7.0
- _ZN5GpgME14EditInteractorD2Ev@Base 1.7.0
- _ZN5GpgME14VfsMountResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME14VfsMountResultC1EP13gpgme_contextRKNS_5ErrorES5_@Base 1.7.0
- _ZN5GpgME14VfsMountResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME14VfsMountResultC1Ev@Base 1.7.0
- _ZN5GpgME14VfsMountResultC2EP13gpgme_contextRKNS_5ErrorES5_@Base 1.7.0
- _ZN5GpgME14VfsMountResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME14VfsMountResultC2Ev@Base 1.7.0
- _ZN5GpgME14find_signatureEP14_gpgme_user_idj@Base 1.7.0
- _ZN5GpgME16CreatedSignatureC1ERKSt10shared_ptrINS_13SigningResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME16CreatedSignatureC1Ev@Base 1.7.0
- _ZN5GpgME16CreatedSignatureC2ERKSt10shared_ptrINS_13SigningResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME16CreatedSignatureC2Ev@Base 1.7.0
- _ZN5GpgME16DecryptionResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME16DecryptionResult9RecipientC1EP16_gpgme_recipient@Base 1.7.0
- _ZN5GpgME16DecryptionResult9RecipientC1Ev@Base 1.7.0
- _ZN5GpgME16DecryptionResult9RecipientC2EP16_gpgme_recipient@Base 1.7.0
- _ZN5GpgME16DecryptionResult9RecipientC2Ev@Base 1.7.0
- _ZN5GpgME16DecryptionResultC1EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16DecryptionResultC1EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME16DecryptionResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16DecryptionResultC1Ev@Base 1.7.0
- _ZN5GpgME16DecryptionResultC2EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16DecryptionResultC2EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME16DecryptionResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16DecryptionResultC2Ev@Base 1.7.0
- _ZN5GpgME16DecryptionResultD1Ev@Base 1.7.0
- _ZN5GpgME16DecryptionResultD2Ev@Base 1.7.0
- _ZN5GpgME16EncryptionResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME16EncryptionResultC1EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16EncryptionResultC1EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME16EncryptionResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16EncryptionResultC1Ev@Base 1.7.0
- _ZN5GpgME16EncryptionResultC2EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16EncryptionResultC2EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME16EncryptionResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME16EncryptionResultC2Ev@Base 1.7.0
- _ZN5GpgME16EncryptionResultD1Ev@Base 1.7.0
- _ZN5GpgME16EncryptionResultD2Ev@Base 1.7.0
- _ZN5GpgME16InvalidRecipientC1ERKSt10shared_ptrINS_16EncryptionResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME16InvalidRecipientC1Ev@Base 1.7.0
- _ZN5GpgME16InvalidRecipientC2ERKSt10shared_ptrINS_16EncryptionResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME16InvalidRecipientC2Ev@Base 1.7.0
- _ZN5GpgME16setDefaultLocaleEiPKc@Base 1.7.0
- _ZN5GpgME16verify_signatureEP14_gpgme_user_idP14_gpgme_key_sig@Base 1.7.0
- _ZN5GpgME17InvalidSigningKeyC1ERKSt10shared_ptrINS_13SigningResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME17InvalidSigningKeyC1Ev@Base 1.7.0
- _ZN5GpgME17InvalidSigningKeyC2ERKSt10shared_ptrINS_13SigningResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME17InvalidSigningKeyC2Ev@Base 1.7.0
- _ZN5GpgME17initializeLibraryEi@Base 1.7.0
- _ZN5GpgME17initializeLibraryEv@Base 1.7.0
- _ZN5GpgME17to_auditlog_flagsEj@Base 1.7.0
- _ZN5GpgME18VerificationResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME18VerificationResult7PrivateD1Ev@Base 1.7.0
- _ZN5GpgME18VerificationResult7PrivateD2Ev@Base 1.7.0
- _ZN5GpgME18VerificationResultC1EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME18VerificationResultC1EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME18VerificationResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME18VerificationResultC1Ev@Base 1.7.0
- _ZN5GpgME18VerificationResultC2EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME18VerificationResultC2EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME18VerificationResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME18VerificationResultC2Ev@Base 1.7.0
- _ZN5GpgME18VerificationResultD1Ev@Base 1.7.0
- _ZN5GpgME18VerificationResultD2Ev@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor5actOnEiNS0_9DirectionE@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor5mSelfE@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor6manageEPNS_7ContextE@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor7Private10removeIOCbEPv@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor7Private12registerIOCbEPviiPFjS2_iES2_PS2_@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor7Private5iocbsE@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor7Private9eventIOCbEPv16gpgme_event_io_tS2_@Base 1.7.0
- _ZN5GpgME19EventLoopInteractor8unmanageEPNS_7ContextE@Base 1.7.0
- _ZN5GpgME19EventLoopInteractorC1Ev@Base 1.7.0
- _ZN5GpgME19EventLoopInteractorC2Ev@Base 1.7.0
- _ZN5GpgME19EventLoopInteractorD0Ev@Base 1.7.0
- _ZN5GpgME19EventLoopInteractorD1Ev@Base 1.7.0
- _ZN5GpgME19EventLoopInteractorD2Ev@Base 1.7.0
- _ZN5GpgME19KeyGenerationResult4initEP13gpgme_context@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC1EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC1EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC1ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC1Ev@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC2EP13gpgme_contextRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC2EP13gpgme_contexti@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC2ERKNS_5ErrorE@Base 1.7.0
- _ZN5GpgME19KeyGenerationResultC2Ev@Base 1.7.0
- _ZN5GpgME23data_provider_callbacksE@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransaction4dataEPKcm@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransaction6statusEPKcS2_@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransaction7inquireEPKcS2_RNS_5ErrorE@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransactionC1Ev@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransactionC2Ev@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransactionD0Ev@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransactionD1Ev@Base 1.7.0
- _ZN5GpgME24DefaultAssuanTransactionD2Ev@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractor13setCheckLevelEj@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractor16setUserIDsToSignERKSt6vectorIjSaIjEE@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractor17setSigningOptionsEi@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractor7PrivateC1Ev@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractor7PrivateC2Ev@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractorC1Ev@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractorC2Ev@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractorD0Ev@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractorD1Ev@Base 1.7.0
- _ZN5GpgME24GpgSignKeyEditInteractorD2Ev@Base 1.7.0
- _ZN5GpgME24edit_interactor_callbackE@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractor11setNameUtf8ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractor12setEmailUtf8ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractor14setCommentUtf8ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractorC1Ev@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractorC2Ev@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractorD0Ev@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractorD1Ev@Base 1.7.0
- _ZN5GpgME26GpgAddUserIDEditInteractorD2Ev@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransaction4dataEPKcm@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransaction6statusEPKcS2_@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransaction7inquireEPKcS2_RNS_5ErrorE@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransactionC1ENS0_8InfoItemE@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransactionC2ENS0_8InfoItemE@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransactionD0Ev@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransactionD1Ev@Base 1.7.0
- _ZN5GpgME27ScdGetInfoAssuanTransactionD2Ev@Base 1.7.0
- _ZN5GpgME30GpgSetExpiryTimeEditInteractorC1ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE@Base 1.7.0
- _ZN5GpgME30GpgSetExpiryTimeEditInteractorC2ERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE@Base 1.7.0
- _ZN5GpgME30GpgSetExpiryTimeEditInteractorD0Ev@Base 1.7.0
- _ZN5GpgME30GpgSetExpiryTimeEditInteractorD1Ev@Base 1.7.0
- _ZN5GpgME30GpgSetExpiryTimeEditInteractorD2Ev@Base 1.7.0
- _ZN5GpgME30GpgSetOwnerTrustEditInteractorC1ENS_3Key10OwnerTrustE@Base 1.7.0
- _ZN5GpgME30GpgSetOwnerTrustEditInteractorC2ENS_3Key10OwnerTrustE@Base 1.7.0
- _ZN5GpgME30GpgSetOwnerTrustEditInteractorD0Ev@Base 1.7.0
- _ZN5GpgME30GpgSetOwnerTrustEditInteractorD1Ev@Base 1.7.0
- _ZN5GpgME30GpgSetOwnerTrustEditInteractorD2Ev@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransaction4dataEPKcm@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransaction6statusEPKcS2_@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransaction7inquireEPKcS2_RNS_5ErrorE@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransactionC1ENS0_8InfoItemE@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransactionC2ENS0_8InfoItemE@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransactionD0Ev@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransactionD1Ev@Base 1.7.0
- _ZN5GpgME32GpgAgentGetInfoAssuanTransactionD2Ev@Base 1.7.0
- _ZN5GpgME3Key4nullE@Base 1.7.0
- _ZN5GpgME3Key6updateEv@Base 1.7.0
- _ZN5GpgME3Key9mergeWithERKS0_@Base 1.7.0
- _ZN5GpgME3KeyC1EP10_gpgme_keyb@Base 1.7.0
- _ZN5GpgME3KeyC1ERKNS0_4NullE@Base 1.7.0
- _ZN5GpgME3KeyC1ERKSt10shared_ptrI10_gpgme_keyE@Base 1.7.0
- _ZN5GpgME3KeyC1Ev@Base 1.7.0
- _ZN5GpgME3KeyC2EP10_gpgme_keyb@Base 1.7.0
- _ZN5GpgME3KeyC2ERKNS0_4NullE@Base 1.7.0
- _ZN5GpgME3KeyC2ERKSt10shared_ptrI10_gpgme_keyE@Base 1.7.0
- _ZN5GpgME3KeyC2Ev@Base 1.7.0
- _ZN5GpgME4Data11setEncodingENS0_8EncodingE@Base 1.7.0
- _ZN5GpgME4Data11setFileNameEPKc@Base 1.7.0
- _ZN5GpgME4Data4nullE@Base 1.7.0
- _ZN5GpgME4Data4readEPvm@Base 1.7.0
- _ZN5GpgME4Data4seekEli@Base 1.7.0
- _ZN5GpgME4Data5writeEPKvm@Base 1.7.0
- _ZN5GpgME4Data7PrivateD1Ev@Base 1.7.0
- _ZN5GpgME4Data7PrivateD2Ev@Base 1.7.0
- _ZN5GpgME4DataC1EP10gpgme_data@Base 1.7.0
- _ZN5GpgME4DataC1EP8_IO_FILE@Base 1.7.0
- _ZN5GpgME4DataC1EP8_IO_FILElm@Base 1.7.0
- _ZN5GpgME4DataC1EPKc@Base 1.7.0
- _ZN5GpgME4DataC1EPKclm@Base 1.7.0
- _ZN5GpgME4DataC1EPKcmb@Base 1.7.0
- _ZN5GpgME4DataC1EPNS_12DataProviderE@Base 1.7.0
- _ZN5GpgME4DataC1ERKNS0_4NullE@Base 1.7.0
- _ZN5GpgME4DataC1Ei@Base 1.7.0
- _ZN5GpgME4DataC1Ev@Base 1.7.0
- _ZN5GpgME4DataC2EP10gpgme_data@Base 1.7.0
- _ZN5GpgME4DataC2EP8_IO_FILE@Base 1.7.0
- _ZN5GpgME4DataC2EP8_IO_FILElm@Base 1.7.0
- _ZN5GpgME4DataC2EPKc@Base 1.7.0
- _ZN5GpgME4DataC2EPKclm@Base 1.7.0
- _ZN5GpgME4DataC2EPKcmb@Base 1.7.0
- _ZN5GpgME4DataC2EPNS_12DataProviderE@Base 1.7.0
- _ZN5GpgME4DataC2ERKNS0_4NullE@Base 1.7.0
- _ZN5GpgME4DataC2Ei@Base 1.7.0
- _ZN5GpgME4DataC2Ev@Base 1.7.0
- _ZN5GpgME5Error14hasSystemErrorEv@Base 1.7.0
- _ZN5GpgME5Error14setSystemErrorE14gpg_err_code_t@Base 1.7.0
- _ZN5GpgME5Error15fromSystemErrorEj@Base 1.7.0
- _ZN5GpgME5Error19__safe_bool_dummy__7nonnullEv@Base 1.7.0
- _ZN5GpgME5Error8fromCodeEjj@Base 1.7.0
- _ZN5GpgME5Error8setErrnoEi@Base 1.7.0
- _ZN5GpgME5Error9fromErrnoEij@Base 1.7.0
- _ZN5GpgME5ErrorD1Ev@Base 1.7.0
- _ZN5GpgME5ErrorD2Ev@Base 1.7.0
- _ZN5GpgME6ImportC1ERKSt10shared_ptrINS_12ImportResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME6ImportC1Ev@Base 1.7.0
- _ZN5GpgME6ImportC2ERKSt10shared_ptrINS_12ImportResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME6ImportC2Ev@Base 1.7.0
- _ZN5GpgME6Subkey26publicKeyAlgorithmAsStringENS0_10PubkeyAlgoE@Base 1.7.0
- _ZN5GpgME6SubkeyC1ERKSt10shared_ptrI10_gpgme_keyEP13_gpgme_subkey@Base 1.7.0
- _ZN5GpgME6SubkeyC1ERKSt10shared_ptrI10_gpgme_keyEj@Base 1.7.0
- _ZN5GpgME6SubkeyC1Ev@Base 1.7.0
- _ZN5GpgME6SubkeyC2ERKSt10shared_ptrI10_gpgme_keyEP13_gpgme_subkey@Base 1.7.0
- _ZN5GpgME6SubkeyC2ERKSt10shared_ptrI10_gpgme_keyEj@Base 1.7.0
- _ZN5GpgME6SubkeyC2Ev@Base 1.7.0
- _ZN5GpgME6UserID18addrSpecFromStringB5cxx11EPKc@Base 1.7.1
- _ZN5GpgME6UserID9SignatureC1ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_idP14_gpgme_key_sig@Base 1.7.0
- _ZN5GpgME6UserID9SignatureC1ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_idj@Base 1.7.0
- _ZN5GpgME6UserID9SignatureC1Ev@Base 1.7.0
- _ZN5GpgME6UserID9SignatureC2ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_idP14_gpgme_key_sig@Base 1.7.0
- _ZN5GpgME6UserID9SignatureC2ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_idj@Base 1.7.0
- _ZN5GpgME6UserID9SignatureC2Ev@Base 1.7.0
- _ZN5GpgME6UserIDC1ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_id@Base 1.7.0
- _ZN5GpgME6UserIDC1ERKSt10shared_ptrI10_gpgme_keyEj@Base 1.7.0
- _ZN5GpgME6UserIDC1Ev@Base 1.7.0
- _ZN5GpgME6UserIDC2ERKSt10shared_ptrI10_gpgme_keyEP14_gpgme_user_id@Base 1.7.0
- _ZN5GpgME6UserIDC2ERKSt10shared_ptrI10_gpgme_keyEj@Base 1.7.0
- _ZN5GpgME6UserIDC2Ev@Base 1.7.0
- _ZN5GpgME7Context10importKeysERKNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context10importKeysERKSt6vectorINS_3KeyESaIS2_EE@Base 1.7.0
- _ZN5GpgME7Context10setOfflineEb@Base 1.7.0
- _ZN5GpgME7Context10spawnAsyncEPKcPS2_RNS_4DataES5_S5_NS0_10SpawnFlagsE@Base 1.7.0
- _ZN5GpgME7Context11generateKeyEPKcRNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context11getAuditLogERNS_4DataEj@Base 1.7.0
- _ZN5GpgME7Context11setTextModeEb@Base 1.7.0
- _ZN5GpgME7Context11startPasswdERKNS_3KeyE@Base 1.7.0
- _ZN5GpgME7Context12startEditingERKNS_3KeyESt10unique_ptrINS_14EditInteractorESt14default_deleteIS5_EERNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context12startSigningERKNS_4DataERS1_NS_13SignatureModeE@Base 1.7.0
- _ZN5GpgME7Context13addSigningKeyERKNS_3KeyE@Base 1.7.0
- _ZN5GpgME7Context13endKeyListingEv@Base 1.7.0
- _ZN5GpgME7Context13nextTrustItemERNS_5ErrorE@Base 1.7.0
- _ZN5GpgME7Context13setTofuPolicyERKNS_3KeyEj@Base 1.7.0
- _ZN5GpgME7Context14addKeyListModeEj@Base 1.7.0
- _ZN5GpgME7Context14assuanTransactEPKc@Base 1.7.0
- _ZN5GpgME7Context14assuanTransactEPKcSt10unique_ptrINS_17AssuanTransactionESt14default_deleteIS4_EE@Base 1.7.0
- _ZN5GpgME7Context14setKeyListModeEj@Base 1.7.0
- _ZN5GpgME7Context14signAndEncryptERKSt6vectorINS_3KeyESaIS2_EERKNS_4DataERS7_NS0_15EncryptionFlagsE@Base 1.7.0
- _ZN5GpgME7Context14startKeyImportERKNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context14startKeyImportERKSt6vectorINS_3KeyESaIS2_EE@Base 1.7.0
- _ZN5GpgME7Context15createForEngineENS_6EngineEPNS_5ErrorE@Base 1.7.0
- _ZN5GpgME7Context15setPinentryModeENS0_12PinentryModeE@Base 1.7.0
- _ZN5GpgME7Context15startDecryptionERKNS_4DataERS1_@Base 1.7.0
- _ZN5GpgME7Context15startEncryptionERKSt6vectorINS_3KeyESaIS2_EERKNS_4DataERS7_NS0_15EncryptionFlagsE@Base 1.7.0
- _ZN5GpgME7Context15startKeyListingEPKcb@Base 1.7.0
- _ZN5GpgME7Context15startKeyListingEPPKcb@Base 1.7.0
- _ZN5GpgME7Context16clearSigningKeysEv@Base 1.7.0
- _ZN5GpgME7Context16decryptAndVerifyERKNS_4DataERS1_@Base 1.7.0
- _ZN5GpgME7Context16exportPublicKeysEPKcRNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context16exportPublicKeysEPPKcRNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context16startCardEditingERKNS_3KeyESt10unique_ptrINS_14EditInteractorESt14default_deleteIS5_EERNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context16startGetAuditLogERNS_4DataEj@Base 1.7.0
- _ZN5GpgME7Context16startKeyDeletionERKNS_3KeyEb@Base 1.7.0
- _ZN5GpgME7Context17createForProtocolENS_8ProtocolE@Base 1.7.0
- _ZN5GpgME7Context17setEngineFileNameEPKc@Base 1.7.0
- _ZN5GpgME7Context18installIOCallbacksEP12gpgme_io_cbs@Base 1.7.0
- _ZN5GpgME7Context18setTofuPolicyStartERKNS_3KeyEj@Base 1.7.0
- _ZN5GpgME7Context18startKeyGenerationEPKcRNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context19endTrustItemListingEv@Base 1.7.0
- _ZN5GpgME7Context19setProgressProviderEPNS_16ProgressProviderE@Base 1.7.0
- _ZN5GpgME7Context20addSignatureNotationEPKcS2_j@Base 1.7.0
- _ZN5GpgME7Context20encryptSymmetricallyERKNS_4DataERS1_@Base 1.7.0
- _ZN5GpgME7Context20startPublicKeyExportEPKcRNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context20startPublicKeyExportEPPKcRNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context20uninstallIOCallbacksEv@Base 1.7.0
- _ZN5GpgME7Context21addSignaturePolicyURLEPKcb@Base 1.7.0
- _ZN5GpgME7Context21getKeysFromRecipientsERKSt6vectorINS_3KeyESaIS2_EE@Base 1.7.0
- _ZN5GpgME7Context21setPassphraseProviderEPNS_18PassphraseProviderE@Base 1.7.0
- _ZN5GpgME7Context21startTrustItemListingEPKci@Base 1.7.0
- _ZN5GpgME7Context21verifyOpaqueSignatureERKNS_4DataERS1_@Base 1.7.0
- _ZN5GpgME7Context22cancelPendingOperationEv@Base 1.7.0
- _ZN5GpgME7Context22setEngineHomeDirectoryEPKc@Base 1.7.0
- _ZN5GpgME7Context22setIncludeCertificatesEi@Base 1.7.0
- _ZN5GpgME7Context22startAssuanTransactionEPKc@Base 1.7.0
- _ZN5GpgME7Context22startAssuanTransactionEPKcSt10unique_ptrINS_17AssuanTransactionESt14default_deleteIS4_EE@Base 1.7.0
- _ZN5GpgME7Context22takeLastEditInteractorEv@Base 1.7.0
- _ZN5GpgME7Context23clearSignatureNotationsEv@Base 1.7.0
- _ZN5GpgME7Context23verifyDetachedSignatureERKNS_4DataES3_@Base 1.7.0
- _ZN5GpgME7Context25takeLastAssuanTransactionEv@Base 1.7.0
- _ZN5GpgME7Context26takeLastCardEditInteractorEv@Base 1.7.0
- _ZN5GpgME7Context31setManagedByEventLoopInteractorEb@Base 1.7.0
- _ZN5GpgME7Context32startOpaqueSignatureVerificationERKNS_4DataERS1_@Base 1.7.0
- _ZN5GpgME7Context33startCombinedSigningAndEncryptionERKSt6vectorINS_3KeyESaIS2_EERKNS_4DataERS7_NS0_15EncryptionFlagsE@Base 1.7.0
- _ZN5GpgME7Context34startDetachedSignatureVerificationERKNS_4DataES3_@Base 1.7.0
- _ZN5GpgME7Context38startCombinedDecryptionAndVerificationERKNS_4DataERS1_@Base 1.7.0
- _ZN5GpgME7Context3keyEPKcRNS_5ErrorEb@Base 1.7.0
- _ZN5GpgME7Context4editERKNS_3KeyESt10unique_ptrINS_14EditInteractorESt14default_deleteIS5_EERNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context4pollEv@Base 1.7.0
- _ZN5GpgME7Context4signERKNS_4DataERS1_NS_13SignatureModeE@Base 1.7.0
- _ZN5GpgME7Context4waitEv@Base 1.7.0
- _ZN5GpgME7Context5spawnEPKcPS2_RNS_4DataES5_S5_NS0_10SpawnFlagsE@Base 1.7.0
- _ZN5GpgME7Context6passwdERKNS_3KeyE@Base 1.7.0
- _ZN5GpgME7Context7PrivateC1EP13gpgme_context@Base 1.7.0
- _ZN5GpgME7Context7PrivateC2EP13gpgme_context@Base 1.7.0
- _ZN5GpgME7Context7PrivateD1Ev@Base 1.7.0
- _ZN5GpgME7Context7PrivateD2Ev@Base 1.7.0
- _ZN5GpgME7Context7decryptERKNS_4DataERS1_@Base 1.7.0
- _ZN5GpgME7Context7encryptERKSt6vectorINS_3KeyESaIS2_EERKNS_4DataERS7_NS0_15EncryptionFlagsE@Base 1.7.0
- _ZN5GpgME7Context7nextKeyERNS_5ErrorE@Base 1.7.0
- _ZN5GpgME7Context8cardEditERKNS_3KeyESt10unique_ptrINS_14EditInteractorESt14default_deleteIS5_EERNS_4DataE@Base 1.7.0
- _ZN5GpgME7Context8mountVFSEPKcS2_@Base 1.7.0
- _ZN5GpgME7Context8setArmorEb@Base 1.7.0
- _ZN5GpgME7Context9createVFSEPKcRKSt6vectorINS_3KeyESaIS4_EE@Base 1.7.0
- _ZN5GpgME7Context9deleteKeyERKNS_3KeyEb@Base 1.7.0
- _ZN5GpgME7Context9setLocaleEiPKc@Base 1.7.0
- _ZN5GpgME7ContextC1EP13gpgme_context@Base 1.7.0
- _ZN5GpgME7ContextC2EP13gpgme_context@Base 1.7.0
- _ZN5GpgME7ContextD0Ev@Base 1.7.0
- _ZN5GpgME7ContextD1Ev@Base 1.7.0
- _ZN5GpgME7ContextD2Ev@Base 1.7.0
- _ZN5GpgME7dirInfoEPKc@Base 1.7.0
- _ZN5GpgME8Notation7PrivateD1Ev@Base 1.7.0
- _ZN5GpgME8Notation7PrivateD2Ev@Base 1.7.0
- _ZN5GpgME8NotationC1EP19_gpgme_sig_notation@Base 1.7.0
- _ZN5GpgME8NotationC1ERKSt10shared_ptrINS_18VerificationResult7PrivateEEjj@Base 1.7.0
- _ZN5GpgME8NotationC1Ev@Base 1.7.0
- _ZN5GpgME8NotationC2EP19_gpgme_sig_notation@Base 1.7.0
- _ZN5GpgME8NotationC2ERKSt10shared_ptrINS_18VerificationResult7PrivateEEjj@Base 1.7.0
- _ZN5GpgME8NotationC2Ev@Base 1.7.0
- _ZN5GpgME8TofuInfoC1EP16_gpgme_tofu_info@Base 1.7.0
- _ZN5GpgME8TofuInfoC1Ev@Base 1.7.0
- _ZN5GpgME8TofuInfoC2EP16_gpgme_tofu_info@Base 1.7.0
- _ZN5GpgME8TofuInfoC2Ev@Base 1.7.0
- _ZN5GpgME8find_uidERKSt10shared_ptrI10_gpgme_keyEj@Base 1.7.0
- _ZN5GpgME9Exception12make_messageERKNS_5ErrorERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE@Base 1.7.0
- _ZN5GpgME9Exception12make_messageERKNS_5ErrorERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEENS0_7OptionsE@Base 1.7.0
- _ZN5GpgME9ExceptionD0Ev@Base 1.7.0
- _ZN5GpgME9ExceptionD1Ev@Base 1.7.0
- _ZN5GpgME9ExceptionD2Ev@Base 1.7.0
- _ZN5GpgME9SignatureC1ERKSt10shared_ptrINS_18VerificationResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME9SignatureC1Ev@Base 1.7.0
- _ZN5GpgME9SignatureC2ERKSt10shared_ptrINS_18VerificationResult7PrivateEEj@Base 1.7.0
- _ZN5GpgME9SignatureC2Ev@Base 1.7.0
- _ZN5GpgME9TrustItemC1EP17_gpgme_trust_item@Base 1.7.0
- _ZN5GpgME9TrustItemC1ERKS0_@Base 1.7.0
- _ZN5GpgME9TrustItemC2EP17_gpgme_trust_item@Base 1.7.0
- _ZN5GpgME9TrustItemC2ERKS0_@Base 1.7.0
- _ZN5GpgME9TrustItemD0Ev@Base 1.7.0
- _ZN5GpgME9TrustItemD1Ev@Base 1.7.0
- _ZN5GpgME9TrustItemD2Ev@Base 1.7.0
- _ZN5GpgMElsERSoNS_11KeyListModeE@Base 1.7.0
- _ZN5GpgMElsERSoNS_13SignatureModeE@Base 1.7.0
- _ZN5GpgMElsERSoNS_6EngineE@Base 1.7.0
- _ZN5GpgMElsERSoNS_7Context13AuditLogFlagsE@Base 1.7.0
- _ZN5GpgMElsERSoNS_7Context15EncryptionFlagsE@Base 1.7.0
- _ZN5GpgMElsERSoNS_7Context20CertificateInclusionE@Base 1.7.0
- _ZN5GpgMElsERSoNS_8Notation5FlagsE@Base 1.7.0
- _ZN5GpgMElsERSoNS_8ProtocolE@Base 1.7.0
- _ZN5GpgMElsERSoNS_9Signature7SummaryE@Base 1.7.0
- _ZN5GpgMElsERSoNS_9Signature9PKAStatusE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_13SigningResultE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_14VfsMountResultE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_16CreatedSignatureE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_16DecryptionResult9RecipientE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_16DecryptionResultE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_16EncryptionResultE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_16InvalidRecipientE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_17InvalidSigningKeyE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_18VerificationResultE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_3KeyE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_5ErrorE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_6UserIDE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_8NotationE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_8TofuInfoE@Base 1.7.0
- _ZN5GpgMElsERSoRKNS_9SignatureE@Base 1.7.0
- (optional=templinst)_ZN9__gnu_cxx12__to_xstringINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEcEET_PFiPT0_mPKS8_P13__va_list_tagEmSB_z@Base 1.7.0
- _ZNK5GpgME10EngineInfo13engineVersionEv@Base 1.7.0
- _ZNK5GpgME10EngineInfo13homeDirectoryEv@Base 1.7.0
- _ZNK5GpgME10EngineInfo15requiredVersionEv@Base 1.7.0
- _ZNK5GpgME10EngineInfo6isNullEv@Base 1.7.0
- _ZNK5GpgME10EngineInfo7versionEv@Base 1.7.0
- _ZNK5GpgME10EngineInfo8fileNameEv@Base 1.7.0
- _ZNK5GpgME10EngineInfo8protocolEv@Base 1.7.0
- _ZNK5GpgME12ImportResult10newSubkeysEv@Base 1.7.0
- _ZNK5GpgME12ImportResult10newUserIDsEv@Base 1.7.0
- _ZNK5GpgME12ImportResult11notImportedEv@Base 1.7.0
- _ZNK5GpgME12ImportResult11numImportedEv@Base 1.7.0
- _ZNK5GpgME12ImportResult12numUnchangedEv@Base 1.7.0
- _ZNK5GpgME12ImportResult13newSignaturesEv@Base 1.7.0
- _ZNK5GpgME12ImportResult13numConsideredEv@Base 1.7.0
- _ZNK5GpgME12ImportResult14newRevocationsEv@Base 1.7.0
- _ZNK5GpgME12ImportResult14numRSAImportedEv@Base 1.7.0
- _ZNK5GpgME12ImportResult20numKeysWithoutUserIDEv@Base 1.7.0
- _ZNK5GpgME12ImportResult21numSecretKeysImportedEv@Base 1.7.0
- _ZNK5GpgME12ImportResult22numSecretKeysUnchangedEv@Base 1.7.0
- _ZNK5GpgME12ImportResult23numSecretKeysConsideredEv@Base 1.7.0
- _ZNK5GpgME12ImportResult6importEj@Base 1.7.0
- _ZNK5GpgME12ImportResult6isNullEv@Base 1.7.0
- _ZNK5GpgME12ImportResult7importsEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option11activeValueEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option11descriptionEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option12argumentNameEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option12currentValueEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option12defaultValueEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option13alternateTypeEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option15noArgumentValueEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option17createIntArgumentEi@Base 1.7.0
- _ZNK5GpgME13Configuration6Option18createNoneArgumentEb@Base 1.7.0
- _ZNK5GpgME13Configuration6Option18createUIntArgumentEj@Base 1.7.0
- _ZNK5GpgME13Configuration6Option18defaultDescriptionEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option20createStringArgumentEPKc@Base 1.7.0
- _ZNK5GpgME13Configuration6Option20createStringArgumentERKNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEE@Base 1.7.0
- _ZNK5GpgME13Configuration6Option21createIntListArgumentERKSt6vectorIiSaIiEE@Base 1.7.0
- _ZNK5GpgME13Configuration6Option21noArgumentDescriptionEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option22createNoneListArgumentEj@Base 1.7.0
- _ZNK5GpgME13Configuration6Option22createUIntListArgumentERKSt6vectorIjSaIjEE@Base 1.7.0
- _ZNK5GpgME13Configuration6Option24createStringListArgumentERKSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS8_EE@Base 1.7.0
- _ZNK5GpgME13Configuration6Option24createStringListArgumentERKSt6vectorIPKcSaIS4_EE@Base 1.7.0
- _ZNK5GpgME13Configuration6Option3setEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option4nameEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option4typeEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option5dirtyEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option5flagsEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option5levelEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option6parentEv@Base 1.7.0
- _ZNK5GpgME13Configuration6Option8newValueEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument10uintValuesEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument11numElementsEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument11stringValueEj@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument12stringValuesEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument16numberOfTimesSetEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument6parentEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument8intValueEj@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument9boolValueEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument9intValuesEv@Base 1.7.0
- _ZNK5GpgME13Configuration8Argument9uintValueEj@Base 1.7.0
- _ZNK5GpgME13Configuration9Component10numOptionsEv@Base 1.7.0
- _ZNK5GpgME13Configuration9Component11descriptionEv@Base 1.7.0
- _ZNK5GpgME13Configuration9Component11programNameEv@Base 1.7.0
- _ZNK5GpgME13Configuration9Component4nameEv@Base 1.7.0
- _ZNK5GpgME13Configuration9Component4saveEv@Base 1.7.0
- _ZNK5GpgME13Configuration9Component6optionEPKc@Base 1.7.0
- _ZNK5GpgME13Configuration9Component6optionEj@Base 1.7.0
- _ZNK5GpgME13Configuration9Component7optionsEv@Base 1.7.0
- _ZNK5GpgME13KeyListResult11isTruncatedEv@Base 1.7.0
- _ZNK5GpgME13KeyListResult6isNullEv@Base 1.7.0
- _ZNK5GpgME13SigningResult16createdSignatureEj@Base 1.7.0
- _ZNK5GpgME13SigningResult17createdSignaturesEv@Base 1.7.0
- _ZNK5GpgME13SigningResult17invalidSigningKeyEj@Base 1.7.0
- _ZNK5GpgME13SigningResult18invalidSigningKeysEv@Base 1.7.0
- _ZNK5GpgME13SigningResult6isNullEv@Base 1.7.0
- _ZNK5GpgME14EditInteractor15needsNoResponseEj@Base 1.7.0
- _ZNK5GpgME14EditInteractor5stateEv@Base 1.7.0
- _ZNK5GpgME14EditInteractor9lastErrorEv@Base 1.7.0
- _ZNK5GpgME14VfsMountResult6isNullEv@Base 1.7.0
- _ZNK5GpgME14VfsMountResult8mountDirEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature11fingerprintEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature12creationTimeEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature13hashAlgorithmEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature14signatureClassEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature18publicKeyAlgorithmEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature21hashAlgorithmAsStringEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature26publicKeyAlgorithmAsStringEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature4modeEv@Base 1.7.0
- _ZNK5GpgME16CreatedSignature6isNullEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult10recipientsEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult13numRecipientsEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult15isWrongKeyUsageEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult20unsupportedAlgorithmEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult6isNullEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult8fileNameEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult9Recipient10shortKeyIDEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult9Recipient18publicKeyAlgorithmEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult9Recipient26publicKeyAlgorithmAsStringEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult9Recipient5keyIDEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult9Recipient6isNullEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult9Recipient6statusEv@Base 1.7.0
- _ZNK5GpgME16DecryptionResult9recipientEj@Base 1.7.0
- _ZNK5GpgME16EncryptionResult20invalidEncryptionKeyEj@Base 1.7.0
- _ZNK5GpgME16EncryptionResult20numInvalidRecipientsEv@Base 1.7.0
- _ZNK5GpgME16EncryptionResult21invalidEncryptionKeysEv@Base 1.7.0
- _ZNK5GpgME16EncryptionResult6isNullEv@Base 1.7.0
- _ZNK5GpgME16InvalidRecipient11fingerprintEv@Base 1.7.0
- _ZNK5GpgME16InvalidRecipient6isNullEv@Base 1.7.0
- _ZNK5GpgME16InvalidRecipient6reasonEv@Base 1.7.0
- _ZNK5GpgME17InvalidSigningKey11fingerprintEv@Base 1.7.0
- _ZNK5GpgME17InvalidSigningKey6isNullEv@Base 1.7.0
- _ZNK5GpgME17InvalidSigningKey6reasonEv@Base 1.7.0
- _ZNK5GpgME18VerificationResult10signaturesEv@Base 1.7.0
- _ZNK5GpgME18VerificationResult13numSignaturesEv@Base 1.7.0
- _ZNK5GpgME18VerificationResult6isNullEv@Base 1.7.0
- _ZNK5GpgME18VerificationResult8fileNameEv@Base 1.7.0
- _ZNK5GpgME18VerificationResult9signatureEj@Base 1.7.0
- _ZNK5GpgME19KeyGenerationResult11fingerprintEv@Base 1.7.0
- _ZNK5GpgME19KeyGenerationResult17isSubkeyGeneratedEv@Base 1.7.0
- _ZNK5GpgME19KeyGenerationResult21isPrimaryKeyGeneratedEv@Base 1.7.0
- _ZNK5GpgME19KeyGenerationResult6isNullEv@Base 1.7.0
- _ZNK5GpgME24DefaultAssuanTransaction10statusLineB5cxx11EPKc@Base 1.7.0
- _ZNK5GpgME24DefaultAssuanTransaction15firstStatusLineB5cxx11EPKc@Base 1.7.0
- _ZNK5GpgME24GpgSignKeyEditInteractor6actionERNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME24GpgSignKeyEditInteractor9nextStateEjPKcRNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME26GpgAddUserIDEditInteractor6actionERNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME26GpgAddUserIDEditInteractor9nextStateEjPKcRNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction10readerListB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction10socketNameB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction11makeCommandEv@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction15applicationListB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction3pidEv@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction6statusEv@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction7commandEv@Base 1.7.0
- _ZNK5GpgME27ScdGetInfoAssuanTransaction7versionB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME30GpgSetExpiryTimeEditInteractor6actionERNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME30GpgSetExpiryTimeEditInteractor9nextStateEjPKcRNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME30GpgSetOwnerTrustEditInteractor6actionERNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME30GpgSetOwnerTrustEditInteractor9nextStateEjPKcRNS_5ErrorE@Base 1.7.0
- _ZNK5GpgME32GpgAgentGetInfoAssuanTransaction10socketNameB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME32GpgAgentGetInfoAssuanTransaction11makeCommandEv@Base 1.7.0
- _ZNK5GpgME32GpgAgentGetInfoAssuanTransaction13sshSocketNameB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME32GpgAgentGetInfoAssuanTransaction3pidEv@Base 1.7.0
- _ZNK5GpgME32GpgAgentGetInfoAssuanTransaction7commandEv@Base 1.7.0
- _ZNK5GpgME32GpgAgentGetInfoAssuanTransaction7versionB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME3Key10canCertifyEv@Base 1.7.0
- _ZNK5GpgME3Key10canEncryptEv@Base 1.7.0
- _ZNK5GpgME3Key10isDisabledEv@Base 1.7.0
- _ZNK5GpgME3Key10issuerNameEv@Base 1.7.0
- _ZNK5GpgME3Key10numSubkeysEv@Base 1.7.0
- _ZNK5GpgME3Key10numUserIDsEv@Base 1.7.0
- _ZNK5GpgME3Key10ownerTrustEv@Base 1.7.0
- _ZNK5GpgME3Key10shortKeyIDEv@Base 1.7.0
- _ZNK5GpgME3Key11isQualifiedEv@Base 1.7.0
- _ZNK5GpgME3Key11keyListModeEv@Base 1.7.0
- _ZNK5GpgME3Key12issuerSerialEv@Base 1.7.0
- _ZNK5GpgME3Key13canReallySignEv@Base 1.7.0
- _ZNK5GpgME3Key15canAuthenticateEv@Base 1.7.0
- _ZNK5GpgME3Key16protocolAsStringEv@Base 1.7.0
- _ZNK5GpgME3Key18ownerTrustAsStringEv@Base 1.7.0
- _ZNK5GpgME3Key18primaryFingerprintEv@Base 1.7.0
- _ZNK5GpgME3Key5keyIDEv@Base 1.7.0
- _ZNK5GpgME3Key6isRootEv@Base 1.7.0
- _ZNK5GpgME3Key6subkeyEj@Base 1.7.0
- _ZNK5GpgME3Key6userIDEj@Base 1.7.0
- _ZNK5GpgME3Key7canSignEv@Base 1.7.0
- _ZNK5GpgME3Key7chainIDEv@Base 1.7.0
- _ZNK5GpgME3Key7subkeysEv@Base 1.7.0
- _ZNK5GpgME3Key7userIDsEv@Base 1.7.0
- _ZNK5GpgME3Key8protocolEv@Base 1.7.0
- _ZNK5GpgME3Key9hasSecretEv@Base 1.7.0
- _ZNK5GpgME3Key9isExpiredEv@Base 1.7.0
- _ZNK5GpgME3Key9isInvalidEv@Base 1.7.0
- _ZNK5GpgME3Key9isRevokedEv@Base 1.7.0
- _ZNK5GpgME4Data4typeEv@Base 1.7.0
- _ZNK5GpgME4Data6isNullEv@Base 1.7.0
- _ZNK5GpgME4Data8encodingEv@Base 1.7.0
- _ZNK5GpgME4Data8fileNameEv@Base 1.7.0
- _ZNK5GpgME5Error10isCanceledEv@Base 1.7.0
- _ZNK5GpgME5Error4codeEv@Base 1.7.0
- _ZNK5GpgME5Error6sourceEv@Base 1.7.0
- _ZNK5GpgME5Error7toErrnoEv@Base 1.7.0
- _ZNK5GpgME5Error8asStringEv@Base 1.7.0
- _ZNK5GpgME5Error8sourceIDEv@Base 1.7.0
- _ZNK5GpgME6Import11fingerprintEv@Base 1.7.0
- _ZNK5GpgME6Import5errorEv@Base 1.7.0
- _ZNK5GpgME6Import6isNullEv@Base 1.7.0
- _ZNK5GpgME6Import6statusEv@Base 1.7.0
- _ZNK5GpgME6Subkey10canCertifyEv@Base 1.7.0
- _ZNK5GpgME6Subkey10canEncryptEv@Base 1.7.0
- _ZNK5GpgME6Subkey10isDisabledEv@Base 1.7.0
- _ZNK5GpgME6Subkey11fingerprintEv@Base 1.7.0
- _ZNK5GpgME6Subkey11isQualifiedEv@Base 1.7.0
- _ZNK5GpgME6Subkey12creationTimeEv@Base 1.7.0
- _ZNK5GpgME6Subkey12neverExpiresEv@Base 1.7.0
- _ZNK5GpgME6Subkey14expirationTimeEv@Base 1.7.0
- _ZNK5GpgME6Subkey15canAuthenticateEv@Base 1.7.0
- _ZNK5GpgME6Subkey16cardSerialNumberEv@Base 1.7.0
- _ZNK5GpgME6Subkey18publicKeyAlgorithmEv@Base 1.7.0
- _ZNK5GpgME6Subkey26publicKeyAlgorithmAsStringEv@Base 1.7.0
- _ZNK5GpgME6Subkey5keyIDEv@Base 1.7.0
- _ZNK5GpgME6Subkey6lengthEv@Base 1.7.0
- _ZNK5GpgME6Subkey6parentEv@Base 1.7.0
- _ZNK5GpgME6Subkey7canSignEv@Base 1.7.0
- _ZNK5GpgME6Subkey8algoNameB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME6Subkey8isSecretEv@Base 1.7.0
- _ZNK5GpgME6Subkey9isCardKeyEv@Base 1.7.0
- _ZNK5GpgME6Subkey9isExpiredEv@Base 1.7.0
- _ZNK5GpgME6Subkey9isInvalidEv@Base 1.7.0
- _ZNK5GpgME6Subkey9isRevokedEv@Base 1.7.0
- _ZNK5GpgME6UserID10signaturesEv@Base 1.7.0
- _ZNK5GpgME6UserID13numSignaturesEv@Base 1.7.0
- _ZNK5GpgME6UserID16validityAsStringEv@Base 1.7.0
- _ZNK5GpgME6UserID2idEv@Base 1.7.0
- _ZNK5GpgME6UserID4nameEv@Base 1.7.0
- _ZNK5GpgME6UserID5emailEv@Base 1.7.0
- _ZNK5GpgME6UserID6parentEv@Base 1.7.0
- _ZNK5GpgME6UserID7commentEv@Base 1.7.0
- _ZNK5GpgME6UserID8addrSpecB5cxx11Ev@Base 1.7.1
- _ZNK5GpgME6UserID8tofuInfoEv@Base 1.7.0
- _ZNK5GpgME6UserID8validityEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature10signerNameEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature11signerEmailEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature11signerKeyIDEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature12creationTimeEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature12isExportableEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature12isRevokationEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature12neverExpiresEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature12numNotationsEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature12signerUserIDEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature13signerCommentEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature14expirationTimeEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature14statusAsStringB5cxx11Ev@Base 1.7.0
- _ZNK5GpgME6UserID9Signature17algorithmAsStringEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature6parentEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature6statusEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature8notationEj@Base 1.7.0
- _ZNK5GpgME6UserID9Signature9algorithmEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature9certClassEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature9isExpiredEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature9isInvalidEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature9notationsEv@Base 1.7.0
- _ZNK5GpgME6UserID9Signature9policyURLEv@Base 1.7.0
- _ZNK5GpgME6UserID9isInvalidEv@Base 1.7.0
- _ZNK5GpgME6UserID9isRevokedEv@Base 1.7.0
- _ZNK5GpgME6UserID9signatureEj@Base 1.7.0
- _ZNK5GpgME7Context10engineInfoEv@Base 1.7.0
- _ZNK5GpgME7Context10signingKeyEj@Base 1.7.0
- _ZNK5GpgME7Context11keyListModeEv@Base 1.7.0
- _ZNK5GpgME7Context11signingKeysEv@Base 1.7.0
- _ZNK5GpgME7Context12importResultEv@Base 1.7.0
- _ZNK5GpgME7Context12pinentryModeEv@Base 1.7.0
- _ZNK5GpgME7Context13keyListResultEv@Base 1.7.0
- _ZNK5GpgME7Context13signingResultEv@Base 1.7.0
- _ZNK5GpgME7Context16decryptionResultEv@Base 1.7.0
- _ZNK5GpgME7Context16encryptionResultEv@Base 1.7.0
- _ZNK5GpgME7Context16progressProviderEv@Base 1.7.0
- _ZNK5GpgME7Context17signatureNotationEj@Base 1.7.0
- _ZNK5GpgME7Context18lastEditInteractorEv@Base 1.7.0
- _ZNK5GpgME7Context18passphraseProviderEv@Base 1.7.0
- _ZNK5GpgME7Context18signatureNotationsEv@Base 1.7.0
- _ZNK5GpgME7Context18signaturePolicyURLEv@Base 1.7.0
- _ZNK5GpgME7Context18verificationResultEv@Base 1.7.0
- _ZNK5GpgME7Context19includeCertificatesEv@Base 1.7.0
- _ZNK5GpgME7Context19keyGenerationResultEv@Base 1.7.0
- _ZNK5GpgME7Context21lastAssuanTransactionEv@Base 1.7.0
- _ZNK5GpgME7Context22lastCardEditInteractorEv@Base 1.7.0
- _ZNK5GpgME7Context28managedByEventLoopInteractorEv@Base 1.7.0
- _ZNK5GpgME7Context5armorEv@Base 1.7.0
- _ZNK5GpgME7Context7offlineEv@Base 1.7.0
- _ZNK5GpgME7Context8protocolEv@Base 1.7.0
- _ZNK5GpgME7Context8textModeEv@Base 1.7.0
- _ZNK5GpgME7Context9lastErrorEv@Base 1.7.0
- _ZNK5GpgME8Notation10isCriticalEv@Base 1.7.0
- _ZNK5GpgME8Notation15isHumanReadableEv@Base 1.7.0
- _ZNK5GpgME8Notation4nameEv@Base 1.7.0
- _ZNK5GpgME8Notation5flagsEv@Base 1.7.0
- _ZNK5GpgME8Notation5valueEv@Base 1.7.0
- _ZNK5GpgME8Notation6isNullEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo11descriptionEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo6isNullEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo6policyEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo8encrLastEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo8signLastEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo8validityEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo9encrCountEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo9encrFirstEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo9signCountEv@Base 1.7.0
- _ZNK5GpgME8TofuInfo9signFirstEv@Base 1.7.0
- _ZNK5GpgME9Signature10pkaAddressEv@Base 1.7.0
- _ZNK5GpgME9Signature11fingerprintEv@Base 1.7.0
- _ZNK5GpgME9Signature12creationTimeEv@Base 1.7.0
- _ZNK5GpgME9Signature12neverExpiresEv@Base 1.7.0
- _ZNK5GpgME9Signature13hashAlgorithmEv@Base 1.7.0
- _ZNK5GpgME9Signature14expirationTimeEv@Base 1.7.0
- _ZNK5GpgME9Signature15isWrongKeyUsageEv@Base 1.7.0
- _ZNK5GpgME9Signature16validityAsStringEv@Base 1.7.0
- _ZNK5GpgME9Signature17nonValidityReasonEv@Base 1.7.0
- _ZNK5GpgME9Signature18publicKeyAlgorithmEv@Base 1.7.0
- _ZNK5GpgME9Signature21hashAlgorithmAsStringEv@Base 1.7.0
- _ZNK5GpgME9Signature25isVerifiedUsingChainModelEv@Base 1.7.0
- _ZNK5GpgME9Signature26publicKeyAlgorithmAsStringEv@Base 1.7.0
- _ZNK5GpgME9Signature3keyEbb@Base 1.7.1
- _ZNK5GpgME9Signature3keyEv@Base 1.7.0
- _ZNK5GpgME9Signature6isNullEv@Base 1.7.0
- _ZNK5GpgME9Signature6statusEv@Base 1.7.0
- _ZNK5GpgME9Signature7summaryEv@Base 1.7.0
- _ZNK5GpgME9Signature8notationEj@Base 1.7.0
- _ZNK5GpgME9Signature8validityEv@Base 1.7.0
- _ZNK5GpgME9Signature9notationsEv@Base 1.7.0
- _ZNK5GpgME9Signature9pkaStatusEv@Base 1.7.0
- _ZNK5GpgME9Signature9policyURLEv@Base 1.7.0
- _ZNK5GpgME9TrustItem10trustLevelEv@Base 1.7.0
- _ZNK5GpgME9TrustItem16validityAsStringEv@Base 1.7.0
- _ZNK5GpgME9TrustItem18ownerTrustAsStringEv@Base 1.7.0
- _ZNK5GpgME9TrustItem4implEv@Base 1.7.0
- _ZNK5GpgME9TrustItem4typeEv@Base 1.7.0
- _ZNK5GpgME9TrustItem5keyIDEv@Base 1.7.0
- _ZNK5GpgME9TrustItem6isNullEv@Base 1.7.0
- _ZNK5GpgME9TrustItem6userIDEv@Base 1.7.0
- (optional=templinst)_ZNKSt5ctypeIcE8do_widenEc@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIDnLN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE10_M_releaseEv@Base 1.7.0
- (optional=templinst)_ZNSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE15_M_weak_releaseEv@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE10_M_destroyEv@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE10_M_disposeEv@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE14_M_get_deleterERKSt9type_info@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt3mapISt5tupleIJN32GpgSignKeyEditInteractor_Private12SignKeyStateEjNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_St4lessIS9_ESaISt4pairIKS9_S2_EEED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt3mapISt5tupleIJN32GpgSignKeyEditInteractor_Private12SignKeyStateEjNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_St4lessIS9_ESaISt4pairIKS9_S2_EEED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt3mapISt5tupleIJN32GpgSignKeyEditInteractor_Private12SignKeyStateEjNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEES2_St4lessIS9_ESaISt4pairIKS9_S2_EEEixEOS9_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorI16_gpgme_recipientSaIS0_EE19_M_emplace_back_auxIJRKS0_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME13Configuration6OptionESaIS2_EE19_M_emplace_back_auxIJS2_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME13Configuration6OptionESaIS2_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME13Configuration6OptionESaIS2_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME13Configuration9ComponentESaIS2_EE17_M_default_appendEm@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME13Configuration9ComponentESaIS2_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME13Configuration9ComponentESaIS2_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16CreatedSignatureESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16CreatedSignatureESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16CreatedSignatureESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16DecryptionResult9RecipientESaIS2_EE19_M_emplace_back_auxIJS2_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16DecryptionResult9RecipientESaIS2_EE7reserveEm@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16DecryptionResult9RecipientESaIS2_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16DecryptionResult9RecipientESaIS2_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16InvalidRecipientESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16InvalidRecipientESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME16InvalidRecipientESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME17InvalidSigningKeyESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME17InvalidSigningKeyESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME17InvalidSigningKeyESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME18VerificationResult7Private4NotaESaIS3_EE19_M_emplace_back_auxIJRKS3_EEEvDpOT_@Base 1.7.0
- _ZNSt6vectorIN5GpgME3KeyESaIS1_EE12emplace_backIJS1_EEEvDpOT_@Base 1.7.1
- (optional=templinst)_ZNSt6vectorIN5GpgME3KeyESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME3KeyESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME3KeyESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6ImportESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6ImportESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6ImportESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6SubkeyESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6SubkeyESaIS1_EE7reserveEm@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6SubkeyESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6SubkeyESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserID9SignatureESaIS2_EE19_M_emplace_back_auxIJS2_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserID9SignatureESaIS2_EE7reserveEm@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserID9SignatureESaIS2_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserID9SignatureESaIS2_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserIDESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserIDESaIS1_EE7reserveEm@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserIDESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME6UserIDESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME8NotationESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME8NotationESaIS1_EE7reserveEm@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME8NotationESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME8NotationESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME9SignatureESaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME9SignatureESaIS1_EED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIN5GpgME9SignatureESaIS1_EED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt6vectorINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEESaIS5_EE19_M_emplace_back_auxIJRKS5_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIP16_gpgme_signatureSaIS1_EE19_M_emplace_back_auxIJRKS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIP18_gpgme_invalid_keySaIS1_EE19_M_emplace_back_auxIJRKS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIP20_gpgme_import_statusSaIS1_EE19_M_emplace_back_auxIJRKS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIP20_gpgme_new_signatureSaIS1_EE19_M_emplace_back_auxIJRKS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIPKcSaIS1_EE12emplace_backIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIPKcSaIS1_EE19_M_emplace_back_auxIJS1_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIPN5GpgME19EventLoopInteractor7Private5OneFDESaIS4_EE19_M_emplace_back_auxIJS4_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIPcSaIS0_EE19_M_emplace_back_auxIJS0_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIS_IN5GpgME18VerificationResult7Private4NotaESaIS3_EESaIS5_EE19_M_emplace_back_auxIJS5_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorISt4pairINSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEES6_ESaIS7_EE19_M_emplace_back_auxIJS7_EEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIiSaIiEE19_M_emplace_back_auxIJRKiEEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIjSaIjEE19_M_emplace_back_auxIJRKjEEEvDpOT_@Base 1.7.0
- (optional=templinst)_ZNSt6vectorIjSaIjEEaSERKS1_@Base 1.7.0
- (optional=templinst)_ZNSt7__cxx1115basic_stringbufIcSt11char_traitsIcESaIcEED0Ev@Base 1.7.0
- (optional=templinst)_ZNSt7__cxx1115basic_stringbufIcSt11char_traitsIcESaIcEED1Ev@Base 1.7.0
- (optional=templinst)_ZNSt7__cxx1115basic_stringbufIcSt11char_traitsIcESaIcEED2Ev@Base 1.7.0
- (optional=templinst)_ZNSt8_Rb_treeISt5tupleIJN32GpgSignKeyEditInteractor_Private12SignKeyStateEjNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEESt4pairIKS9_S2_ESt10_Select1stISC_ESt4lessIS9_ESaISC_EE24_M_get_insert_unique_posERSB_@Base 1.7.0
- (optional=templinst)_ZNSt8_Rb_treeISt5tupleIJN32GpgSignKeyEditInteractor_Private12SignKeyStateEjNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEESt4pairIKS9_S2_ESt10_Select1stISC_ESt4lessIS9_ESaISC_EE29_M_get_insert_hint_unique_posESt23_Rb_tree_const_iteratorISC_ERSB_@Base 1.7.0
- (optional=templinst)_ZNSt8_Rb_treeISt5tupleIJN32GpgSignKeyEditInteractor_Private12SignKeyStateEjNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEEESt4pairIKS9_S2_ESt10_Select1stISC_ESt4lessIS9_ESaISC_EE8_M_eraseEPSt13_Rb_tree_nodeISC_E@Base 1.7.0
- _ZTIN5GpgME14EditInteractorE@Base 1.7.0
- _ZTIN5GpgME17AssuanTransactionE@Base 1.7.0
- _ZTIN5GpgME19EventLoopInteractorE@Base 1.7.0
- _ZTIN5GpgME24DefaultAssuanTransactionE@Base 1.7.0
- _ZTIN5GpgME24GpgSignKeyEditInteractorE@Base 1.7.0
- _ZTIN5GpgME26GpgAddUserIDEditInteractorE@Base 1.7.0
- _ZTIN5GpgME27ScdGetInfoAssuanTransactionE@Base 1.7.0
- _ZTIN5GpgME30GpgSetExpiryTimeEditInteractorE@Base 1.7.0
- _ZTIN5GpgME30GpgSetOwnerTrustEditInteractorE@Base 1.7.0
- _ZTIN5GpgME32GpgAgentGetInfoAssuanTransactionE@Base 1.7.0
- _ZTIN5GpgME7ContextE@Base 1.7.0
- _ZTIN5GpgME9ExceptionE@Base 1.7.0
- _ZTIN5GpgME9TrustItemE@Base 1.7.0
- _ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTISt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSN5GpgME14EditInteractorE@Base 1.7.0
- _ZTSN5GpgME17AssuanTransactionE@Base 1.7.0
- _ZTSN5GpgME19EventLoopInteractorE@Base 1.7.0
- _ZTSN5GpgME24DefaultAssuanTransactionE@Base 1.7.0
- _ZTSN5GpgME24GpgSignKeyEditInteractorE@Base 1.7.0
- _ZTSN5GpgME26GpgAddUserIDEditInteractorE@Base 1.7.0
- _ZTSN5GpgME27ScdGetInfoAssuanTransactionE@Base 1.7.0
- _ZTSN5GpgME30GpgSetExpiryTimeEditInteractorE@Base 1.7.0
- _ZTSN5GpgME30GpgSetOwnerTrustEditInteractorE@Base 1.7.0
- _ZTSN5GpgME32GpgAgentGetInfoAssuanTransactionE@Base 1.7.0
- _ZTSN5GpgME7ContextE@Base 1.7.0
- _ZTSN5GpgME9ExceptionE@Base 1.7.0
- _ZTSN5GpgME9TrustItemE@Base 1.7.0
- _ZTSPFvP10_gpgme_keyE@Base 1.7.0
- _ZTSPFvP13gpgme_contextE@Base 1.7.0
- _ZTSPFvP15gpgme_conf_compE@Base 1.7.0
- _ZTSSt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTSSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVN5GpgME14EditInteractorE@Base 1.7.0
- _ZTVN5GpgME19EventLoopInteractorE@Base 1.7.0
- _ZTVN5GpgME24DefaultAssuanTransactionE@Base 1.7.0
- _ZTVN5GpgME24GpgSignKeyEditInteractorE@Base 1.7.0
- _ZTVN5GpgME26GpgAddUserIDEditInteractorE@Base 1.7.0
- _ZTVN5GpgME27ScdGetInfoAssuanTransactionE@Base 1.7.0
- _ZTVN5GpgME30GpgSetExpiryTimeEditInteractorE@Base 1.7.0
- _ZTVN5GpgME30GpgSetOwnerTrustEditInteractorE@Base 1.7.0
- _ZTVN5GpgME32GpgAgentGetInfoAssuanTransactionE@Base 1.7.0
- _ZTVN5GpgME7ContextE@Base 1.7.0
- _ZTVN5GpgME9ExceptionE@Base 1.7.0
- _ZTVN5GpgME9TrustItemE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME10EngineInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME12ImportResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME13KeyListResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME13SigningResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME14VfsMountResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME16DecryptionResult9Recipient7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME16EncryptionResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME18VerificationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME19KeyGenerationResult7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME4Data7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME8Notation7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt15_Sp_counted_ptrIPN5GpgME8TofuInfo7PrivateELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt19_Sp_counted_deleterIP10_gpgme_keyPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt19_Sp_counted_deleterIP13gpgme_contextPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
- _ZTVSt19_Sp_counted_deleterIP15gpgme_conf_compPFvS1_ESaIvELN9__gnu_cxx12_Lock_policyE2EE@Base 1.7.0
+ (c++)"GpgME::EngineInfo::EngineInfo(_gpgme_engine_info*)@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::EngineInfo()@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::EngineInfo(_gpgme_engine_info*)@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::EngineInfo()@Base" 1.7.0
+ (c++)"GpgME::engineInfo(GpgME::Engine)@Base" 1.7.0
+ (c++)"GpgME::engineInfo(GpgME::Protocol)@Base" 1.7.0
+ (c++)"GpgME::hasFeature(unsigned long)@Base" 1.7.0
+ (c++)"GpgME::hasFeature(unsigned long, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::verify_uid(std::shared_ptr<_gpgme_key> const&, _gpgme_user_id*)@Base" 1.7.0
+ (c++)"GpgME::checkEngine(GpgME::Engine)@Base" 1.7.0
+ (c++)"GpgME::checkEngine(GpgME::Protocol)@Base" 1.7.0
+ (c++)"GpgME::find_subkey(std::shared_ptr<_gpgme_key> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult()@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::ImportResult::ImportResult()@Base" 1.7.0
+ (c++)"GpgME::getQIODevice(int)@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::setNewValue(GpgME::Configuration::Argument const&)@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::resetToActiveValue()@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::resetToDefaultValue()@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::__safe_bool_dummy__::nonnull()@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::Argument(GpgME::Configuration::Argument const&)@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::Argument(std::shared_ptr<gpgme_conf_comp> const&, gpgme_conf_opt*, gpgme_conf_arg*, bool)@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::Argument(GpgME::Configuration::Argument const&)@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::Argument(std::shared_ptr<gpgme_conf_comp> const&, gpgme_conf_opt*, gpgme_conf_arg*, bool)@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::~Argument()@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::~Argument()@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::load(GpgME::Error&)@Base" 1.7.0
+ (c++)"GpgME::Configuration::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Configuration::Flag)@Base" 1.7.0
+ (c++)"GpgME::Configuration::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Configuration::Type)@Base" 1.7.0
+ (c++)"GpgME::Configuration::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Configuration::Level)@Base" 1.7.0
+ (c++)"GpgME::Configuration::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Configuration::Option const&)@Base" 1.7.0
+ (c++)"GpgME::Configuration::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Configuration::Argument const&)@Base" 1.7.0
+ (c++)"GpgME::Configuration::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Configuration::Component const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::detach()@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::mergeWith(GpgME::KeyListResult const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(GpgME::Error const&, _gpgme_op_keylist_result const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult()@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult(GpgME::Error const&, _gpgme_op_keylist_result const&)@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::KeyListResult()@Base" 1.7.0
+ (c++)"GpgME::SigningResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult()@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::SigningResult::SigningResult()@Base" 1.7.0
+ (c++)"GpgME::SigningResult::~SigningResult()@Base" 1.7.0
+ (c++)"GpgME::SigningResult::~SigningResult()@Base" 1.7.0
+ (c++)"GpgME::getGIOChannel(int)@Base" 1.7.0
+ (c++)"GpgME::verify_subkey(std::shared_ptr<_gpgme_key> const&, _gpgme_subkey*)@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::setDebugChannel(_IO_FILE*)@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::Private::Private(GpgME::EditInteractor*)@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::Private::Private(GpgME::EditInteractor*)@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::EditInteractor()@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::EditInteractor()@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::~EditInteractor()@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::~EditInteractor()@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::~EditInteractor()@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::VfsMountResult(gpgme_context*, GpgME::Error const&, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::VfsMountResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::VfsMountResult()@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::VfsMountResult(gpgme_context*, GpgME::Error const&, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::VfsMountResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::VfsMountResult()@Base" 1.7.0
+ (c++)"GpgME::find_signature(_gpgme_user_id*, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::CreatedSignature(std::shared_ptr<GpgME::SigningResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::CreatedSignature()@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::CreatedSignature(std::shared_ptr<GpgME::SigningResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::CreatedSignature()@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::Recipient(_gpgme_recipient*)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::Recipient()@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::Recipient(_gpgme_recipient*)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::Recipient()@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult()@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::DecryptionResult()@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::~DecryptionResult()@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::~DecryptionResult()@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult()@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::EncryptionResult()@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::~EncryptionResult()@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::~EncryptionResult()@Base" 1.7.0
+ (c++)"GpgME::InvalidRecipient::InvalidRecipient(std::shared_ptr<GpgME::EncryptionResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::InvalidRecipient::InvalidRecipient()@Base" 1.7.0
+ (c++)"GpgME::InvalidRecipient::InvalidRecipient(std::shared_ptr<GpgME::EncryptionResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::InvalidRecipient::InvalidRecipient()@Base" 1.7.0
+ (c++)"GpgME::setDefaultLocale(int, char const*)@Base" 1.7.0
+ (c++)"GpgME::verify_signature(_gpgme_user_id*, _gpgme_key_sig*)@Base" 1.7.0
+ (c++)"GpgME::InvalidSigningKey::InvalidSigningKey(std::shared_ptr<GpgME::SigningResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::InvalidSigningKey::InvalidSigningKey()@Base" 1.7.0
+ (c++)"GpgME::InvalidSigningKey::InvalidSigningKey(std::shared_ptr<GpgME::SigningResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::InvalidSigningKey::InvalidSigningKey()@Base" 1.7.0
+ (c++)"GpgME::initializeLibrary(int)@Base" 1.7.0
+ (c++)"GpgME::initializeLibrary()@Base" 1.7.0
+ (c++)"GpgME::to_auditlog_flags(unsigned int)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult()@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::VerificationResult()@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::~VerificationResult()@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::~VerificationResult()@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::actOn(int, GpgME::EventLoopInteractor::Direction)@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::mSelf@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::manage(GpgME::Context*)@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::Private::removeIOCb(void*)@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::Private::registerIOCb(void*, int, int, unsigned int (*)(void*, int), void*, void**)@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::Private::iocbs@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::Private::eventIOCb(void*, gpgme_event_io_t, void*)@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::unmanage(GpgME::Context*)@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::EventLoopInteractor()@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::EventLoopInteractor()@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::~EventLoopInteractor()@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::~EventLoopInteractor()@Base" 1.7.0
+ (c++)"GpgME::EventLoopInteractor::~EventLoopInteractor()@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::init(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult()@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult(gpgme_context*, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult(gpgme_context*, int)@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult(GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::KeyGenerationResult()@Base" 1.7.0
+ (c++)"GpgME::data_provider_callbacks@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::data(char const*, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::status(char const*, char const*)@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::inquire(char const*, char const*, GpgME::Error&)@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::DefaultAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::DefaultAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::~DefaultAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::~DefaultAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::~DefaultAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::setCheckLevel(unsigned int)@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::setUserIDsToSign(std::vector<unsigned int, std::allocator<unsigned int> > const&)@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::setSigningOptions(int)@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::Private::Private()@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::Private::Private()@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::GpgSignKeyEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::GpgSignKeyEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::~GpgSignKeyEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::~GpgSignKeyEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::~GpgSignKeyEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::edit_interactor_callback@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::setNameUtf8(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::setEmailUtf8(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::setCommentUtf8(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::GpgAddUserIDEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::GpgAddUserIDEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::~GpgAddUserIDEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::~GpgAddUserIDEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::~GpgAddUserIDEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::data(char const*, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::status(char const*, char const*)@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::inquire(char const*, char const*, GpgME::Error&)@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::ScdGetInfoAssuanTransaction(GpgME::ScdGetInfoAssuanTransaction::InfoItem)@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::ScdGetInfoAssuanTransaction(GpgME::ScdGetInfoAssuanTransaction::InfoItem)@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::~ScdGetInfoAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::~ScdGetInfoAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::~ScdGetInfoAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::GpgSetExpiryTimeEditInteractor::GpgSetExpiryTimeEditInteractor(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.7.0
+ (c++)"GpgME::GpgSetExpiryTimeEditInteractor::GpgSetExpiryTimeEditInteractor(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.7.0
+ (c++)"GpgME::GpgSetExpiryTimeEditInteractor::~GpgSetExpiryTimeEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSetExpiryTimeEditInteractor::~GpgSetExpiryTimeEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSetExpiryTimeEditInteractor::~GpgSetExpiryTimeEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSetOwnerTrustEditInteractor::GpgSetOwnerTrustEditInteractor(GpgME::Key::OwnerTrust)@Base" 1.7.0
+ (c++)"GpgME::GpgSetOwnerTrustEditInteractor::GpgSetOwnerTrustEditInteractor(GpgME::Key::OwnerTrust)@Base" 1.7.0
+ (c++)"GpgME::GpgSetOwnerTrustEditInteractor::~GpgSetOwnerTrustEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSetOwnerTrustEditInteractor::~GpgSetOwnerTrustEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgSetOwnerTrustEditInteractor::~GpgSetOwnerTrustEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::data(char const*, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::status(char const*, char const*)@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::inquire(char const*, char const*, GpgME::Error&)@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::GpgAgentGetInfoAssuanTransaction(GpgME::GpgAgentGetInfoAssuanTransaction::InfoItem)@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::GpgAgentGetInfoAssuanTransaction(GpgME::GpgAgentGetInfoAssuanTransaction::InfoItem)@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::~GpgAgentGetInfoAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::~GpgAgentGetInfoAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::~GpgAgentGetInfoAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::Key::null@Base" 1.7.0
+ (c++)"GpgME::Key::update()@Base" 1.7.0
+ (c++)"GpgME::Key::mergeWith(GpgME::Key const&)@Base" 1.7.0
+ (c++)"GpgME::Key::Key(_gpgme_key*, bool)@Base" 1.7.0
+ (c++)"GpgME::Key::Key(GpgME::Key::Null const&)@Base" 1.7.0
+ (c++)"GpgME::Key::Key(std::shared_ptr<_gpgme_key> const&)@Base" 1.7.0
+ (c++)"GpgME::Key::Key()@Base" 1.7.0
+ (c++)"GpgME::Key::Key(_gpgme_key*, bool)@Base" 1.7.0
+ (c++)"GpgME::Key::Key(GpgME::Key::Null const&)@Base" 1.7.0
+ (c++)"GpgME::Key::Key(std::shared_ptr<_gpgme_key> const&)@Base" 1.7.0
+ (c++)"GpgME::Key::Key()@Base" 1.7.0
+ (c++)"GpgME::Data::setEncoding(GpgME::Data::Encoding)@Base" 1.7.0
+ (c++)"GpgME::Data::setFileName(char const*)@Base" 1.7.0
+ (c++)"GpgME::Data::null@Base" 1.7.0
+ (c++)"GpgME::Data::read(void*, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::Data::seek(long, int)@Base" 1.7.0
+ (c++)"GpgME::Data::write(void const*, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::Data::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::Data::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::Data::Data(gpgme_data*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(_IO_FILE*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(_IO_FILE*, long, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(char const*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(char const*, long, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(char const*, unsigned long, bool)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(GpgME::DataProvider*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(GpgME::Data::Null const&)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(int)@Base" 1.7.0
+ (c++)"GpgME::Data::Data()@Base" 1.7.0
+ (c++)"GpgME::Data::Data(gpgme_data*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(_IO_FILE*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(_IO_FILE*, long, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(char const*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(char const*, long, unsigned long)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(char const*, unsigned long, bool)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(GpgME::DataProvider*)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(GpgME::Data::Null const&)@Base" 1.7.0
+ (c++)"GpgME::Data::Data(int)@Base" 1.7.0
+ (c++)"GpgME::Data::Data()@Base" 1.7.0
+ (c++)"GpgME::Error::hasSystemError()@Base" 1.7.0
+ (c++)"GpgME::Error::setSystemError(gpg_err_code_t)@Base" 1.7.0
+ (c++)"GpgME::Error::fromSystemError(unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Error::__safe_bool_dummy__::nonnull()@Base" 1.7.0
+ (c++)"GpgME::Error::fromCode(unsigned int, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Error::setErrno(int)@Base" 1.7.0
+ (c++)"GpgME::Error::fromErrno(int, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Error::~Error()@Base" 1.7.0
+ (c++)"GpgME::Error::~Error()@Base" 1.7.0
+ (c++)"GpgME::Import::Import(std::shared_ptr<GpgME::ImportResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Import::Import()@Base" 1.7.0
+ (c++)"GpgME::Import::Import(std::shared_ptr<GpgME::ImportResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Import::Import()@Base" 1.7.0
+ (c++)"GpgME::Subkey::publicKeyAlgorithmAsString(GpgME::Subkey::PubkeyAlgo)@Base" 1.7.0
+ (c++)"GpgME::Subkey::Subkey(std::shared_ptr<_gpgme_key> const&, _gpgme_subkey*)@Base" 1.7.0
+ (c++)"GpgME::Subkey::Subkey(std::shared_ptr<_gpgme_key> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Subkey::Subkey()@Base" 1.7.0
+ (c++)"GpgME::Subkey::Subkey(std::shared_ptr<_gpgme_key> const&, _gpgme_subkey*)@Base" 1.7.0
+ (c++)"GpgME::Subkey::Subkey(std::shared_ptr<_gpgme_key> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Subkey::Subkey()@Base" 1.7.0
+ (c++)"GpgME::UserID::addrSpecFromString[abi:cxx11](char const*)@Base" 1.7.1
+ (c++)"GpgME::UserID::Signature::Signature(std::shared_ptr<_gpgme_key> const&, _gpgme_user_id*, _gpgme_key_sig*)@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::Signature(std::shared_ptr<_gpgme_key> const&, _gpgme_user_id*, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::Signature()@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::Signature(std::shared_ptr<_gpgme_key> const&, _gpgme_user_id*, _gpgme_key_sig*)@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::Signature(std::shared_ptr<_gpgme_key> const&, _gpgme_user_id*, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::Signature()@Base" 1.7.0
+ (c++)"GpgME::UserID::UserID(std::shared_ptr<_gpgme_key> const&, _gpgme_user_id*)@Base" 1.7.0
+ (c++)"GpgME::UserID::UserID(std::shared_ptr<_gpgme_key> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::UserID::UserID()@Base" 1.7.0
+ (c++)"GpgME::UserID::UserID(std::shared_ptr<_gpgme_key> const&, _gpgme_user_id*)@Base" 1.7.0
+ (c++)"GpgME::UserID::UserID(std::shared_ptr<_gpgme_key> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::UserID::UserID()@Base" 1.7.0
+ (c++)"GpgME::Context::importKeys(GpgME::Data const&)@Base" 1.7.0
+ (c++)"GpgME::Context::importKeys(std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&)@Base" 1.7.0
+ (c++)"GpgME::Context::setOffline(bool)@Base" 1.7.0
+ (c++)"GpgME::Context::spawnAsync(char const*, char const**, GpgME::Data&, GpgME::Data&, GpgME::Data&, GpgME::Context::SpawnFlags)@Base" 1.7.0
+ (c++)"GpgME::Context::generateKey(char const*, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::getAuditLog(GpgME::Data&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Context::setTextMode(bool)@Base" 1.7.0
+ (c++)"GpgME::Context::startPasswd(GpgME::Key const&)@Base" 1.7.0
+ (c++)"GpgME::Context::startEditing(GpgME::Key const&, std::unique_ptr<GpgME::EditInteractor, std::default_delete<GpgME::EditInteractor> >, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::startSigning(GpgME::Data const&, GpgME::Data&, GpgME::SignatureMode)@Base" 1.7.0
+ (c++)"GpgME::Context::addSigningKey(GpgME::Key const&)@Base" 1.7.0
+ (c++)"GpgME::Context::endKeyListing()@Base" 1.7.0
+ (c++)"GpgME::Context::nextTrustItem(GpgME::Error&)@Base" 1.7.0
+ (c++)"GpgME::Context::setTofuPolicy(GpgME::Key const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Context::addKeyListMode(unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Context::assuanTransact(char const*)@Base" 1.7.0
+ (c++)"GpgME::Context::assuanTransact(char const*, std::unique_ptr<GpgME::AssuanTransaction, std::default_delete<GpgME::AssuanTransaction> >)@Base" 1.7.0
+ (c++)"GpgME::Context::setKeyListMode(unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Context::signAndEncrypt(std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&, GpgME::Data const&, GpgME::Data&, GpgME::Context::EncryptionFlags)@Base" 1.7.0
+ (c++)"GpgME::Context::startKeyImport(GpgME::Data const&)@Base" 1.7.0
+ (c++)"GpgME::Context::startKeyImport(std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&)@Base" 1.7.0
+ (c++)"GpgME::Context::createForEngine(GpgME::Engine, GpgME::Error*)@Base" 1.7.0
+ (c++)"GpgME::Context::setPinentryMode(GpgME::Context::PinentryMode)@Base" 1.7.0
+ (c++)"GpgME::Context::startDecryption(GpgME::Data const&, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::startEncryption(std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&, GpgME::Data const&, GpgME::Data&, GpgME::Context::EncryptionFlags)@Base" 1.7.0
+ (c++)"GpgME::Context::startKeyListing(char const*, bool)@Base" 1.7.0
+ (c++)"GpgME::Context::startKeyListing(char const**, bool)@Base" 1.7.0
+ (c++)"GpgME::Context::clearSigningKeys()@Base" 1.7.0
+ (c++)"GpgME::Context::decryptAndVerify(GpgME::Data const&, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::exportPublicKeys(char const*, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::exportPublicKeys(char const**, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::startCardEditing(GpgME::Key const&, std::unique_ptr<GpgME::EditInteractor, std::default_delete<GpgME::EditInteractor> >, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::startGetAuditLog(GpgME::Data&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Context::startKeyDeletion(GpgME::Key const&, bool)@Base" 1.7.0
+ (c++)"GpgME::Context::createForProtocol(GpgME::Protocol)@Base" 1.7.0
+ (c++)"GpgME::Context::setEngineFileName(char const*)@Base" 1.7.0
+ (c++)"GpgME::Context::installIOCallbacks(gpgme_io_cbs*)@Base" 1.7.0
+ (c++)"GpgME::Context::setTofuPolicyStart(GpgME::Key const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Context::startKeyGeneration(char const*, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::endTrustItemListing()@Base" 1.7.0
+ (c++)"GpgME::Context::setProgressProvider(GpgME::ProgressProvider*)@Base" 1.7.0
+ (c++)"GpgME::Context::addSignatureNotation(char const*, char const*, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Context::encryptSymmetrically(GpgME::Data const&, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::startPublicKeyExport(char const*, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::startPublicKeyExport(char const**, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::uninstallIOCallbacks()@Base" 1.7.0
+ (c++)"GpgME::Context::addSignaturePolicyURL(char const*, bool)@Base" 1.7.0
+ (c++)"GpgME::Context::getKeysFromRecipients(std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&)@Base" 1.7.0
+ (c++)"GpgME::Context::setPassphraseProvider(GpgME::PassphraseProvider*)@Base" 1.7.0
+ (c++)"GpgME::Context::startTrustItemListing(char const*, int)@Base" 1.7.0
+ (c++)"GpgME::Context::verifyOpaqueSignature(GpgME::Data const&, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::cancelPendingOperation()@Base" 1.7.0
+ (c++)"GpgME::Context::setEngineHomeDirectory(char const*)@Base" 1.7.0
+ (c++)"GpgME::Context::setIncludeCertificates(int)@Base" 1.7.0
+ (c++)"GpgME::Context::startAssuanTransaction(char const*)@Base" 1.7.0
+ (c++)"GpgME::Context::startAssuanTransaction(char const*, std::unique_ptr<GpgME::AssuanTransaction, std::default_delete<GpgME::AssuanTransaction> >)@Base" 1.7.0
+ (c++)"GpgME::Context::takeLastEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::Context::clearSignatureNotations()@Base" 1.7.0
+ (c++)"GpgME::Context::verifyDetachedSignature(GpgME::Data const&, GpgME::Data const&)@Base" 1.7.0
+ (c++)"GpgME::Context::takeLastAssuanTransaction()@Base" 1.7.0
+ (c++)"GpgME::Context::takeLastCardEditInteractor()@Base" 1.7.0
+ (c++)"GpgME::Context::setManagedByEventLoopInteractor(bool)@Base" 1.7.0
+ (c++)"GpgME::Context::startOpaqueSignatureVerification(GpgME::Data const&, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::startCombinedSigningAndEncryption(std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&, GpgME::Data const&, GpgME::Data&, GpgME::Context::EncryptionFlags)@Base" 1.7.0
+ (c++)"GpgME::Context::startDetachedSignatureVerification(GpgME::Data const&, GpgME::Data const&)@Base" 1.7.0
+ (c++)"GpgME::Context::startCombinedDecryptionAndVerification(GpgME::Data const&, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::key(char const*, GpgME::Error&, bool)@Base" 1.7.0
+ (c++)"GpgME::Context::edit(GpgME::Key const&, std::unique_ptr<GpgME::EditInteractor, std::default_delete<GpgME::EditInteractor> >, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::poll()@Base" 1.7.0
+ (c++)"GpgME::Context::sign(GpgME::Data const&, GpgME::Data&, GpgME::SignatureMode)@Base" 1.7.0
+ (c++)"GpgME::Context::wait()@Base" 1.7.0
+ (c++)"GpgME::Context::spawn(char const*, char const**, GpgME::Data&, GpgME::Data&, GpgME::Data&, GpgME::Context::SpawnFlags)@Base" 1.7.0
+ (c++)"GpgME::Context::passwd(GpgME::Key const&)@Base" 1.7.0
+ (c++)"GpgME::Context::Private::Private(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::Context::Private::Private(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::Context::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::Context::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::Context::decrypt(GpgME::Data const&, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::encrypt(std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&, GpgME::Data const&, GpgME::Data&, GpgME::Context::EncryptionFlags)@Base" 1.7.0
+ (c++)"GpgME::Context::nextKey(GpgME::Error&)@Base" 1.7.0
+ (c++)"GpgME::Context::cardEdit(GpgME::Key const&, std::unique_ptr<GpgME::EditInteractor, std::default_delete<GpgME::EditInteractor> >, GpgME::Data&)@Base" 1.7.0
+ (c++)"GpgME::Context::mountVFS(char const*, char const*)@Base" 1.7.0
+ (c++)"GpgME::Context::setArmor(bool)@Base" 1.7.0
+ (c++)"GpgME::Context::createVFS(char const*, std::vector<GpgME::Key, std::allocator<GpgME::Key> > const&)@Base" 1.7.0
+ (c++)"GpgME::Context::deleteKey(GpgME::Key const&, bool)@Base" 1.7.0
+ (c++)"GpgME::Context::setLocale(int, char const*)@Base" 1.7.0
+ (c++)"GpgME::Context::Context(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::Context::Context(gpgme_context*)@Base" 1.7.0
+ (c++)"GpgME::Context::~Context()@Base" 1.7.0
+ (c++)"GpgME::Context::~Context()@Base" 1.7.0
+ (c++)"GpgME::Context::~Context()@Base" 1.7.0
+ (c++)"GpgME::dirInfo(char const*)@Base" 1.7.0
+ (c++)"GpgME::Notation::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::Notation::Private::~Private()@Base" 1.7.0
+ (c++)"GpgME::Notation::Notation(_gpgme_sig_notation*)@Base" 1.7.0
+ (c++)"GpgME::Notation::Notation(std::shared_ptr<GpgME::VerificationResult::Private> const&, unsigned int, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Notation::Notation()@Base" 1.7.0
+ (c++)"GpgME::Notation::Notation(_gpgme_sig_notation*)@Base" 1.7.0
+ (c++)"GpgME::Notation::Notation(std::shared_ptr<GpgME::VerificationResult::Private> const&, unsigned int, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Notation::Notation()@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::TofuInfo(_gpgme_tofu_info*)@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::TofuInfo()@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::TofuInfo(_gpgme_tofu_info*)@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::TofuInfo()@Base" 1.7.0
+ (c++)"GpgME::find_uid(std::shared_ptr<_gpgme_key> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Exception::make_message(GpgME::Error const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.7.0
+ (c++)"GpgME::Exception::make_message(GpgME::Error const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, GpgME::Exception::Options)@Base" 1.7.0
+ (c++)"GpgME::Exception::~Exception()@Base" 1.7.0
+ (c++)"GpgME::Exception::~Exception()@Base" 1.7.0
+ (c++)"GpgME::Exception::~Exception()@Base" 1.7.0
+ (c++)"GpgME::Signature::Signature(std::shared_ptr<GpgME::VerificationResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Signature::Signature()@Base" 1.7.0
+ (c++)"GpgME::Signature::Signature(std::shared_ptr<GpgME::VerificationResult::Private> const&, unsigned int)@Base" 1.7.0
+ (c++)"GpgME::Signature::Signature()@Base" 1.7.0
+ (c++)"GpgME::TrustItem::TrustItem(_gpgme_trust_item*)@Base" 1.7.0
+ (c++)"GpgME::TrustItem::TrustItem(GpgME::TrustItem const&)@Base" 1.7.0
+ (c++)"GpgME::TrustItem::TrustItem(_gpgme_trust_item*)@Base" 1.7.0
+ (c++)"GpgME::TrustItem::TrustItem(GpgME::TrustItem const&)@Base" 1.7.0
+ (c++)"GpgME::TrustItem::~TrustItem()@Base" 1.7.0
+ (c++)"GpgME::TrustItem::~TrustItem()@Base" 1.7.0
+ (c++)"GpgME::TrustItem::~TrustItem()@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::KeyListMode)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::SignatureMode)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Engine)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Context::AuditLogFlags)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Context::EncryptionFlags)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Context::CertificateInclusion)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Notation::Flags)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Protocol)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Signature::Summary)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Signature::PKAStatus)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::SigningResult const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::VfsMountResult const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::CreatedSignature const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::DecryptionResult::Recipient const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::DecryptionResult const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::EncryptionResult const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::InvalidRecipient const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::InvalidSigningKey const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::VerificationResult const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Key const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Error const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::UserID const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Notation const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::TofuInfo const&)@Base" 1.7.0
+ (c++)"GpgME::operator<<(std::basic_ostream<char, std::char_traits<char> >&, GpgME::Signature const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > __gnu_cxx::__to_xstring<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char>(int (*)(char*, unsigned long, char const*, __va_list_tag*), unsigned long, char const*, ...)@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::engineVersion() const@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::homeDirectory() const@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::requiredVersion() const@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::isNull() const@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::version() const@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::fileName() const@Base" 1.7.0
+ (c++)"GpgME::EngineInfo::protocol() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::newSubkeys() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::newUserIDs() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::notImported() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numImported() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numUnchanged() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::newSignatures() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numConsidered() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::newRevocations() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numRSAImported() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numKeysWithoutUserID() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numSecretKeysImported() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numSecretKeysUnchanged() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::numSecretKeysConsidered() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::import(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::ImportResult::imports() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::activeValue() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::description() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::argumentName() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::currentValue() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::defaultValue() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::alternateType() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::noArgumentValue() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createIntArgument(int) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createNoneArgument(bool) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createUIntArgument(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::defaultDescription() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createStringArgument(char const*) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createStringArgument(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createIntListArgument(std::vector<int, std::allocator<int> > const&) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::noArgumentDescription() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createNoneListArgument(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createUIntListArgument(std::vector<unsigned int, std::allocator<unsigned int> > const&) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createStringListArgument(std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > const&) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::createStringListArgument(std::vector<char const*, std::allocator<char const*> > const&) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::set() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::name() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::type() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::dirty() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::flags() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::level() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::parent() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Option::newValue() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::uintValues() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::numElements() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::stringValue(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::stringValues() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::numberOfTimesSet() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::parent() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::intValue(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::boolValue() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::intValues() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Argument::uintValue(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::numOptions() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::description() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::programName() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::name() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::save() const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::option(char const*) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::option(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Configuration::Component::options() const@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::isTruncated() const@Base" 1.7.0
+ (c++)"GpgME::KeyListResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::SigningResult::createdSignature(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::SigningResult::createdSignatures() const@Base" 1.7.0
+ (c++)"GpgME::SigningResult::invalidSigningKey(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::SigningResult::invalidSigningKeys() const@Base" 1.7.0
+ (c++)"GpgME::SigningResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::needsNoResponse(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::state() const@Base" 1.7.0
+ (c++)"GpgME::EditInteractor::lastError() const@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::VfsMountResult::mountDir() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::fingerprint() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::creationTime() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::hashAlgorithm() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::signatureClass() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::publicKeyAlgorithm() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::hashAlgorithmAsString() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::publicKeyAlgorithmAsString() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::mode() const@Base" 1.7.0
+ (c++)"GpgME::CreatedSignature::isNull() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::recipients() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::numRecipients() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::isWrongKeyUsage() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::unsupportedAlgorithm() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::fileName() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::shortKeyID() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::publicKeyAlgorithm() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::publicKeyAlgorithmAsString() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::keyID() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::isNull() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::Recipient::status() const@Base" 1.7.0
+ (c++)"GpgME::DecryptionResult::recipient(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::invalidEncryptionKey(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::numInvalidRecipients() const@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::invalidEncryptionKeys() const@Base" 1.7.0
+ (c++)"GpgME::EncryptionResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::InvalidRecipient::fingerprint() const@Base" 1.7.0
+ (c++)"GpgME::InvalidRecipient::isNull() const@Base" 1.7.0
+ (c++)"GpgME::InvalidRecipient::reason() const@Base" 1.7.0
+ (c++)"GpgME::InvalidSigningKey::fingerprint() const@Base" 1.7.0
+ (c++)"GpgME::InvalidSigningKey::isNull() const@Base" 1.7.0
+ (c++)"GpgME::InvalidSigningKey::reason() const@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::signatures() const@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::numSignatures() const@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::fileName() const@Base" 1.7.0
+ (c++)"GpgME::VerificationResult::signature(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::fingerprint() const@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::isSubkeyGenerated() const@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::isPrimaryKeyGenerated() const@Base" 1.7.0
+ (c++)"GpgME::KeyGenerationResult::isNull() const@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::statusLine[abi:cxx11](char const*) const@Base" 1.7.0
+ (c++)"GpgME::DefaultAssuanTransaction::firstStatusLine[abi:cxx11](char const*) const@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::action(GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::GpgSignKeyEditInteractor::nextState(unsigned int, char const*, GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::action(GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::GpgAddUserIDEditInteractor::nextState(unsigned int, char const*, GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::readerList[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::socketName[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::makeCommand() const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::applicationList[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::pid() const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::status() const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::command() const@Base" 1.7.0
+ (c++)"GpgME::ScdGetInfoAssuanTransaction::version[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::GpgSetExpiryTimeEditInteractor::action(GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::GpgSetExpiryTimeEditInteractor::nextState(unsigned int, char const*, GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::GpgSetOwnerTrustEditInteractor::action(GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::GpgSetOwnerTrustEditInteractor::nextState(unsigned int, char const*, GpgME::Error&) const@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::socketName[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::makeCommand() const@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::sshSocketName[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::pid() const@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::command() const@Base" 1.7.0
+ (c++)"GpgME::GpgAgentGetInfoAssuanTransaction::version[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::Key::canCertify() const@Base" 1.7.0
+ (c++)"GpgME::Key::canEncrypt() const@Base" 1.7.0
+ (c++)"GpgME::Key::isDisabled() const@Base" 1.7.0
+ (c++)"GpgME::Key::issuerName() const@Base" 1.7.0
+ (c++)"GpgME::Key::numSubkeys() const@Base" 1.7.0
+ (c++)"GpgME::Key::numUserIDs() const@Base" 1.7.0
+ (c++)"GpgME::Key::ownerTrust() const@Base" 1.7.0
+ (c++)"GpgME::Key::shortKeyID() const@Base" 1.7.0
+ (c++)"GpgME::Key::isQualified() const@Base" 1.7.0
+ (c++)"GpgME::Key::keyListMode() const@Base" 1.7.0
+ (c++)"GpgME::Key::issuerSerial() const@Base" 1.7.0
+ (c++)"GpgME::Key::canReallySign() const@Base" 1.7.0
+ (c++)"GpgME::Key::canAuthenticate() const@Base" 1.7.0
+ (c++)"GpgME::Key::protocolAsString() const@Base" 1.7.0
+ (c++)"GpgME::Key::ownerTrustAsString() const@Base" 1.7.0
+ (c++)"GpgME::Key::primaryFingerprint() const@Base" 1.7.0
+ (c++)"GpgME::Key::keyID() const@Base" 1.7.0
+ (c++)"GpgME::Key::isRoot() const@Base" 1.7.0
+ (c++)"GpgME::Key::subkey(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Key::userID(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Key::canSign() const@Base" 1.7.0
+ (c++)"GpgME::Key::chainID() const@Base" 1.7.0
+ (c++)"GpgME::Key::subkeys() const@Base" 1.7.0
+ (c++)"GpgME::Key::userIDs() const@Base" 1.7.0
+ (c++)"GpgME::Key::protocol() const@Base" 1.7.0
+ (c++)"GpgME::Key::hasSecret() const@Base" 1.7.0
+ (c++)"GpgME::Key::isExpired() const@Base" 1.7.0
+ (c++)"GpgME::Key::isInvalid() const@Base" 1.7.0
+ (c++)"GpgME::Key::isRevoked() const@Base" 1.7.0
+ (c++)"GpgME::Data::type() const@Base" 1.7.0
+ (c++)"GpgME::Data::isNull() const@Base" 1.7.0
+ (c++)"GpgME::Data::encoding() const@Base" 1.7.0
+ (c++)"GpgME::Data::fileName() const@Base" 1.7.0
+ (c++)"GpgME::Error::isCanceled() const@Base" 1.7.0
+ (c++)"GpgME::Error::code() const@Base" 1.7.0
+ (c++)"GpgME::Error::source() const@Base" 1.7.0
+ (c++)"GpgME::Error::toErrno() const@Base" 1.7.0
+ (c++)"GpgME::Error::asString() const@Base" 1.7.0
+ (c++)"GpgME::Error::sourceID() const@Base" 1.7.0
+ (c++)"GpgME::Import::fingerprint() const@Base" 1.7.0
+ (c++)"GpgME::Import::error() const@Base" 1.7.0
+ (c++)"GpgME::Import::isNull() const@Base" 1.7.0
+ (c++)"GpgME::Import::status() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::canCertify() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::canEncrypt() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::isDisabled() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::fingerprint() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::isQualified() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::creationTime() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::neverExpires() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::expirationTime() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::canAuthenticate() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::cardSerialNumber() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::publicKeyAlgorithm() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::publicKeyAlgorithmAsString() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::keyID() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::length() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::parent() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::canSign() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::algoName[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::isSecret() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::isCardKey() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::isExpired() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::isInvalid() const@Base" 1.7.0
+ (c++)"GpgME::Subkey::isRevoked() const@Base" 1.7.0
+ (c++)"GpgME::UserID::signatures() const@Base" 1.7.0
+ (c++)"GpgME::UserID::numSignatures() const@Base" 1.7.0
+ (c++)"GpgME::UserID::validityAsString() const@Base" 1.7.0
+ (c++)"GpgME::UserID::id() const@Base" 1.7.0
+ (c++)"GpgME::UserID::name() const@Base" 1.7.0
+ (c++)"GpgME::UserID::email() const@Base" 1.7.0
+ (c++)"GpgME::UserID::parent() const@Base" 1.7.0
+ (c++)"GpgME::UserID::comment() const@Base" 1.7.0
+ (c++)"GpgME::UserID::addrSpec[abi:cxx11]() const@Base" 1.7.1
+ (c++)"GpgME::UserID::tofuInfo() const@Base" 1.7.0
+ (c++)"GpgME::UserID::validity() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::signerName() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::signerEmail() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::signerKeyID() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::creationTime() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::isExportable() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::isRevokation() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::neverExpires() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::numNotations() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::signerUserID() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::signerComment() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::expirationTime() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::statusAsString[abi:cxx11]() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::algorithmAsString() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::parent() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::status() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::notation(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::algorithm() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::certClass() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::isExpired() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::isInvalid() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::notations() const@Base" 1.7.0
+ (c++)"GpgME::UserID::Signature::policyURL() const@Base" 1.7.0
+ (c++)"GpgME::UserID::isInvalid() const@Base" 1.7.0
+ (c++)"GpgME::UserID::isRevoked() const@Base" 1.7.0
+ (c++)"GpgME::UserID::signature(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Context::engineInfo() const@Base" 1.7.0
+ (c++)"GpgME::Context::signingKey(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Context::keyListMode() const@Base" 1.7.0
+ (c++)"GpgME::Context::signingKeys() const@Base" 1.7.0
+ (c++)"GpgME::Context::importResult() const@Base" 1.7.0
+ (c++)"GpgME::Context::pinentryMode() const@Base" 1.7.0
+ (c++)"GpgME::Context::keyListResult() const@Base" 1.7.0
+ (c++)"GpgME::Context::signingResult() const@Base" 1.7.0
+ (c++)"GpgME::Context::decryptionResult() const@Base" 1.7.0
+ (c++)"GpgME::Context::encryptionResult() const@Base" 1.7.0
+ (c++)"GpgME::Context::progressProvider() const@Base" 1.7.0
+ (c++)"GpgME::Context::signatureNotation(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Context::lastEditInteractor() const@Base" 1.7.0
+ (c++)"GpgME::Context::passphraseProvider() const@Base" 1.7.0
+ (c++)"GpgME::Context::signatureNotations() const@Base" 1.7.0
+ (c++)"GpgME::Context::signaturePolicyURL() const@Base" 1.7.0
+ (c++)"GpgME::Context::verificationResult() const@Base" 1.7.0
+ (c++)"GpgME::Context::includeCertificates() const@Base" 1.7.0
+ (c++)"GpgME::Context::keyGenerationResult() const@Base" 1.7.0
+ (c++)"GpgME::Context::lastAssuanTransaction() const@Base" 1.7.0
+ (c++)"GpgME::Context::lastCardEditInteractor() const@Base" 1.7.0
+ (c++)"GpgME::Context::managedByEventLoopInteractor() const@Base" 1.7.0
+ (c++)"GpgME::Context::armor() const@Base" 1.7.0
+ (c++)"GpgME::Context::offline() const@Base" 1.7.0
+ (c++)"GpgME::Context::protocol() const@Base" 1.7.0
+ (c++)"GpgME::Context::textMode() const@Base" 1.7.0
+ (c++)"GpgME::Context::lastError() const@Base" 1.7.0
+ (c++)"GpgME::Notation::isCritical() const@Base" 1.7.0
+ (c++)"GpgME::Notation::isHumanReadable() const@Base" 1.7.0
+ (c++)"GpgME::Notation::name() const@Base" 1.7.0
+ (c++)"GpgME::Notation::flags() const@Base" 1.7.0
+ (c++)"GpgME::Notation::value() const@Base" 1.7.0
+ (c++)"GpgME::Notation::isNull() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::description() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::isNull() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::policy() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::encrLast() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::signLast() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::validity() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::encrCount() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::encrFirst() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::signCount() const@Base" 1.7.0
+ (c++)"GpgME::TofuInfo::signFirst() const@Base" 1.7.0
+ (c++)"GpgME::Signature::pkaAddress() const@Base" 1.7.0
+ (c++)"GpgME::Signature::fingerprint() const@Base" 1.7.0
+ (c++)"GpgME::Signature::creationTime() const@Base" 1.7.0
+ (c++)"GpgME::Signature::neverExpires() const@Base" 1.7.0
+ (c++)"GpgME::Signature::hashAlgorithm() const@Base" 1.7.0
+ (c++)"GpgME::Signature::expirationTime() const@Base" 1.7.0
+ (c++)"GpgME::Signature::isWrongKeyUsage() const@Base" 1.7.0
+ (c++)"GpgME::Signature::validityAsString() const@Base" 1.7.0
+ (c++)"GpgME::Signature::nonValidityReason() const@Base" 1.7.0
+ (c++)"GpgME::Signature::publicKeyAlgorithm() const@Base" 1.7.0
+ (c++)"GpgME::Signature::hashAlgorithmAsString() const@Base" 1.7.0
+ (c++)"GpgME::Signature::isVerifiedUsingChainModel() const@Base" 1.7.0
+ (c++)"GpgME::Signature::publicKeyAlgorithmAsString() const@Base" 1.7.0
+ (c++)"GpgME::Signature::key(bool, bool) const@Base" 1.7.1
+ (c++)"GpgME::Signature::key() const@Base" 1.7.0
+ (c++)"GpgME::Signature::isNull() const@Base" 1.7.0
+ (c++)"GpgME::Signature::status() const@Base" 1.7.0
+ (c++)"GpgME::Signature::summary() const@Base" 1.7.0
+ (c++)"GpgME::Signature::notation(unsigned int) const@Base" 1.7.0
+ (c++)"GpgME::Signature::validity() const@Base" 1.7.0
+ (c++)"GpgME::Signature::notations() const@Base" 1.7.0
+ (c++)"GpgME::Signature::pkaStatus() const@Base" 1.7.0
+ (c++)"GpgME::Signature::policyURL() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::trustLevel() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::validityAsString() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::ownerTrustAsString() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::impl() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::type() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::keyID() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::isNull() const@Base" 1.7.0
+ (c++)"GpgME::TrustItem::userID() const@Base" 1.7.0
+ (c++|optional=templinst)"std::ctype<char>::do_widen(char) const@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<decltype(nullptr), (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_ptr()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_weak_release()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_destroy()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_dispose()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::_M_get_deleter(std::type_info const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>::~_Sp_counted_deleter()@Base" 1.7.0
+ (c++|optional=templinst)"std::map<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, GpgSignKeyEditInteractor_Private::SignKeyState, std::less<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> > >::~map()@Base" 1.7.0
+ (c++|optional=templinst)"std::map<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, GpgSignKeyEditInteractor_Private::SignKeyState, std::less<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> > >::~map()@Base" 1.7.0
+ (c++|optional=templinst)"std::map<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, GpgSignKeyEditInteractor_Private::SignKeyState, std::less<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> > >::operator[](std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<_gpgme_recipient, std::allocator<_gpgme_recipient> >::_M_emplace_back_aux<_gpgme_recipient const&>(_gpgme_recipient const&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::Configuration::Option, std::allocator<GpgME::Configuration::Option> >::_M_emplace_back_aux<GpgME::Configuration::Option>(GpgME::Configuration::Option&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Configuration::Option, std::allocator<GpgME::Configuration::Option> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Configuration::Option, std::allocator<GpgME::Configuration::Option> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Configuration::Component, std::allocator<GpgME::Configuration::Component> >::_M_default_append(unsigned long)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Configuration::Component, std::allocator<GpgME::Configuration::Component> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Configuration::Component, std::allocator<GpgME::Configuration::Component> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::CreatedSignature, std::allocator<GpgME::CreatedSignature> >::_M_emplace_back_aux<GpgME::CreatedSignature>(GpgME::CreatedSignature&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::CreatedSignature, std::allocator<GpgME::CreatedSignature> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::CreatedSignature, std::allocator<GpgME::CreatedSignature> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::DecryptionResult::Recipient, std::allocator<GpgME::DecryptionResult::Recipient> >::_M_emplace_back_aux<GpgME::DecryptionResult::Recipient>(GpgME::DecryptionResult::Recipient&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::DecryptionResult::Recipient, std::allocator<GpgME::DecryptionResult::Recipient> >::reserve(unsigned long)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::DecryptionResult::Recipient, std::allocator<GpgME::DecryptionResult::Recipient> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::DecryptionResult::Recipient, std::allocator<GpgME::DecryptionResult::Recipient> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::InvalidRecipient, std::allocator<GpgME::InvalidRecipient> >::_M_emplace_back_aux<GpgME::InvalidRecipient>(GpgME::InvalidRecipient&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::InvalidRecipient, std::allocator<GpgME::InvalidRecipient> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::InvalidRecipient, std::allocator<GpgME::InvalidRecipient> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::InvalidSigningKey, std::allocator<GpgME::InvalidSigningKey> >::_M_emplace_back_aux<GpgME::InvalidSigningKey>(GpgME::InvalidSigningKey&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::InvalidSigningKey, std::allocator<GpgME::InvalidSigningKey> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::InvalidSigningKey, std::allocator<GpgME::InvalidSigningKey> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::VerificationResult::Private::Nota, std::allocator<GpgME::VerificationResult::Private::Nota> >::_M_emplace_back_aux<GpgME::VerificationResult::Private::Nota const&>(GpgME::VerificationResult::Private::Nota const&)@Base" 1.7.0
+ (c++)"void std::vector<GpgME::Key, std::allocator<GpgME::Key> >::emplace_back<GpgME::Key>(GpgME::Key&&)@Base" 1.7.1
+ (c++|optional=templinst)"void std::vector<GpgME::Key, std::allocator<GpgME::Key> >::_M_emplace_back_aux<GpgME::Key>(GpgME::Key&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Key, std::allocator<GpgME::Key> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Key, std::allocator<GpgME::Key> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::Import, std::allocator<GpgME::Import> >::_M_emplace_back_aux<GpgME::Import>(GpgME::Import&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Import, std::allocator<GpgME::Import> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Import, std::allocator<GpgME::Import> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::Subkey, std::allocator<GpgME::Subkey> >::_M_emplace_back_aux<GpgME::Subkey>(GpgME::Subkey&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Subkey, std::allocator<GpgME::Subkey> >::reserve(unsigned long)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Subkey, std::allocator<GpgME::Subkey> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Subkey, std::allocator<GpgME::Subkey> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::UserID::Signature, std::allocator<GpgME::UserID::Signature> >::_M_emplace_back_aux<GpgME::UserID::Signature>(GpgME::UserID::Signature&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::UserID::Signature, std::allocator<GpgME::UserID::Signature> >::reserve(unsigned long)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::UserID::Signature, std::allocator<GpgME::UserID::Signature> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::UserID::Signature, std::allocator<GpgME::UserID::Signature> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::UserID, std::allocator<GpgME::UserID> >::_M_emplace_back_aux<GpgME::UserID>(GpgME::UserID&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::UserID, std::allocator<GpgME::UserID> >::reserve(unsigned long)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::UserID, std::allocator<GpgME::UserID> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::UserID, std::allocator<GpgME::UserID> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::Notation, std::allocator<GpgME::Notation> >::_M_emplace_back_aux<GpgME::Notation>(GpgME::Notation&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Notation, std::allocator<GpgME::Notation> >::reserve(unsigned long)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Notation, std::allocator<GpgME::Notation> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Notation, std::allocator<GpgME::Notation> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::Signature, std::allocator<GpgME::Signature> >::_M_emplace_back_aux<GpgME::Signature>(GpgME::Signature&&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Signature, std::allocator<GpgME::Signature> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<GpgME::Signature, std::allocator<GpgME::Signature> >::~vector()@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_emplace_back_aux<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<_gpgme_signature*, std::allocator<_gpgme_signature*> >::_M_emplace_back_aux<_gpgme_signature* const&>(_gpgme_signature* const&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<_gpgme_invalid_key*, std::allocator<_gpgme_invalid_key*> >::_M_emplace_back_aux<_gpgme_invalid_key* const&>(_gpgme_invalid_key* const&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<_gpgme_import_status*, std::allocator<_gpgme_import_status*> >::_M_emplace_back_aux<_gpgme_import_status* const&>(_gpgme_import_status* const&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<_gpgme_new_signature*, std::allocator<_gpgme_new_signature*> >::_M_emplace_back_aux<_gpgme_new_signature* const&>(_gpgme_new_signature* const&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<char const*, std::allocator<char const*> >::emplace_back<char const*>(char const*&&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<char const*, std::allocator<char const*> >::_M_emplace_back_aux<char const*>(char const*&&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<GpgME::EventLoopInteractor::Private::OneFD*, std::allocator<GpgME::EventLoopInteractor::Private::OneFD*> >::_M_emplace_back_aux<GpgME::EventLoopInteractor::Private::OneFD*>(GpgME::EventLoopInteractor::Private::OneFD*&&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<char*, std::allocator<char*> >::_M_emplace_back_aux<char*>(char*&&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<std::vector<GpgME::VerificationResult::Private::Nota, std::allocator<GpgME::VerificationResult::Private::Nota> >, std::allocator<std::vector<GpgME::VerificationResult::Private::Nota, std::allocator<GpgME::VerificationResult::Private::Nota> > > >::_M_emplace_back_aux<std::vector<GpgME::VerificationResult::Private::Nota, std::allocator<GpgME::VerificationResult::Private::Nota> > >(std::vector<GpgME::VerificationResult::Private::Nota, std::allocator<GpgME::VerificationResult::Private::Nota> >&&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::allocator<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >::_M_emplace_back_aux<std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >(std::pair<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >&&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<int, std::allocator<int> >::_M_emplace_back_aux<int const&>(int const&)@Base" 1.7.0
+ (c++|optional=templinst)"void std::vector<unsigned int, std::allocator<unsigned int> >::_M_emplace_back_aux<unsigned int const&>(unsigned int const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::vector<unsigned int, std::allocator<unsigned int> >::operator=(std::vector<unsigned int, std::allocator<unsigned int> > const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::__cxx11::basic_stringbuf<char, std::char_traits<char>, std::allocator<char> >::~basic_stringbuf()@Base" 1.7.0
+ (c++|optional=templinst)"std::__cxx11::basic_stringbuf<char, std::char_traits<char>, std::allocator<char> >::~basic_stringbuf()@Base" 1.7.0
+ (c++|optional=templinst)"std::__cxx11::basic_stringbuf<char, std::char_traits<char>, std::allocator<char> >::~basic_stringbuf()@Base" 1.7.0
+ (c++|optional=templinst)"std::_Rb_tree<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState>, std::_Select1st<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> >, std::less<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> > >::_M_get_insert_unique_pos(std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Rb_tree<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState>, std::_Select1st<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> >, std::less<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> > >::_M_get_insert_hint_unique_pos(std::_Rb_tree_const_iterator<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> >, std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const&)@Base" 1.7.0
+ (c++|optional=templinst)"std::_Rb_tree<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >, std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState>, std::_Select1st<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> >, std::less<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >, std::allocator<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> > >::_M_erase(std::_Rb_tree_node<std::pair<std::tuple<GpgSignKeyEditInteractor_Private::SignKeyState, unsigned int, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > const, GpgSignKeyEditInteractor_Private::SignKeyState> >*)@Base" 1.7.0
+ (c++)"typeinfo for GpgME::EditInteractor@Base" 1.7.0
+ (c++)"typeinfo for GpgME::AssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo for GpgME::EventLoopInteractor@Base" 1.7.0
+ (c++)"typeinfo for GpgME::DefaultAssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo for GpgME::GpgSignKeyEditInteractor@Base" 1.7.0
+ (c++)"typeinfo for GpgME::GpgAddUserIDEditInteractor@Base" 1.7.0
+ (c++)"typeinfo for GpgME::ScdGetInfoAssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo for GpgME::GpgSetExpiryTimeEditInteractor@Base" 1.7.0
+ (c++)"typeinfo for GpgME::GpgSetOwnerTrustEditInteractor@Base" 1.7.0
+ (c++)"typeinfo for GpgME::GpgAgentGetInfoAssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo for GpgME::Context@Base" 1.7.0
+ (c++)"typeinfo for GpgME::Exception@Base" 1.7.0
+ (c++)"typeinfo for GpgME::TrustItem@Base" 1.7.0
+ (c++)"typeinfo for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo for std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::EditInteractor@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::AssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::EventLoopInteractor@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::DefaultAssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::GpgSignKeyEditInteractor@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::GpgAddUserIDEditInteractor@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::ScdGetInfoAssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::GpgSetExpiryTimeEditInteractor@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::GpgSetOwnerTrustEditInteractor@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::GpgAgentGetInfoAssuanTransaction@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::Context@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::Exception@Base" 1.7.0
+ (c++)"typeinfo name for GpgME::TrustItem@Base" 1.7.0
+ (c++)"typeinfo name for void (*)(_gpgme_key*)@Base" 1.7.0
+ (c++)"typeinfo name for void (*)(gpgme_context*)@Base" 1.7.0
+ (c++)"typeinfo name for void (*)(gpgme_conf_comp*)@Base" 1.7.0
+ (c++)"typeinfo name for std::_Mutex_base<(__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"typeinfo name for std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for GpgME::EditInteractor@Base" 1.7.0
+ (c++)"vtable for GpgME::EventLoopInteractor@Base" 1.7.0
+ (c++)"vtable for GpgME::DefaultAssuanTransaction@Base" 1.7.0
+ (c++)"vtable for GpgME::GpgSignKeyEditInteractor@Base" 1.7.0
+ (c++)"vtable for GpgME::GpgAddUserIDEditInteractor@Base" 1.7.0
+ (c++)"vtable for GpgME::ScdGetInfoAssuanTransaction@Base" 1.7.0
+ (c++)"vtable for GpgME::GpgSetExpiryTimeEditInteractor@Base" 1.7.0
+ (c++)"vtable for GpgME::GpgSetOwnerTrustEditInteractor@Base" 1.7.0
+ (c++)"vtable for GpgME::GpgAgentGetInfoAssuanTransaction@Base" 1.7.0
+ (c++)"vtable for GpgME::Context@Base" 1.7.0
+ (c++)"vtable for GpgME::Exception@Base" 1.7.0
+ (c++)"vtable for GpgME::TrustItem@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::EngineInfo::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::ImportResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::KeyListResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::SigningResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::VfsMountResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::DecryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::DecryptionResult::Recipient::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::EncryptionResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::VerificationResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::KeyGenerationResult::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::Data::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::Notation::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_ptr<GpgME::TofuInfo::Private*, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_deleter<_gpgme_key*, void (*)(_gpgme_key*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_deleter<gpgme_context*, void (*)(gpgme_context*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
+ (c++)"vtable for std::_Sp_counted_deleter<gpgme_conf_comp*, void (*)(gpgme_conf_comp*), std::allocator<void>, (__gnu_cxx::_Lock_policy)2>@Base" 1.7.0
  passphrase_callback@Base 1.7.0
  progress_callback@Base 1.7.0
