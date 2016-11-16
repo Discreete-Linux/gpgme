@@ -71,7 +71,7 @@ Description: GPGME - GnuPG Made Easy (library)
  .
  This package contains the library.
 
-Package: python3-pyme
+Package: python3-gpg
 Architecture: any
 Section: python
 Provides:
@@ -81,11 +81,11 @@ Depends:
  ${python3:Depends},
  ${shlibs:Depends},
 Description: Python interface to the GPGME GnuPG encryption library (Python 3)
- Pyme is, for the most part, a direct interface to the C GPGME
- library.  However, it is re-packaged in a more Pythonic way --
- object-oriented with classes and modules.  Take a look at the classes
- defined here -- they correspond directly to certain object types in GPGME
- for C.
+ The "gpg" Python module is, for the most part, a direct interface to
+ the C GPGME library.  However, it is re-packaged in a more Pythonic
+ way -- object-oriented with classes and modules.  Take a look at the
+ classes defined here -- they correspond directly to certain object
+ types in GPGME for C.
  .
  Features:
   * Feature-rich, full implementation of the GPGME library. Supports
@@ -97,7 +97,7 @@ Description: Python interface to the GPGME GnuPG encryption library (Python 3)
  .
  This is the official upstream Python 3 binding for GPGME.
 
-Package: python-pyme
+Package: python-gpg
 Architecture: any
 Section: python
 Provides:
@@ -107,11 +107,11 @@ Depends:
  ${python:Depends},
  ${shlibs:Depends},
 Description: Python interface to the GPGME GnuPG encryption library (Python 2)
- Pyme is, for the most part, a direct interface to the C GPGME
- library.  However, it is re-packaged in a more Pythonic way --
- object-oriented with classes and modules.  Take a look at the classes
- defined here -- they correspond directly to certain object types in GPGME
- for C.
+ The "gpg" Python module is, for the most part, a direct interface to
+ the C GPGME library.  However, it is re-packaged in a more Pythonic
+ way -- object-oriented with classes and modules.  Take a look at the
+ classes defined here -- they correspond directly to certain object
+ types in GPGME for C.
  .
  Features:
   * Feature-rich, full implementation of the GPGME library. Supports

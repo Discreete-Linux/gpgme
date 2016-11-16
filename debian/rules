@@ -19,21 +19,5 @@ override_dh_install:
 override_dh_makeshlibs:
 	dh_makeshlibs -V
 
-# python-pyme needs an epoch number because previous versions had an
-# epoch.  If we ever add an epoch to the source package, remove this
-# stanza.
-override_dh_gencontrol-arch:
-	dh_gencontrol
-	dpkg-gencontrol -ppython-pyme \
-	-v1:$(DEBIAN_VERSION) \
-	-Tdebian/python-pyme.substvars \
-	-Pdebian/python-pyme \
-	-Odebian/python-pyme/DEBIAN/control
-	# and add an epoch to the generated dbgsym as well:
-	sed -i -e 's/^Version: /Version: 1:/' \
-	-e 's/^Depends: python-pyme (= /Depends: python-pyme (= 1:/' \
-	-e 's/^Source: gpgme1.0$$/Source: gpgme1.0 ($(DEBIAN_VERSION))/' \
-	debian/.debhelper/python-pyme/dbgsym-root/DEBIAN/control
-
 override_dh_installdocs:
 	dh_installdocs -X.md5

@@ -1,0 +1,7 @@
+debian/tmp/usr/lib/python3*/site-packages/gpg*.egg-info usr/lib/python3/dist-packages
+debian/tmp/usr/lib/python3*/site-packages/gpg/*.py usr/lib/python3/dist-packages/gpg
+debian/tmp/usr/lib/python3*/site-packages/gpg/_gpgme*.so usr/lib/python3/dist-packages/gpg
+debian/tmp/usr/lib/python3*/site-packages/gpg/constants/*.py usr/lib/python3/dist-packages/gpg/constants
+debian/tmp/usr/lib/python3*/site-packages/gpg/constants/data/*.py usr/lib/python3/dist-packages/gpg/constants/data
+debian/tmp/usr/lib/python3*/site-packages/gpg/constants/keylist/*.py usr/lib/python3/dist-packages/gpg/constants/keylist
+debian/tmp/usr/lib/python3*/site-packages/gpg/constants/sig/*.py usr/lib/python3/dist-packages/gpg/constants/sig

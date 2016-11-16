@@ -25,7 +25,7 @@ Files: lang/cl/*
 Copyright: 2003, 2006, 2008 g10 Code GmbH
 License: GPL-2+
 
-Files: lang/python/* lang/python/*/* lang/python/pyme/constants/* lang/python/pyme/constants/*/*
+Files: lang/python/* lang/python/*/* lang/python/gpg/constants/* lang/python/gpg/constants/*/*
 Copyright:
  2002 John Goerzen,
  2004-2008 Igor Belyi,
