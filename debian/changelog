@@ -1,3 +1,18 @@
+gpgme1.0 (1.8.0-1) experimental; urgency=medium
+
+  * new upstream release
+   - drops gpgme-pthread variant (we replace .so with symlink)
+   - moves python binding name from "pyme" to "gpg"
+  * no need for pasv in debian/watch
+  * filter another auto-generated file at import-orig
+  * re-enable pie, it is needed to build Qt properly now
+  * avoid installing python bytecode and unnecessary package metadata
+  * update build-dep gpg-error version requirements to track configure.ac
+  * add new symbols
+  * drop C++ and QT .symbols files, do only strict versioning.
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Fri, 18 Nov 2016 19:15:37 -0500
+
 gpgme1.0 (1.7.1-3) experimental; urgency=medium
 
   [ Sandro Knauß ]
