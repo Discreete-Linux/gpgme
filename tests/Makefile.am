@@ -15,7 +15,7 @@
 # Public License for more details.
 #
 # You should have received a copy of the GNU Lesser General Public
-# License along with this program; if not, see <http://www.gnu.org/licenses/>.
+# License along with this program; if not, see <https://www.gnu.org/licenses/>.
 
 ## Process this file with automake to produce Makefile.in
 
@@ -33,7 +33,7 @@ noinst_HEADERS = run-support.h
 
 noinst_PROGRAMS = $(TESTS) run-keylist run-export run-import run-sign \
 		  run-verify run-encrypt run-identify run-decrypt run-genkey \
-		  run-keysign run-tofu
+		  run-keysign run-tofu run-swdb
 
 
 if RUN_GPG_TESTS

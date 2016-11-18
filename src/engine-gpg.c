@@ -16,7 +16,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
 */
 
 #if HAVE_CONFIG_H
@@ -139,6 +139,9 @@ struct engine_gpg
 
   struct gpgme_io_cbs io_cbs;
   gpgme_pinentry_mode_t pinentry_mode;
+
+  /* NULL or the data object fed to --override_session_key-fd.  */
+  gpgme_data_t override_session_key;
 };
 
 typedef struct engine_gpg *engine_gpg_t;
@@ -440,6 +443,8 @@ gpg_release (void *engine)
     free_argv (gpg->argv);
   if (gpg->cmd.keyword)
     free (gpg->cmd.keyword);
+
+  gpgme_data_release (gpg->override_session_key);
 
   free (gpg);
 }
@@ -1550,12 +1555,44 @@ add_input_size_hint (engine_gpg_t gpg, gpgme_data_t data)
 
 
 static gpgme_error_t
-gpg_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain)
+gpg_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain,
+             int export_session_key, const char *override_session_key)
 {
   engine_gpg_t gpg = engine;
   gpgme_error_t err;
 
   err = add_arg (gpg, "--decrypt");
+
+  if (!err && export_session_key)
+    err = add_arg (gpg, "--show-session-key");
+
+  if (!err && override_session_key && *override_session_key)
+    {
+      if (have_gpg_version (gpg, "2.1.16"))
+        {
+          gpgme_data_release (gpg->override_session_key);
+          TRACE2 (DEBUG_ENGINE, "override", gpg, "seskey='%s' len=%zu\n",
+                  override_session_key,
+                  strlen (override_session_key));
+
+          err = gpgme_data_new_from_mem (&gpg->override_session_key,
+                                         override_session_key,
+                                         strlen (override_session_key), 1);
+          if (!err)
+            {
+              err = add_arg (gpg, "--override-session-key-fd");
+              if (!err)
+                err = add_data (gpg, gpg->override_session_key, -2, 0);
+            }
+        }
+      else
+        {
+          /* Using that option may leak the session key via ps(1).  */
+          err = add_arg (gpg, "--override-session-key");
+          if (!err)
+            err = add_arg (gpg, override_session_key);
+        }
+    }
 
   /* Tell the gpg object about the data.  */
   if (!err)
@@ -1641,6 +1678,23 @@ append_args_from_signers (engine_gpg_t gpg, gpgme_ctx_t ctx /* FIXME */)
       if (err)
         break;
     }
+  return err;
+}
+
+
+static gpgme_error_t
+append_args_from_sender (engine_gpg_t gpg, gpgme_ctx_t ctx)
+{
+  gpgme_error_t err;
+
+  if (ctx->sender && have_gpg_version (gpg, "2.1.15"))
+    {
+      err = add_arg (gpg, "--sender");
+      if (!err)
+        err = add_arg (gpg, ctx->sender);
+    }
+  else
+    err = 0;
   return err;
 }
 
@@ -1891,6 +1945,9 @@ gpg_encrypt_sign (void *engine, gpgme_key_t recp[],
 
   if (!err)
     err = append_args_from_signers (gpg, ctx);
+
+  if (!err)
+    err = append_args_from_sender (gpg, ctx);
 
   if (!err)
     err = append_args_from_sig_notations (gpg, ctx);
@@ -2794,6 +2851,8 @@ gpg_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
   if (!err)
     err = append_args_from_signers (gpg, ctx);
   if (!err)
+    err = append_args_from_sender (gpg, ctx);
+  if (!err)
     err = append_args_from_sig_notations (gpg, ctx);
 
   if (gpgme_data_get_file_name (in))
@@ -2845,12 +2904,15 @@ gpg_trustlist (void *engine, const char *pattern)
 
 static gpgme_error_t
 gpg_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
-	    gpgme_data_t plaintext)
+	    gpgme_data_t plaintext, gpgme_ctx_t ctx)
 {
   engine_gpg_t gpg = engine;
-  gpgme_error_t err = 0;
+  gpgme_error_t err;
 
-  if (plaintext)
+  err = append_args_from_sender (gpg, ctx);
+  if (err)
+    ;
+  else if (plaintext)
     {
       /* Normal or cleartext signature.  */
       err = add_arg (gpg, "--output");
@@ -2944,6 +3006,7 @@ struct engine_ops _gpgme_engine_ops_gpg =
     NULL,               /* opassuan_transact */
     NULL,		/* conf_load */
     NULL,		/* conf_save */
+    NULL,               /* query_swdb */
     gpg_set_io_cbs,
     gpg_io_event,
     gpg_cancel,

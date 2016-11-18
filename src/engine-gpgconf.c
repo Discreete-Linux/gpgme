@@ -16,7 +16,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #if HAVE_CONFIG_H
@@ -47,16 +47,26 @@
 
 #include "engine-backend.h"
 
+
 
 struct engine_gpgconf
 {
   char *file_name;
   char *home_dir;
+  char *version;
 };
 
 typedef struct engine_gpgconf *engine_gpgconf_t;
 
 
+/* Return true if the engine's version is at least VERSION.  */
+static int
+have_gpgconf_version (engine_gpgconf_t gpgconf, const char *version)
+{
+  return _gpgme_compare_versions (gpgconf->version, version);
+}
+
+
 static char *
 gpgconf_get_version (const char *file_name)
 {
@@ -84,6 +94,8 @@ gpgconf_release (void *engine)
     free (gpgconf->file_name);
   if (gpgconf->home_dir)
     free (gpgconf->home_dir);
+  if (gpgconf->version)
+    free (gpgconf->version);
 
   free (gpgconf);
 }
@@ -95,8 +107,6 @@ gpgconf_new (void **engine, const char *file_name, const char *home_dir,
 {
   gpgme_error_t err = 0;
   engine_gpgconf_t gpgconf;
-
-  (void)version; /* Not yet used.  */
 
   gpgconf = calloc (1, sizeof *gpgconf);
   if (!gpgconf)
@@ -112,6 +122,13 @@ gpgconf_new (void **engine, const char *file_name, const char *home_dir,
       gpgconf->home_dir = strdup (home_dir);
       if (!gpgconf->home_dir)
 	err = gpg_error_from_syserror ();
+    }
+
+  if (!err && version)
+    {
+      gpgconf->version = strdup (version);
+      if (!gpgconf->version)
+        err = gpg_error_from_syserror ();
     }
 
   if (err)
@@ -209,7 +226,8 @@ gpgconf_read (void *engine, const char *arg1, char *arg2,
   char *linebuf;
   size_t linebufsize;
   int linelen;
-  char *argv[4] = { NULL /* file_name */, NULL, NULL, NULL };
+  char *argv[6];
+  int argc = 0;
   int rp[2];
   struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */, -1, 0},
 				   {-1, -1} };
@@ -217,14 +235,19 @@ gpgconf_read (void *engine, const char *arg1, char *arg2,
   int nread;
   char *mark = NULL;
 
-  argv[1] = (char*)arg1;
-  argv[2] = arg2;
-
-
-  /* FIXME: Deal with engine->home_dir.  */
-
   /* _gpgme_engine_new guarantees that this is not NULL.  */
-  argv[0] = gpgconf->file_name;
+  argv[argc++] = gpgconf->file_name;
+
+  if (gpgconf->home_dir && have_gpgconf_version (gpgconf, "2.1.13"))
+    {
+      argv[argc++] = (char*)"--homedir";
+      argv[argc++] = gpgconf->home_dir;
+    }
+
+  argv[argc++] = (char*)arg1;
+  argv[argc++] = arg2;
+  argv[argc] = NULL;
+  assert (argc < DIM (argv));
 
   if (_gpgme_io_pipe (rp, 1) < 0)
     return gpg_error_from_syserror ();
@@ -685,16 +708,26 @@ gpgconf_write (void *engine, const char *arg1, char *arg2, gpgme_data_t conf)
 #define BUFLEN 1024
   char buf[BUFLEN];
   int buflen = 0;
-  char *argv[] = { NULL /* file_name */, (char*)arg1, arg2, 0 };
+  char *argv[6];
+  int argc = 0;
   int rp[2];
   struct spawn_fd_item_s cfd[] = { {-1, 0 /* STDIN_FILENO */}, {-1, -1} };
   int status;
   int nwrite;
 
-  /* FIXME: Deal with engine->home_dir.  */
-
   /* _gpgme_engine_new guarantees that this is not NULL.  */
-  argv[0] = gpgconf->file_name;
+  argv[argc++] = gpgconf->file_name;
+
+  if (gpgconf->home_dir && have_gpgconf_version (gpgconf, "2.1.13"))
+    {
+      argv[argc++] = (char*)"--homedir";
+      argv[argc++] = gpgconf->home_dir;
+    }
+
+  argv[argc++] = (char*)arg1;
+  argv[argc++] = arg2;
+  argv[argc] = NULL;
+  assert (argc < DIM (argv));
 
   if (_gpgme_io_pipe (rp, 0) < 0)
     return gpg_error_from_syserror ();
@@ -909,6 +942,217 @@ gpgconf_conf_save (void *engine, gpgme_conf_comp_t comp)
 }
 
 
+/* Parse a line received from gpgconf --query-swdb.  This function may
+ * modify LINE.  The result is stored at RESUL.  */
+static gpg_error_t
+parse_swdb_line (char *line, gpgme_query_swdb_result_t result)
+{
+  char *field[9];
+  int fields = 0;
+  gpg_err_code_t ec;
+
+  while (line && fields < DIM (field))
+    {
+      field[fields++] = line;
+      line = strchr (line, ':');
+      if (line)
+	*line++ = 0;
+    }
+  /* We require that all fields exists - gpgme emits all these fields
+   * even on error.  They might be empty, though. */
+  if (fields < 9)
+    return gpg_error (GPG_ERR_INV_ENGINE);
+
+  free (result->name);
+  result->name = strdup (field[0]);
+  if (!result->name)
+    return gpg_error_from_syserror ();
+
+  free (result->iversion);
+  result->iversion = strdup (field[1]);
+  if (!result->iversion)
+    return gpg_error_from_syserror ();
+
+  result->urgent = (strtol (field[3], NULL, 10) > 0);
+
+  ec = gpg_err_code (strtoul (field[4], NULL, 10));
+
+  result->created  = _gpgme_parse_timestamp (field[5], NULL);
+  result->retrieved= _gpgme_parse_timestamp (field[6], NULL);
+
+  free (result->version);
+  result->version  = strdup (field[7]);
+  if (!result->version)
+    return gpg_error_from_syserror ();
+
+  result->reldate  = _gpgme_parse_timestamp (field[8], NULL);
+
+  /* Set other flags.  */
+  result->warning = !!ec;
+  result->update = 0;
+  result->noinfo = 0;
+  result->unknown = 0;
+  result->tooold = 0;
+  result->error = 0;
+
+  switch (*field[2])
+    {
+    case '-': result->warning = 1; break;
+    case '?': result->unknown = result->warning = 1; break;
+    case 'u': result->update = 1; break;
+    case 'c': break;
+    case 'n': break;
+    default:
+      result->warning = 1;
+      if (!ec)
+        ec = GPG_ERR_INV_ENGINE;
+      break;
+    }
+
+  if (ec == GPG_ERR_TOO_OLD)
+    result->tooold = 1;
+  else if (ec == GPG_ERR_ENOENT)
+    result->noinfo = 1;
+  else if (ec)
+    result->error = 1;
+
+
+  return 0;
+}
+
+
+static gpgme_error_t
+gpgconf_query_swdb (void *engine,
+                    const char *name, const char *iversion,
+                    gpgme_query_swdb_result_t result)
+{
+  struct engine_gpgconf *gpgconf = engine;
+  gpgme_error_t err = 0;
+  char *linebuf;
+  size_t linebufsize;
+  int linelen;
+  char *argv[7];
+  int argc = 0;
+  int rp[2];
+  struct spawn_fd_item_s cfd[] = { {-1, 1 /* STDOUT_FILENO */, -1, 0},
+				   {-1, -1} };
+  int status;
+  int nread;
+  char *mark = NULL;
+
+  if (!have_gpgconf_version (gpgconf, "2.1.16"))
+    return gpg_error (GPG_ERR_ENGINE_TOO_OLD);
+
+  /* _gpgme_engine_new guarantees that this is not NULL.  */
+  argv[argc++] = gpgconf->file_name;
+
+  if (gpgconf->home_dir)
+    {
+      argv[argc++] = (char*)"--homedir";
+      argv[argc++] = gpgconf->home_dir;
+    }
+
+  argv[argc++] = (char*)"--query-swdb";
+  argv[argc++] = (char*)name;
+  argv[argc++] = (char*)iversion;
+  argv[argc] = NULL;
+  assert (argc < DIM (argv));
+
+  if (_gpgme_io_pipe (rp, 1) < 0)
+    return gpg_error_from_syserror ();
+
+  cfd[0].fd = rp[1];
+
+  status = _gpgme_io_spawn (gpgconf->file_name, argv,
+                            IOSPAWN_FLAG_DETACHED, cfd, NULL, NULL, NULL);
+  if (status < 0)
+    {
+      _gpgme_io_close (rp[0]);
+      _gpgme_io_close (rp[1]);
+      return gpg_error_from_syserror ();
+    }
+
+  linebufsize = 2048; /* Same as used by gpgconf.  */
+  linebuf = malloc (linebufsize);
+  if (!linebuf)
+    {
+      err = gpg_error_from_syserror ();
+      goto leave;
+    }
+  linelen = 0;
+
+  while ((nread = _gpgme_io_read (rp[0], linebuf + linelen,
+                                  linebufsize - linelen - 1)))
+    {
+      char *line;
+      const char *lastmark = NULL;
+      size_t nused;
+
+      if (nread < 0)
+        {
+          err = gpg_error_from_syserror ();
+          goto leave;
+        }
+
+      linelen += nread;
+      linebuf[linelen] = '\0';
+
+      for (line=linebuf; (mark = strchr (line, '\n')); line = mark+1 )
+        {
+          lastmark = mark;
+          if (mark > line && mark[-1] == '\r')
+            mark[-1] = '\0';
+          else
+            mark[0] = '\0';
+
+          /* Got a full line.  Due to the CR removal code (which
+             occurs only on Windows) we might be one-off and thus
+             would see empty lines.  */
+          if (*line)
+            {
+              err = parse_swdb_line (line, result);
+              goto leave; /* Ready.  */
+            }
+          else /* empty line.  */
+            err = 0;
+        }
+
+      nused = lastmark? (lastmark + 1 - linebuf) : 0;
+      memmove (linebuf, linebuf + nused, linelen - nused);
+      linelen -= nused;
+
+      if (!(linelen < linebufsize - 1))
+        {
+          char *newlinebuf;
+
+          if (linelen <  8 * 1024 - 1)
+            linebufsize = 8 * 1024;
+          else if (linelen < 64 * 1024 - 1)
+            linebufsize = 64 * 1024;
+          else
+            {
+              /* We reached our limit - give up.  */
+              err = gpg_error (GPG_ERR_LINE_TOO_LONG);
+              goto leave;
+            }
+
+          newlinebuf = realloc (linebuf, linebufsize);
+          if (!newlinebuf)
+            {
+              err = gpg_error_from_syserror ();
+              goto leave;
+            }
+          linebuf = newlinebuf;
+        }
+    }
+
+ leave:
+  free (linebuf);
+  _gpgme_io_close (rp[0]);
+  return err;
+}
+
+
 static void
 gpgconf_set_io_cbs (void *engine, gpgme_io_cbs_t io_cbs)
 {
@@ -966,6 +1210,7 @@ struct engine_ops _gpgme_engine_ops_gpgconf =
     NULL,               /* opassuan_transact */
     gpgconf_conf_load,
     gpgconf_conf_save,
+    gpgconf_query_swdb,
     gpgconf_set_io_cbs,
     NULL,		/* io_event */
     NULL,		/* cancel */

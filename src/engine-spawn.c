@@ -14,7 +14,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
 */
 
 #if HAVE_CONFIG_H
@@ -469,6 +469,7 @@ struct engine_ops _gpgme_engine_ops_spawn =
     NULL,               /* opassuan_transact */
     NULL,		/* conf_load */
     NULL,		/* conf_save */
+    NULL,               /* query_swdb */
     engspawn_set_io_cbs,
     engspawn_io_event,	/* io_event */
     engspawn_cancel,	/* cancel */

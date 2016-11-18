@@ -960,12 +960,16 @@ uiserver_reset (void *engine)
 
 static gpgme_error_t
 _uiserver_decrypt (void *engine, int verify,
-		   gpgme_data_t ciph, gpgme_data_t plain)
+		   gpgme_data_t ciph, gpgme_data_t plain,
+                   int export_session_key, const char *override_session_key)
 {
   engine_uiserver_t uiserver = engine;
   gpgme_error_t err;
   const char *protocol;
   char *cmd;
+
+  (void)override_session_key; /* Fixme: We need to see now to add this
+                               * to the UI server protocol  */
 
   if (!uiserver)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -978,8 +982,9 @@ _uiserver_decrypt (void *engine, int verify,
   else
     return gpgme_error (GPG_ERR_UNSUPPORTED_PROTOCOL);
 
-  if (asprintf (&cmd, "DECRYPT%s%s", protocol,
-		verify ? "" : " --no-verify") < 0)
+  if (asprintf (&cmd, "DECRYPT%s%s%s", protocol,
+		verify ? "" : " --no-verify",
+                export_session_key ? " --export-session-key" : "") < 0)
     return gpg_error_from_syserror ();
 
   uiserver->input_cb.data = ciph;
@@ -1006,16 +1011,21 @@ _uiserver_decrypt (void *engine, int verify,
 
 
 static gpgme_error_t
-uiserver_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain)
+uiserver_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain,
+                  int export_session_key, const char *override_session_key)
 {
-  return _uiserver_decrypt (engine, 0, ciph, plain);
+  return _uiserver_decrypt (engine, 0, ciph, plain,
+                            export_session_key, override_session_key);
 }
 
 
 static gpgme_error_t
-uiserver_decrypt_verify (void *engine, gpgme_data_t ciph, gpgme_data_t plain)
+uiserver_decrypt_verify (void *engine, gpgme_data_t ciph, gpgme_data_t plain,
+                         int export_session_key,
+                         const char *override_session_key)
 {
-  return _uiserver_decrypt (engine, 1, ciph, plain);
+  return _uiserver_decrypt (engine, 1, ciph, plain,
+                            export_session_key, override_session_key);
 }
 
 
@@ -1243,12 +1253,15 @@ uiserver_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
 /* FIXME: Missing a way to specify --silent.  */
 static gpgme_error_t
 uiserver_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
-	      gpgme_data_t plaintext)
+                 gpgme_data_t plaintext, gpgme_ctx_t ctx)
 {
   engine_uiserver_t uiserver = engine;
   gpgme_error_t err;
   const char *protocol;
   char *cmd;
+
+  (void)ctx; /* FIXME: We should to add a --sender option to the
+              * UISever protocol.  */
 
   if (!uiserver)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -1390,11 +1403,12 @@ struct engine_ops _gpgme_engine_ops_uiserver =
     NULL,               /* opassuan_transact */
     NULL,		/* conf_load */
     NULL,		/* conf_save */
+    NULL,               /* query_swdb */
     uiserver_set_io_cbs,
     uiserver_io_event,
     uiserver_cancel,
     NULL,		/* cancel_op */
     NULL,               /* passwd */
-    NULL,                /* set_pinentry_mode */
+    NULL,               /* set_pinentry_mode */
     NULL                /* opspawn */
   };

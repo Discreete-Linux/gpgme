@@ -64,7 +64,7 @@ add_library(QGpgme SHARED IMPORTED)
 set_target_properties(QGpgme PROPERTIES
   INTERFACE_INCLUDE_DIRECTORIES "@resolved_includedir@/qgpgme;@resolved_includedir@"
   INTERFACE_LINK_LIBRARIES "Gpgmepp;Qt5::Core"
-  IMPORTED_LOCATION "@resolved_libdir@/libqgpgme@libsuffix@"
+  IMPORTED_LOCATION "@resolved_libdir@/libqgpgme.so"
 )
 
 if(CMAKE_VERSION VERSION_LESS 2.8.12)
@@ -96,3 +96,6 @@ unset(_IMPORT_CHECK_TARGETS)
 # Commands beyond this point should not need to know the version.
 set(CMAKE_IMPORT_FILE_VERSION)
 cmake_policy(POP)
+
+# Gpgmepp is a requirement for qgpgme
+find_package(Gpgmepp CONFIG REQUIRED)

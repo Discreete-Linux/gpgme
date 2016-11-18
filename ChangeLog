@@ -1,3 +1,453 @@
+2016-11-16  Werner Koch  <wk@gnupg.org>
+
+	Release 1.8.0.
+	* configure.ac: Set version to 1.8.0.  Set LT version C28/A17/RO.
+	Set CPP LT version to C9/A3/R0.  Set Qt LT version to C8/A1/R0.
+
+	core: Do not leak the override session key to ps(1).
+	* src/engine-gpg.c (struct engine_gpg): New field
+	override_session_key.
+	(gpg_release): Free that field.
+	(gpg_decrypt): With gnupg 2.1.16 use --override-session-key-fd.
+
+	* tests/run-decrypt.c (main): Fix setting over the override key.
+
+2016-11-16  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	doc,tests: Require use of ctx_flag before use of session_key.
+	* doc/gpgme.texi: Document requirements of verifying that it is OK to
+	use session_key.
+	* tests/run-decrypt.c: Ensure that we fail if we're unable to access
+	the session key, so that we do not violate the guidance above.
+
+
+	Changed the description
+
+	 -@code{gpgme_set_ctx_flag (ctx, "export-session-key")} returns
+	 -@code{GPG_ERR_NO_ERROR} or @code{gpgme_get_ctx_flag (ctx,
+	 -"export-session-key")} returns @code{"1"}.
+	 +@code{gpgme_set_ctx_flag (ctx, "export-session-key")} returns success
+	 +or @code{gpgme_get_ctx_flag (ctx, "export-session-key")} returns true
+	 +(non-empty string).
+
+	to get gpgme_get_ctx_flag for boolean values in sync with its own
+	description.
+
+	Note that I don't agree with the above suggestion but it does not
+	really harm to have it in the man page.
+
+2016-11-15  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt, cpp: Add cmake config files for w32.
+	* lang/cpp/src/GpgmeppConfig-w32.cmake.in.in
+	lang/qt/src/QGpgmeConfig-w32.cmake.in.in: New.
+	* lang/cpp/src/GpgmeppConfig.cmake.in.in,
+	lang/qt/src/QGpgmeConfig.cmake.in.in: Remove libsuffix handling.
+	* lang/cpp/src/Makefile.am,
+	lang/qt/src/Makefile.am: Create / install w32 config files.
+	* configure.ac: Configure them.
+
+	qt: Use new style connect in th..mixin.
+	* lang/qt/src/threadedjobmixin.h
+	(ThreadedJobMixin::lateInitialization): Use new style connect.
+
+2016-11-15  Werner Koch  <wk@gnupg.org>
+
+	core: Implement context flag "override-session-key".
+	* src/gpgme.c (gpgme_set_ctx_flag): Add flags "export-session-key" and
+	"override-session-key".
+	(gpgme_get_ctx_flag): Ditto.
+	(gpgme_set_export_session_keys): Remove.
+	(gpgme_get_export_session_keys): Remove.
+	* src/gpgme.def, src/libgpgme.vers: Remove them.
+	* src/context.h (struct gpgme_context): Add field
+	override_session_key.
+	* src/decrypt-verify.c (decrypt_verify_start): Pass
+	override_session_key value to the engine.
+	* src/decrypt.c (decrypt_start): Ditto.
+	* src/engine.c (_gpgme_engine_op_decrypt): Ditto.
+	(_gpgme_engine_op_decrypt_verify): Ditto.
+	* src/engine-backend.h (struct engine_ops): Extend DECRYPT and
+	DECRYPT_VERIFY_START with override_session_key.
+	* src/engine-uiserver.c (_uiserver_decrypt): Add stub arg
+	override_session_key.
+	(uiserver_decrypt): Ditto.
+	(uiserver_decrypt_verify): Ditto.
+	* src/engine-gpgsm.c (gpgsm_decrypt): Ditto.
+	* src/engine-gpg.c (gpg_decrypt): Add arg override_session_key and set
+	corresponding gpg option.
+
+	* tests/run-decrypt.c (print_result): Print the session key if
+	available.
+	(main): Add options --export-session-key and --override-session-key.
+
+	core: Add public function gpgme_get_ctx_flag.
+	* src/gpgme.h.in (gpgme_get_ctx_flag): New.
+	* src/gpgme.c (gpgme_set_ctx_flag): Move down the file and add a trace
+	statement.
+	(gpgme_get_ctx_flag): New.
+	* src/gpgme.def, src/libgpgme.vers: Add new interface.
+
+2016-11-15  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	core: Enable extraction of session keys.
+	* src/gpgme.c (gpgme_set_export_session_keys): New function.
+	(gpgme_get_export_session_keys): New function.
+	* src/gpgme.h.in (struct _gpgme_op_decrypt_result): Add session_key
+	member.
+	(gpgme_{set,get}_export_session_keys): Declare new functions.
+	* src/libgpgme.vers, src/gpgme.def: Export new functions in shared
+	object.
+	* src/engine.h: (_gpgme_engine_op_decrypt) Add export_session_key
+	parameter.
+	(_gpgme_engine_op_decrypt_verify): Add export_session_key parameter.
+	* src/engine-backend.h: (struct engine_ops): Change function
+	pointer declarations to match.
+	* src/context.h (struct gpgme_context): Add export_session_keys member.
+	* src/decrypt.c (release_op_data): Free result.session_key.
+	(_gpgme_decrypt_status_handler): Store a copy of the exported session
+	key.
+	(decrypt_start): Pass export_session_keys from the context.
+	* src/decrypt-verify.c (decrypt_verify_start): Pass
+	export_session_keys from context.
+	* src/engine.c (_gpgme_engine_op_decrypt): Pass through
+	export_session_key flag.
+	(_gpgme_engine_op_decrypt_verify): Pass through export_session_key
+	flag.
+	* src/engine-gpg.c (gpg_decrypt): If export_session_key is set, add
+	--export-session-key to argument list.
+	* src/engine-gpgsm.c (gpgsm_decrypt): Ignore export_session_key for
+	now, since gpgsm offers no such mechanism.
+	* src/engine-uiserver.c (_uiserver_decrypt): If export_session_key is
+	set, add --export-session-key flag to cmd.
+	* doc/gpgme.texi: Document new functions and session_key member of
+	decrypt_result_t.
+	* doc/uiserver.texi: Add --export-session-key flag to DECRYPT command.
+
+2016-11-14  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Add API to get the context for a Job.
+	* lang/qt/src/job.cpp,
+	lang/qt/src/job.h (Job::context): New.
+	* lang/qt/src/threadedjobmixin.cpp
+	(ThreadedJobMixin::~ThreadedJobMixin): New. Unregister context.
+	(ThreadedJobMixin::lateInitialization): Register context.
+	* NEWS: Update for cpp and qt.
+
+	cpp: Add get / set Sender API.
+	* cpp/src/context.cpp, cpp/src/context.h (Context::setSender),
+	(Context::getSender): Add simple wrappers.
+
+	qt, cpp: Enable dll build for windows.
+	* lang/cpp/src/Makefile.am,
+	lang/qt/src/Makefile.am: Add -no-undefined to LDFLAGS.
+
+	w32: Fix build of w32-glib.
+	* src/Makefile.am (main_sources): Remove system_components_not_extra.
+	(libgpgme_la_SOURCES): Add system_components_not_extra.
+	(libgpgme_glib_la_SOURCES): Remove duplicated ath files.
+
+2016-11-11  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	doc: Correct deftypefun for gpgme_op_decrypt_verify_start.
+	* doc/gpgme.texi: Documentationabout gpgme_op_decrypt_verify_start was
+	stored under the name gpgme_op_decrypt_verify instead.
+
+	doc: Correct text about gpgme_cancel_async.
+	* doc/gpgme.texi: Documentation about gpgme_cancel_async should refer
+	to the correct name.
+
+	core: Non-zero values should set _armor, _textmode, and _online.
+	* src/gpgme.c (gpgme_set_armor, gpgme_set_textmode,
+	gpgme_set_offline): Ensure that non-zero values actually set the
+	appropriate internal bit.
+
+2016-11-11  Alon Bar-Lev  <alon.barlev@gmail.com>
+
+	tests,python: Atomic directory creation.
+	* lang/python/tests/Makefile.am:  Use MIDIR_P.
+	* tests/gpg/Makefile.am: Ditto.
+	* tests/gpgsm/Makefile.am: Ditto.
+
+2016-11-10  Werner Koch  <wk@gnupg.org>
+
+	core: Use better error code when using select with a too high fd.
+	* src/posix-io.c (_gpgme_io_select): Return EMFILE instead of EBADF.
+
+2016-11-10  Andre Heinecke  <aheinecke@intevation.de>
+
+	tests: Reduce thread count in new thread tests.
+	* gpg/t-thread-keylist-verify.c,
+	gpg/t-thread-keylist.c: Reduce threads to 100
+
+2016-11-10  Werner Koch  <wk@gnupg.org>
+
+	core: Detect unreadable keyrings.
+	* src/keylist.c (op_data_t): Add field keydb_search_err.
+	(keylist_status_handler): Parse STATUS_ERROR into that var.
+	(gpgme_op_keylist_next): Use that err instead of GPG_ERR_EOF.
+
+2016-11-10  Andre Heinecke  <aheinecke@intevation.de>
+
+	tests: Fix additional memleaks in thread tests.
+	* tests/gpg/t-thread-keylist-verify.c (start_verify): Release
+	data.
+	(start_keylist): Unref keys.
+	* tests/gpg/t-thread-keylist.c (start_keylist): Unref keys.
+
+	tests: Improve new thread tests.
+	* tests/gpg/t-thread-keylist-verify.c (start_keylist): Mark
+	arg as unused. Release context.
+	(start_verify): Ditto.
+	(main): Mark args as unused.
+	* tests/gpg/t-thread-keylist.c (start_keylist):  Mark
+	arg as unused. Release context.
+	(main): Mark args as unused.
+
+	core: Use gpgrt locking for thread safeness.
+	* configure.ac: Require libgpg-error 1.17. No longer
+	check for pthread.
+	* doc/gpgme.texi: Document removed neccessity for thread
+	safe gpgme flavours.
+	* src/sema.h (DEFINE_GLOBAL_LOCK),
+	(DEFINE_STATIC_LOCK, INIT_LOCK, DECLARE_LOCK)
+	(DESTROY_LOCK, LOCK, UNLOCK): Change to gpgrt equivalents.
+	* src/posix-sema.c, src/w32-sema.c: Removed.
+	* src/Makefile.am: Remove libpthread and
+	Update accordingly.
+	* src/ath.c, src/ath.h (ath_mutex_init)
+	(ath_mutex_destroy, ath_mutex_lock, ath_mutex_unlock): Removed.
+	* src/ath.h (ATH_MUTEX_INITIALIZER): Removed.
+	* src/version.c (do_subsystem_inits): sema_subsystem_init is
+	no longer required.
+	* tests/gpg/Makefile.am: Add new threading tests.
+	(t_thread1_LDADD, t_cancel_LDADD):
+	Use just gpgme.
+	* tests/gpg/t-thread-keylist-verify.c,
+	tests/gpg/t-thread-keylist.c: New.
+	* src/gpgme-config.in: Use -lgpgme for thread-model pthread.
+
+2016-11-09  Justus Winter  <justus@g10code.com>
+
+	python: Require at least GPGME 1.7 for out-of-tree builds.
+	* lang/python/setup.py.in: Bump required version to 1.7.
+
+2016-11-09  Werner Koch  <wk@gnupg.org>
+
+	w32: Better protect the IO-system's fd_table.
+	* src/w32-io.c (fd_table_lock): New.
+	(new_fd): Lock allocation of a new slot.
+	(release_fd): Lock deallocation of a slot.
+
+2016-11-04  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Add API for swdb queries.
+	* lang/cpp/src/swdbresult.cpp,
+	 lang/cpp/src/swdbresult.h (SwdbResult): New.
+	* lang/cpp/src/Makefile.am: Update accordingly.
+
+	cpp: Add more EngineInfo::Version ctors.
+	* lang/cpp/src/engineinfo.h
+	(EngineInfo::Version::Version(const char*)),
+	(EngineInfo::Version::Version()): New.
+
+	cpp: Don't include gpgme.h in tofuinfo header.
+	* lang/cpp/src/tofuinfo.h: Don't include gpgme.h
+
+	cpp: Extend gpgmefw for tofuinfo and swdb query.
+	* lang/cpp/src/gpgmefw.h (gpgme_tofu_info_t)
+	(gpgme_query_swdb_result_t): New forwards.
+
+2016-11-04  Werner Koch  <wk@gnupg.org>
+
+	w32: Fix locating gpgconf on 64 bit systems.
+	* src/w32-util.c (find_program_at_standard_place): Use access to check
+	whether the binary is at CSIDL_PROGRAM_FILES before testing
+	CSIDL_PROGRAM_FILESX86.
+
+2016-11-03  Werner Koch  <wk@gnupg.org>
+
+	core: Add gpgme_op_query_swdb and helper.
+	* src/gpgme.h.in (gpgme_query_swdb_result_t): New.
+	(gpgme_op_query_swdb): New.
+	(gpgme_op_query_swdb_result): New.
+	* src/libgpgme.vers, src/gpgme.def: Add the two new functions.
+	* src/queryswdb.c: New.
+	* src/Makefile.am (main_sources): Add new file.
+	* src/context.h (OPDATA_QUERY_SWDB): New.
+	* src/engine-backend.h (struct engine_ops): Add field 'query_swdb'.
+	Adjust all initializer.
+	* src/engine.c (_gpgme_engine_op_query_swdb): New.
+	* src/engine-gpgconf.c (parse_swdb_line): New.
+	(gpgconf_query_swdb): New.
+	(_gpgme_engine_ops_gpgconf): Register that function.
+
+	* src/util.h (GPG_ERR_TOO_OLD): Define for older libgpg-error.
+	(GPG_ERR_ENGINE_TOO_OLD): Ditto.
+
+	* tests/run-swdb.c: New.
+	* tests/Makefile.am (noinst_PROGRAMS): Add new debug tool.
+
+2016-11-03  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Change license of export / version header.
+	* lang/qt/src/qgpgme_export.h,
+	lang/qt/src/qgpgme_version.h: Change license to GPLv2+
+
+2016-11-03  Werner Koch  <wk@gnupg.org>
+
+	core: Make use of --homedir in gpgconf.
+	* src/engine-gpgconf.c (struct engine_gpgconf): Add field 'version'.
+	(have_gpgconf_version): New.
+	(gpgconf_release): Free VERSION.
+	(gpgconf_new): Set VERSION.
+	(gpgconf_read, gpgconf_write): Use --homedir with recent gnupg.
+
+2016-11-02  Andras Mantia  <andras@kdab.com>
+
+	qt: Fix build with g++ 4.8.x.
+	* lang/qt/src/defaultkeygenerationjob.cpp
+	(DefaultKeyGenerationJob::start): Explicitly connect pointer
+	in the QPointer.
+
+2016-11-02  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt, cpp: Fix versioning in cmake config and header.
+	* configure.ac (VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO): New
+	subst variables for the version header.
+	* lang/cpp/src/GpgmeppConfigVersion.cmake.in,
+	lang/cpp/src/gpgmepp_version.h.in,
+	lang/qt/src/QGpgmeConfigVersion.cmake.in,
+	lang/qt/src/qgpgme_version.h.in: Use new variables.
+
+	qt: Install cmake config into qgpgme subdir.
+	* lang/qt/src/Makefile.am: Install cmake config file in qgpgme subdir.
+
+	qt: Require gpgmepp from cmake config script.
+	* lang/qt/src/QGpgmeConfig.cmake.in.in: Require cpp.
+
+	qt, cpp: Add all generated files to cleanfiles.
+	* cpp/src/Makefile.am (CLEANFILES),
+	qt/src/Makefile.am (CLEANFILES): Add all generated files
+	to cleanfiles.
+
+2016-11-01  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Add Distinguished Name parser from libkleo.
+	* lang/qt/src/dn.cpp (DN, DN::Attribute): New public API.
+	* lang/qt/src/dn.h: New.
+	* lang/qt/src/Makefile.am: Update accordingly.
+
+	qt, cpp: Install version headers in subdirs.
+	* lang/cpp/src/Makefile.am,
+	lang/qt/src/Makefile.am: Install version headers in include
+	subdirs.
+
+2016-10-31  Justus Winter  <justus@g10code.com>
+
+	python: Use vanity modules for constants in tests and examples.
+	* lang/python/gpg/constants/sig/notation.py: New file.
+	* lang/python/gpg/constants/sig/__init__.py: Import new module.
+
+	* lang/python/examples/assuan.py: Use more specific module for
+	constants, e.g. 'protocol.ASSUAN' instead of 'PROTOCOL_ASSUAN'.
+	* lang/python/examples/testCMSgetkey.py: Likewise.
+	* lang/python/tests/initial.py: Likewise.
+	* lang/python/tests/t-callbacks.py: Likewise.
+	* lang/python/tests/t-decrypt-verify.py: Likewise.
+	* lang/python/tests/t-decrypt.py: Likewise.
+	* lang/python/tests/t-edit.py: Likewise.
+	* lang/python/tests/t-encrypt-large.py: Likewise.
+	* lang/python/tests/t-encrypt-sign.py: Likewise.
+	* lang/python/tests/t-encrypt-sym.py: Likewise.
+	* lang/python/tests/t-encrypt.py: Likewise.
+	* lang/python/tests/t-export.py: Likewise.
+	* lang/python/tests/t-file-name.py: Likewise.
+	* lang/python/tests/t-idiomatic.py: Likewise.
+	* lang/python/tests/t-import.py: Likewise.
+	* lang/python/tests/t-keylist.py: Likewise.
+	* lang/python/tests/t-protocol-assuan.py: Likewise.
+	* lang/python/tests/t-sig-notation.py: Likewise.
+	* lang/python/tests/t-sign.py: Likewise.
+	* lang/python/tests/t-signers.py: Likewise.
+	* lang/python/tests/t-trustlist.py: Likewise.
+	* lang/python/tests/t-verify.py: Likewise.
+	* lang/python/tests/t-wait.py: Likewise.
+
+	python: Import the topmost module in tests and examples.
+	* examples/verifydetails.py: Only import the topmost module 'gpg' and
+	update the code accordingly.
+	* tests/support.py: Likewise.
+	* tests/t-callbacks.py: Likewise.
+	* tests/t-data.py: Likewise.
+	* tests/t-decrypt-verify.py: Likewise.
+	* tests/t-decrypt.py: Likewise.
+	* tests/t-edit.py: Likewise.
+	* tests/t-encrypt-large.py: Likewise.
+	* tests/t-encrypt-sign.py: Likewise.
+	* tests/t-encrypt-sym.py: Likewise.
+	* tests/t-encrypt.py: Likewise.
+	* tests/t-export.py: Likewise.
+	* tests/t-file-name.py: Likewise.
+	* tests/t-import.py: Likewise.
+	* tests/t-keylist.py: Likewise.
+	* tests/t-sig-notation.py: Likewise.
+	* tests/t-sign.py: Likewise.
+	* tests/t-signers.py: Likewise.
+	* tests/t-trustlist.py: Likewise.
+	* tests/t-verify.py: Likewise.
+	* tests/t-wait.py: Likewise.
+	* tests/t-wrapper.py: Likewise.
+
+	python: Improve constants module.
+	* lang/python/gpg/constants/__init__.py: Import all modules below
+	'constants/'.  Interface hygiene: delete 'util'.
+	* lang/python/gpg/constants/data/encoding.py: Delete 'util'.
+	* lang/python/gpg/constants/event.py: Likewise.
+	* lang/python/gpg/constants/import.py: Likewise.
+	* lang/python/gpg/constants/keylist/mode.py: Likewise.
+	* lang/python/gpg/constants/md.py: Likewise.
+	* lang/python/gpg/constants/pk.py: Likewise.
+	* lang/python/gpg/constants/protocol.py: Likewise.
+	* lang/python/gpg/constants/sig/mode.py: Likewise.
+	* lang/python/gpg/constants/sigsum.py: Likewise.
+	* lang/python/gpg/constants/validity.py: Likewise.
+	* lang/python/gpg/errors.py: Likewise.
+
+2016-10-31  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	python: Rename Python module from PyME to gpg.
+	This follows weeks of discussion on the gnupg-devel mailing list.
+	Hopefully it will make it easier for people using Python to use GnuPG
+	in the future.
+
+2016-10-25  Werner Koch  <wk@gnupg.org>
+
+	core: New API functions gpgme_set_sender, gpgme_get_sender.
+	* src/context.h (struct gpgme_context): Add field 'sender'.
+	* src/gpgme.c: Include mbox-util.h.
+	(gpgme_release): Free SENDER.
+	(gpgme_set_sender): New.
+	(gpgme_get_sender): New.
+	* src/gpgme.def, src/libgpgme.vers: Add new functions.
+
+	* src/engine-gpg.c (append_args_from_sender): New.
+	(gpg_encrypt_sign, gpg_sign): Call append_args_from_sender.
+	(gpg_verify): Add arg CTX.  Call append_args_from_sender/
+	* src/engine-gpgsm.c (gpgsm_verify): Add dummy arg CTX.
+	* src/engine-uiserver.c (uiserver_verify): Ditto.
+	* src/engine.c (_gpgme_engine_op_verify): Add arg CTX.
+	* src/verify.c (verify_start): Pass CTX to engine function.
+
+	* tests/gpg/t-verify.c (main): Add some checks for new functions.
+	* tests/run-sign.c (main): Add option --sender.
+	* tests/run-verify.c (main): Ditto.
+
+2016-10-19  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Improve WKSPublishJob apidoc.
+	* lang/qt/src/wkspublishjob.h: Improve doc.
+
 2016-10-18  Werner Koch  <wk@gnupg.org>
 
 	Release 1.7.1.

@@ -19,7 +19,7 @@
 # 02111-1307, USA
 
 EXTRA_DIST = GpgmeppConfig.cmake.in.in GpgmeppConfigVersion.cmake.in \
-             gpgmepp_version.h.in
+             gpgmepp_version.h.in GpgmeppConfig-w32.cmake.in.in
 
 lib_LTLIBRARIES = libgpgmepp.la
 
@@ -33,7 +33,7 @@ main_sources = \
     gpgsetownertrusteditinteractor.cpp gpgsignkeyeditinteractor.cpp \
     gpgadduserideditinteractor.cpp defaultassuantransaction.cpp \
     scdgetinfoassuantransaction.cpp gpgagentgetinfoassuantransaction.cpp \
-    vfsmountresult.cpp configuration.cpp tofuinfo.cpp
+    vfsmountresult.cpp configuration.cpp tofuinfo.cpp swdbresult.cpp
 
 gpgmepp_headers = \
     configuration.h context.h data.h decryptionresult.h \
@@ -45,7 +45,7 @@ gpgmepp_headers = \
     importresult.h keygenerationresult.h key.h keylistresult.h \
     notation.h result.h scdgetinfoassuantransaction.h signingresult.h \
     trustitem.h verificationresult.h vfsmountresult.h gpgmepp_export.h \
-    tofuinfo.h
+    tofuinfo.h swdbresult.h
 
 private_gpgmepp_headers = \
     result_p.h context_p.h util.h callbacks.h data_p.h
@@ -57,7 +57,7 @@ interface_headers= \
 gpgmeppincludedir = $(includedir)/gpgme++
 gpgmeppinclude_HEADERS = $(gpgmepp_headers)
 nobase_gpgmeppinclude_HEADERS = $(interface_headers)
-nodist_include_HEADERS = gpgmepp_version.h
+nodist_gpgmeppinclude_HEADERS = gpgmepp_version.h
 
 libgpgmepp_la_SOURCES = $(main_sources) $(gpgmepp_headers) context_vanilla.cpp \
                         $(interface_headers) $(private_gpgmepp_headers)
@@ -66,20 +66,19 @@ AM_CPPFLAGS = -I$(top_builddir)/src @GPG_ERROR_CFLAGS@ @LIBASSUAN_CFLAGS@ \
               -DBUILDING_GPGMEPP
 
 libgpgmepp_la_LIBADD = ../../../src/libgpgme.la @LIBASSUAN_LIBS@
-libgpgmepp_la_LDFLAGS = -version-info \
+libgpgmepp_la_LDFLAGS = -no-undefined -version-info \
     @LIBGPGMEPP_LT_CURRENT@:@LIBGPGMEPP_LT_REVISION@:@LIBGPGMEPP_LT_AGE@
 
 if HAVE_W32_SYSTEM
-libsuffix=.dll.a
+GpgmeppConfig.cmake: GpgmeppConfig-w32.cmake.in
+	sed -e 's|[@]resolved_bindir@|$(bindir)|g' < "$<" | \
+	sed -e 's|[@]resolved_libdir@|$(libdir)|g' | \
+	sed -e 's|[@]resolved_includedir@|$(includedir)|g' > $@
 else
-libsuffix=.so
-endif
-
 GpgmeppConfig.cmake: GpgmeppConfig.cmake.in
 	sed -e 's|[@]resolved_libdir@|$(libdir)|g' < "$<" | \
-	sed -e 's|[@]libsuffix@|$(libsuffix)|g' | \
 	sed -e 's|[@]resolved_includedir@|$(includedir)|g' > $@
-
+endif
 install-cmake-files: GpgmeppConfig.cmake GpgmeppConfigVersion.cmake
 	-$(INSTALL) -d $(DESTDIR)$(libdir)/cmake/Gpgmepp
 	$(INSTALL) -m 644 GpgmeppConfig.cmake \
@@ -96,4 +95,5 @@ install-data-local: install-cmake-files
 
 uninstall-local: uninstall-cmake-files
 
-CLEANFILES = GpgmeppConfig.cmake
+CLEANFILES = GpgmeppConfig.cmake GpgmeppConfigVersion.cmake \
+             gpgmepp_version.h GpgmeppConfig.cmake.in

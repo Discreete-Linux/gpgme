@@ -31,11 +31,11 @@ General Public License for more details.
 @end copying
 
 @c Macros used by the description of the UI server protocol
-@macro clnt
-  @sc{c:} @c
+@macro clnt{string}
+  @sc{c:} \string\
 @end macro
-@macro srvr
-  @sc{s:} @c
+@macro srvr{string}
+  @sc{s:} \string\
 @end macro
 
 
@@ -130,7 +130,7 @@ Preparation
 * Using Libtool::                 Avoiding compiler options entirely.
 * Library Version Check::         Getting and verifying the library version.
 * Signal Handling::               How @acronym{GPGME} affects signal handling.
-* Multi Threading::               How @acronym{GPGME} can be used in an MT environment.
+* Multi-Threading::               How @acronym{GPGME} can be used in an MT environment.
 
 Protocols and Engines
 
@@ -186,6 +186,7 @@ Context Attributes
 
 * Protocol Selection::            Selecting the protocol used by a context.
 * Crypto Engine::                 Configuring the crypto engine.
+* Setting the Sender::            How to tell the engine the sender.
 * ASCII Armor::                   Requesting @acronym{ASCII} armored output.
 * Text Mode::                     Choosing canonical text mode.
 * Offline Mode::                  Choosing offline mode.
@@ -236,7 +237,9 @@ Encrypt
 
 Miscellaneous
 
-* Running other Programs::        Running other Programs
+* Running other Programs::        Running other Programs.
+* Using the Assuan protocol::     Using the Assuan protocol.
+* Checking for updates::          How to check for software updates.
 
 Run Control
 
@@ -379,7 +382,7 @@ of the library are verified.
 * Using Libtool::                 Avoiding compiler options entirely.
 * Library Version Check::         Getting and verifying the library version.
 * Signal Handling::               How @acronym{GPGME} affects signal handling.
-* Multi Threading::               How @acronym{GPGME} can be used in an MT environment.
+* Multi-Threading::               How @acronym{GPGME} can be used in an MT environment.
 @end menu
 
 
@@ -454,12 +457,6 @@ specifying both options to @command{gpgme-config}:
 @example
 gcc -o foo foo.c `gpgme-config --cflags --libs`
 @end example
-
-If you want to link to one of the thread-safe versions of
-@acronym{GPGME}, you must specify the @option{--thread} option before
-any other option to select the thread package you want to link with.
-Supported thread packages are @option{--thread=pth} and
-@option{--thread=pthread}.
 
 If you need to detect the installed language bindings you can use list
 them using:
@@ -611,7 +608,9 @@ that can be used with GNU Pth, and defines @code{GPGME_PTH_CFLAGS} and
 
 @code{AM_PATH_GPGME_PTHREAD} checks for the version of @acronym{GPGME}
 that can be used with the native pthread implementation, and defines
-@code{GPGME_PTHREAD_CFLAGS} and @code{GPGME_PTHREAD_LIBS}.
+@code{GPGME_PTHREAD_CFLAGS} and @code{GPGME_PTHREAD_LIBS}. Since
+version 1.8.0 this is no longer required to GPGME_PTHREAD as
+@acronym{GPGME} itself is thread safe.
 
 This macro searches for @command{gpgme-config} along the PATH.  If
 you are cross-compiling, it is useful to set the environment variable
@@ -806,36 +805,16 @@ application is multi-threaded, and you install a signal action for
 @code{gpgme_check_version} is called or afterwards.
 
 
-@node Multi Threading
-@section Multi Threading
+@node Multi-Threading
+@section Multi-Threading
 @cindex thread-safeness
 @cindex multi-threading
 
-The @acronym{GPGME} library is not entirely thread-safe, but it can
-still be used in a multi-threaded environment if some care is taken.
-If the following requirements are met, there should be no race
-conditions to worry about:
+The @acronym{GPGME} library is mostly thread-safe, and can be used
+in a multi-threaded environment but there are some requirements
+for multi-threaded use:
 
 @itemize @bullet
-@item
-@acronym{GPGME} supports the thread libraries pthread and GNU Pth.
-The support for this has to be enabled at compile time.
-@acronym{GPGME} will automatically detect the location in which the
-thread libraries are installed and activate the support for them at
-build time.
-
-Support for other thread libraries is very easy to add.  Please
-contact us if you have the need.
-
-@item
-If you want to use @acronym{GPGME} with threads, you must link to the
-right version of the library.  The name of the right library is
-@code{libgpgme-} followed by the name of the thread package you use.
-For example, if you use GNU Pth, the right name is
-@code{libgpgme-pth}.  Use the Automake macros or
-@command{gpgme-config} program for simplicity.
-
-
 @item
 The function @code{gpgme_check_version} must be called before any
 other function in the library, because it initializes the thread
@@ -2334,10 +2313,12 @@ The function @code{gpgme_release} destroys the context with the handle
 The detailed result of an operation is returned in operation-specific
 structures such as @code{gpgme_decrypt_result_t}.  The corresponding
 retrieval functions such as @code{gpgme_op_decrypt_result} provide
-static access to the results after an operation completes.  The
-following interfaces make it possible to detach a result structure
-from its associated context and give it a lifetime beyond that of the
-current operation or context.
+static access to the results after an operation completes.  Those
+structures shall be considered read-only and an application must not
+allocate such a structure on its own.  The following interfaces make
+it possible to detach a result structure from its associated context
+and give it a lifetime beyond that of the current operation or
+context.
 
 @deftypefun void gpgme_result_ref (@w{void *@var{result}})
 The function @code{gpgme_result_ref} acquires an additional reference
@@ -2366,6 +2347,7 @@ started.  In fact, these references are accessed through the
 @menu
 * Protocol Selection::            Selecting the protocol used by a context.
 * Crypto Engine::                 Configuring the crypto engine.
+* Setting the Sender::            How to tell the engine the sender.
 * ASCII Armor::                   Requesting @acronym{ASCII} armored output.
 * Text Mode::                     Choosing canonical text mode.
 * Offline Mode::                  Choosing offline mode.
@@ -2446,6 +2428,47 @@ context @var{ctx}.
 This function returns the error code @code{GPG_ERR_NO_ERROR} if
 successful, or an eror code on failure.
 @end deftypefun
+
+
+@node Setting the Sender
+@subsection How to tell the engine the sender.
+@cindex context, sender
+@cindex sender
+@cindex From:
+
+Some engines can make use of the sender’s address, for example to
+figure out the best user id in certain trust models.  For verification
+and signing of mails, it is thus suggested to let the engine know the
+sender ("From:") address.  @acronym{GPGME} provides two functions to
+accomplish that.  Note that the esoteric use of multiple "From:"
+addresses is not supported.
+
+@deftypefun gpgme_error_t gpgme_set_sender @
+      (@w{gpgme_ctx_t @var{ctx}}, @
+       @w{int @var{address}})
+
+The function @code{gpgme_set_sender} specifies the sender address for
+use in sign and verify operations.  @var{address} is expected to be
+the ``addr-spec'' part of an address but my also be a complete mailbox
+address, in which case this function extracts the ``addr-spec'' from
+it.  Using @code{NULL} for @var{address} clears the sender address.
+
+The function returns 0 on success or an error code on failure.  The
+most likely failure is that no valid ``addr-spec'' was found in
+@var{address}.
+
+@end deftypefun
+
+@deftypefun @w{const char *} gpgme_get_sender @
+      (@w{gpgme_ctx_t @var{ctx}})
+
+The function @code{gpgme_get_sender} returns the current sender
+address from the context, or NULL if none was set.  The returned
+value is valid as long as the @var{ctx} is valid and
+@code{gpgme_set_sender} has not been called again.
+
+@end deftypefun
+
 
 
 @c FIXME: Unfortunately, using @acronym here breaks texi2dvi.
@@ -2877,9 +2900,36 @@ format.  For example the non breaking space characters ("~") will not
 be removed from the @code{description} field of the
 @code{gpgme_tofu_info_t} object.
 
+@item "export-session-key"
+Using a @var{value} of "1" specifies that the context should try to
+export the symmetric session key when decrypting data.  By default, or
+when using an empty string or "0" for @var{value}, session keys are
+not exported.
+
+@item "override-session-key"
+The string given in @var{value} is passed to the GnuPG engine to override
+the session key for decryption.  The format of that session key is
+specific to GnuPG and can be retrieved during a decrypt operation when
+the context flag "export-session-key" is enabled.  Please be aware that
+using this feature with GnuPG < 2.1.16 will leak the session key on
+many platforms via ps(1).
+
 @end table
 
 This function returns @code{0} on success.
+@end deftypefun
+
+
+@deftypefun {const char *} gpgme_get_ctx_flag  @
+            (@w{gpgme_ctx_t @var{ctx}}, @
+            @w{const char *@var{name}})
+
+The value of flags settable by @code{gpgme_set_ctx_flag} can be
+retrieved by this function.  If @var{name} is unknown the function
+returns @code{NULL}.  For boolean flags an empty string is returned
+for False and the string "1" is returned for True; either atoi(3) or a
+test for an empty string can be used to get the boolean value.
+
 @end deftypefun
 
 
@@ -4739,8 +4789,10 @@ secret key for this recipient is not available, and 0 otherwise.
 This is a pointer to a structure used to store the result of a
 @code{gpgme_op_decrypt} operation.  After successfully decrypting
 data, you can retrieve the pointer to the result with
-@code{gpgme_op_decrypt_result}.  The structure contains the following
-members:
+@code{gpgme_op_decrypt_result}.  As with all result structures, it
+this structure shall be considered read-only and an application must
+not allocated such a strucure on its own.  The structure contains the
+following members:
 
 @table @code
 @item char *unsupported_algorithm
@@ -4756,6 +4808,19 @@ This is a linked list of recipients to which this message was encrypted.
 @item char *file_name
 This is the filename of the original plaintext message file if it is
 known, otherwise this is a null pointer.
+
+@item char *session_key
+A textual representation (nul-terminated string) of the session key
+used in symmetric encryption of the message, if the context has been
+set to export session keys (see @code{gpgme_set_ctx_flag,
+"export-session-key"}), and a session key was available for the most
+recent decryption operation.  Otherwise, this is a null pointer.
+
+You must not try to access this member of the struct unless
+@code{gpgme_set_ctx_flag (ctx, "export-session-key")} returns success
+or @code{gpgme_get_ctx_flag (ctx, "export-session-key")} returns true
+(non-empty string).
+
 @end table
 @end deftp
 
@@ -5096,7 +5161,7 @@ secret key could not be retrieved, and passes through any errors that
 are reported by the crypto engine support routines.
 @end deftypefun
 
-@deftypefun gpgme_error_t gpgme_op_decrypt_verify (@w{gpgme_ctx_t @var{ctx}}, @w{gpgme_data_t @var{cipher}}, @w{gpgme_data_t @var{plain}})
+@deftypefun gpgme_error_t gpgme_op_decrypt_verify_start (@w{gpgme_ctx_t @var{ctx}}, @w{gpgme_data_t @var{cipher}}, @w{gpgme_data_t @var{plain}})
 The function @code{gpgme_op_decrypt_verify_start} initiates a
 @code{gpgme_op_decrypt_verify} operation.  It can be completed by
 calling @code{gpgme_wait} on the context.  @xref{Waiting For
@@ -5518,6 +5583,7 @@ Here are some support functions which are sometimes useful.
 @menu
 * Running other Programs::      Running other Programs
 * Using the Assuan protocol::   Using the Assuan protocol
+* Checking for updates::        How to check for software updates
 @end menu
 
 
@@ -5647,6 +5713,142 @@ The result of the operation is returned in @var{op_err}.
 
 Synchronous variant.
 @end deftypefun
+
+
+@node Checking for updates
+@subsection How to check for software updates
+
+The GnuPG Project operates a server to query the current versions of
+software packages related to GnuPG.  GPGME can be used to
+access this online database and check whether a new version of a
+software package is available.
+
+@deftp {Data type} {gpgme_query_swdb_result_t}
+This is a pointer to a structure used to store the result of a
+@code{gpgme_op_query_swdb} operation.  After success full call to that
+function, you can retrieve the pointer to the result with
+@code{gpgme_op_query_swdb_result}.  The structure contains the
+following member:
+
+@table @code
+@item name
+This is the name of the package.
+
+@item iversion
+The currently installed version or an empty string.  This value is
+either a copy of the argument given to @code{gpgme_op_query_swdb} or
+the version of the installed software as figured out by GPGME or GnuPG.
+
+@item created
+This gives the date the file with the list of version numbers has
+originally be created by the GnuPG project.
+
+@item retrieved
+This gives the date the file was downloaded.
+
+@item warning
+If this flag is set either an error has occurred or some of the
+information in this structure are not properly set.  For example if
+the version number of the installed software could not be figured out,
+the @code{update} flag may not reflect a required update status.
+
+@item update
+If this flag is set an update of the software is available.
+
+@item urgent
+If this flag is set an available update is important.
+
+@item noinfo
+If this flag is set, no valid information could be retrieved.
+
+@item unknown
+If this flag is set the given @code{name} is not known.
+
+@item tooold
+If this flag is set the available information is not fresh enough.
+
+@item error
+If this flag is set some other error has occured.
+
+@item version
+The version string of the latest released version.
+
+@item reldate
+The release date of the latest released version.
+
+@end table
+@end deftp
+
+@deftypefun gpgme_error_t gpgme_op_query_swdb @
+            (@w{gpgme_ctx_t @var{ctx}},       @
+             @w{const char *@var{name}},      @
+             @w{const char *@var{iversion}},  @
+             @w{gpgme_data_t @var{reserved}})
+
+Query the software version database for software package @var{name}
+and check against the installed version given by @var{iversion}.  If
+@var{iversion} is given as @code{NULL} a check is only done if GPGME
+can figure out the version by itself (for example when using
+"gpgme" or "gnupg").  If @code{NULL} is used for @var{name} the
+current gpgme version is checked.  @var{reserved} must be set to 0.
+
+@end deftypefun
+
+@deftypefun gpgme_query_swdb_result_t gpgme_op_query_swdb_result @
+            (@w{gpgme_ctx_t @var{ctx}})
+
+The function @code{gpgme_op_query_swdb_result} returns a
+@code{gpgme_query_swdb_result_t} pointer to a structure holding the
+result of a @code{gpgme_op_query_swdb} operation.  The pointer is only
+valid if the last operation on the context was a sucessful call to
+@code{gpgme_op_query_swdb}.  If that call failed, the result might
+be a @code{NULL} pointer.  The returned pointer is only valid until
+the next operation is started on the context @var{ctx}.
+@end deftypefun
+
+@noindent
+Here is an example on how to check whether GnuPG is current:
+
+@example
+#include <gpgme.h>
+
+int
+main (void)
+@{
+  gpg_error_t err;
+  gpgme_ctx_t ctx;
+  gpgme_query_swdb_result_t result;
+
+  gpgme_check_version (NULL);
+  err = gpgme_new (&ctx);
+  if (err)
+    fprintf (stderr, "error creating context: %s\n", gpg_strerror (err));
+  else
+    @{
+      gpgme_set_protocol (ctx, GPGME_PROTOCOL_GPGCONF);
+
+      err = gpgme_op_query_swdb (ctx, "gnupg", NULL, 0);
+      if (err)
+        fprintf (stderr, "error querying swdb: %s\n", gpg_strerror (err));
+      else
+        @{
+          result = gpgme_op_query_swdb_result (ctx);
+          if (!result)
+            fprintf (stderr, "error querying swdb\n");
+          if (!result->warning && !result->update)
+            printf ("GnuPG version %s is current\n",
+                    result->iversion);
+          else if (!result->warning && result->update)
+            printf ("GnuPG version %s can be updated to %s\n",
+                    result->iversion, result->version);
+          else
+            fprintf (stderr, "error finding the update status\n");
+        @}
+      gpgme_release (ctx);
+    @}
+  return 0;
+@}
+@end example
 
 
 @node Run Control
@@ -6379,7 +6581,7 @@ case the state of @var{ctx} is not modified).
 
 
 @deftypefun gpgme_ctx_t gpgme_cancel_async (@w{gpgme_ctx_t @var{ctx}})
-The function @code{gpgme_cancel} attempts to cancel a pending
+The function @code{gpgme_cancel_async} attempts to cancel a pending
 operation in the context @var{ctx}.  This can be called by any thread
 at any time after starting an operation on the context, but will not
 take effect immediately.  The actual cancellation happens at the next

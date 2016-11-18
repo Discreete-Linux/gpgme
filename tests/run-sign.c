@@ -14,7 +14,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
 */
 
 /* We need to include config.h so that we know whether we are building
@@ -83,6 +83,7 @@ show_usage (int ex)
          "  --uiserver       use the UI server\n"
          "  --loopback       use a loopback pinentry\n"
          "  --key NAME       use key NAME for signing\n"
+         "  --sender MBOX    use MBOX as sender address\n"
          , stderr);
   exit (ex);
 }
@@ -101,6 +102,7 @@ main (int argc, char **argv)
   gpgme_sign_result_t result;
   int print_status = 0;
   int use_loopback = 0;
+  const char *sender = NULL;
 
   if (argc)
     { argc--; argv++; }
@@ -148,6 +150,14 @@ main (int argc, char **argv)
           key_string = *argv;
           argc--; argv++;
         }
+      else if (!strcmp (*argv, "--sender"))
+        {
+          argc--; argv++;
+          if (!argc)
+            show_usage (1);
+          sender = *argv;
+          argc--; argv++;
+        }
       else if (!strcmp (*argv, "--loopback"))
         {
           use_loopback = 1;
@@ -190,6 +200,12 @@ main (int argc, char **argv)
       err = gpgme_signers_add (ctx, akey);
       fail_if_err (err);
       gpgme_key_unref (akey);
+    }
+
+  if (sender)
+    {
+      err = gpgme_set_sender (ctx, sender);
+      fail_if_err (err);
     }
 
   err = gpgme_data_new_from_file (&in, *argv, 1);

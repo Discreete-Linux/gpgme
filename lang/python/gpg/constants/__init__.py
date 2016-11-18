@@ -1,15 +1,43 @@
+# Constants.
+#
+# Copyright (C) 2016 g10 Code GmbH
+#
+# This file is part of GPGME.
+#
+# GPGME is free software; you can redistribute it and/or modify it
+# under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; either version 2.1 of the
+# License, or (at your option) any later version.
+#
+# GPGME is distributed in the hope that it will be useful, but WITHOUT
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General
+# Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this program; if not, see <http://www.gnu.org/licenses/>.
 
 from __future__ import absolute_import, print_function, unicode_literals
 del absolute_import, print_function, unicode_literals
 
-from pyme import util
+from gpg import util
 util.process_constants('GPGME_', globals())
+del util
+
+# For convenience, we import the modules here.
+from . import data, event, keylist, md, pk
+from . import protocol, sig, sigsum, status, validity
+
+# A complication arises because 'import' is a reserved keyword.
+# Import it as 'Import' instead.
+globals()['Import'] = getattr(__import__('', globals(), locals(),
+                                         [str('import')], 1), "import")
 
 __all__ = ['data', 'event', 'import', 'keylist', 'md', 'pk',
            'protocol', 'sig', 'sigsum', 'status', 'validity']
 
 # GPGME 1.7 replaced gpgme_op_edit with gpgme_op_interact.  We
-# implement pyme.Context.op_edit using gpgme_op_interact, so the
+# implement gpg.Context.op_edit using gpgme_op_interact, so the
 # callbacks will be called with string keywords instead of numeric
 # status messages.  Code that is using these constants will continue
 # to work.

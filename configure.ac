@@ -16,7 +16,7 @@
 # Public License for more details.
 #
 # You should have received a copy of the GNU General Public License
-# along with this program; if not, see <http://www.gnu.org/licenses/>.
+# along with this program; if not, see <https://www.gnu.org/licenses/>.
 
 # (Process this file with autoconf to produce a configure script.)
 AC_PREREQ(2.59)
@@ -28,8 +28,8 @@ min_automake_version="1.14"
 # commit and push so that the git magic is able to work.  See below
 # for the LT versions.
 m4_define(mym4_version_major, [1])
-m4_define(mym4_version_minor, [7])
-m4_define(mym4_version_micro, [1])
+m4_define(mym4_version_minor, [8])
+m4_define(mym4_version_micro, [0])
 
 # Below is m4 magic to extract and compute the revision number, the
 # decimalized short revision number, a beta version string, and a flag
@@ -55,29 +55,36 @@ AC_INIT([gpgme],[mym4_full_version],[http://bugs.gnupg.org])
 #   (Interfaces added:			AGE++)
 #   (Interfaces removed/changed:	AGE=0)
 #
-LIBGPGME_LT_CURRENT=27
-LIBGPGME_LT_AGE=16
+LIBGPGME_LT_CURRENT=28
+LIBGPGME_LT_AGE=17
 LIBGPGME_LT_REVISION=0
 
-LIBGPGMEPP_LT_CURRENT=8
-LIBGPGMEPP_LT_AGE=2
+# If there is an ABI break in gpgmepp or qgpgme also bump the
+# version in IMPORTED_LOCATION in the GpgmeppConfig-w32.cmake.in.in
+
+LIBGPGMEPP_LT_CURRENT=9
+LIBGPGMEPP_LT_AGE=3
 LIBGPGMEPP_LT_REVISION=0
 
-LIBQGPGME_LT_CURRENT=7
-LIBQGPGME_LT_AGE=0
+LIBQGPGME_LT_CURRENT=8
+LIBQGPGME_LT_AGE=1
 LIBQGPGME_LT_REVISION=0
 
 # If the API is changed in an incompatible way: increment the next counter.
 GPGME_CONFIG_API_VERSION=1
 ##############################################
 
-NEED_GPG_ERROR_VERSION=1.11
+NEED_GPG_ERROR_VERSION=1.17
 NEED_LIBASSUAN_API=2
 NEED_LIBASSUAN_VERSION=2.0.2
 
 
 PACKAGE=$PACKAGE_NAME
 VERSION=$PACKAGE_VERSION
+
+VERSION_MAJOR=mym4_version_major
+VERSION_MINOR=mym4_version_minor
+VERSION_MICRO=mym4_version_micro
 
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -119,6 +126,9 @@ AC_SUBST(LIBQGPGME_LT_REVISION)
 
 AC_SUBST(PACKAGE)
 AC_SUBST(VERSION)
+AC_SUBST(VERSION_MAJOR)
+AC_SUBST(VERSION_MINOR)
+AC_SUBST(VERSION_MICRO)
 AC_DEFINE_UNQUOTED(PACKAGE, "$PACKAGE", [Name of this package])
 AC_DEFINE_UNQUOTED(VERSION, "$VERSION", [Version of this package])
 VERSION_NUMBER=m4_esyscmd(printf "0x%02x%02x%02x" mym4_version_major \
@@ -204,11 +214,6 @@ case "${host}" in
        ;;
     *)
 
-	AC_CHECK_LIB(pthread,pthread_create,have_pthread=yes)
-	if test "$have_pthread" = yes; then
-	  AC_DEFINE(HAVE_PTHREAD, ,[Define if we have pthread.])
-	fi
-
 	# XXX: Probably use exec-prefix here?
 #	GPG_DEFAULT='/usr/bin/gpg'
 #	GPGSM_DEFAULT='/usr/bin/gpgsm'
@@ -249,8 +254,6 @@ fi
 AM_CONDITIONAL(HAVE_ANDROID_SYSTEM, test "$have_android_system" = yes)
 
 AM_CONDITIONAL(BUILD_W32_GLIB, test "$build_w32_glib" = yes)
-
-AM_CONDITIONAL(HAVE_PTHREAD, test "$have_pthread" = "yes")
 
 
 AC_ARG_ENABLE([fixed-path],
@@ -873,10 +876,12 @@ AC_CONFIG_FILES(Makefile src/Makefile
                 src/gpgme.h)
 AC_CONFIG_FILES(src/gpgme-config, chmod +x src/gpgme-config)
 AC_CONFIG_FILES(lang/cpp/Makefile lang/cpp/src/Makefile)
+AC_CONFIG_FILES(lang/cpp/src/GpgmeppConfig-w32.cmake.in)
 AC_CONFIG_FILES(lang/cpp/src/GpgmeppConfig.cmake.in)
 AC_CONFIG_FILES(lang/cpp/src/GpgmeppConfigVersion.cmake)
 AC_CONFIG_FILES(lang/cpp/src/gpgmepp_version.h)
 AC_CONFIG_FILES(lang/qt/Makefile lang/qt/src/Makefile)
+AC_CONFIG_FILES(lang/qt/src/QGpgmeConfig-w32.cmake.in)
 AC_CONFIG_FILES(lang/qt/src/QGpgmeConfig.cmake.in)
 AC_CONFIG_FILES(lang/qt/src/QGpgmeConfigVersion.cmake)
 AC_CONFIG_FILES(lang/qt/tests/Makefile)
@@ -885,7 +890,7 @@ AC_CONFIG_FILES([lang/Makefile lang/cl/Makefile lang/cl/gpgme.asd])
 AM_COND_IF([HAVE_DOXYGEN], [AC_CONFIG_FILES([lang/qt/doc/Doxyfile])])
 AC_CONFIG_FILES(lang/qt/doc/Makefile)
 AC_CONFIG_FILES([lang/python/Makefile
-		 lang/python/pyme/version.py
+		 lang/python/gpg/version.py
 		 lang/python/tests/Makefile])
 AC_CONFIG_FILES([lang/python/setup.py], [chmod a+x lang/python/setup.py])
 AC_OUTPUT
@@ -898,7 +903,6 @@ echo "
 
         UI Server:         $uiserver
         FD Passing:        $use_descriptor_passing
-        GPGME Pthread:     $have_pthread
 
         Language bindings: ${enabled_languages_v:-$enabled_languages}
 "
