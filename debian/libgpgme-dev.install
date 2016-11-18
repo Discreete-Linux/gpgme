@@ -1,8 +1,6 @@
 usr/bin/gpgme-config
 usr/bin/gpgme-tool
 usr/include/gpgme.h
-usr/lib/*/libgpgme-*.a
-usr/lib/*/libgpgme-*.so
 usr/lib/*/libgpgme.a
 usr/lib/*/libgpgme.so
 usr/share/aclocal/
