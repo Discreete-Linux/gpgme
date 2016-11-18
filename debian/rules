@@ -14,7 +14,7 @@ override_dh_auto_configure:
 	    --infodir=/usr/share/info
 
 override_dh_install:
-	dh_install --list-missing -X.la -Xinfo/dir
+	dh_install --list-missing -X.la -Xinfo/dir -X.pyc -Xinstall_files.txt -X__pycache__
 
 override_dh_makeshlibs:
 	dh_makeshlibs -V
