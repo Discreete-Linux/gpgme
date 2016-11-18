@@ -17,7 +17,6 @@ Build-Depends:
  libassuan-dev (>> 2.0.2),
  libgpg-error-dev (>> 1.17),
  pkg-config,
- pkg-kde-tools,
  python-all-dev,
  python3-all-dev,
  qtbase5-dev,
