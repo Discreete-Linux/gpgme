@@ -15,7 +15,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef CONTEXT_H
@@ -38,7 +38,8 @@ typedef enum
     OPDATA_DECRYPT, OPDATA_SIGN, OPDATA_ENCRYPT, OPDATA_PASSPHRASE,
     OPDATA_IMPORT, OPDATA_GENKEY, OPDATA_KEYLIST, OPDATA_EDIT,
     OPDATA_VERIFY, OPDATA_TRUSTLIST, OPDATA_ASSUAN, OPDATA_VFS_MOUNT,
-    OPDATA_PASSWD, OPDATA_EXPORT, OPDATA_KEYSIGN, OPDATA_TOFU_POLICY
+    OPDATA_PASSWD, OPDATA_EXPORT, OPDATA_KEYSIGN, OPDATA_TOFU_POLICY,
+    OPDATA_QUERY_SWDB
   } ctx_op_data_id_t;
 
 
@@ -110,6 +111,9 @@ struct gpgme_context
    * unmodified string, as received form gpg, will be returned.  */
   unsigned int raw_description : 1;
 
+  /* True if session keys should be exported upon decryption.  */
+  unsigned int export_session_keys : 1;
+
   /* Flags for keylist mode.  */
   gpgme_keylist_mode_t keylist_mode;
 
@@ -119,15 +123,20 @@ struct gpgme_context
   /* Number of certs to be included.  */
   unsigned int include_certs;
 
-  /* The number of keys in signers.  */
+  /* The actual number of keys in SIGNERS, the allocated size of the
+   * array, and the array with the signing keys.  */
   unsigned int signers_len;
-
-  /* Size of the following array.  */
   unsigned int signers_size;
   gpgme_key_t *signers;
 
   /* The signature notations for this context.  */
   gpgme_sig_notation_t sig_notations;
+
+  /* The sender's addr-spec or NULL.  */
+  char *sender;
+
+  /* The gpg specific override session key or NULL. */
+  char *override_session_key;
 
   /* The locale for the pinentry.  */
   char *lc_ctype;

@@ -14,7 +14,7 @@
  * Lesser General Public License for more details.
  *
  * You should have received a copy of the GNU Lesser General Public
- * License along with this program; if not, see <http://www.gnu.org/licenses/>.
+ * License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 /*
@@ -796,6 +796,7 @@ struct engine_ops _gpgme_engine_ops_assuan =
     llass_transact,     /* opassuan_transact */
     NULL,		/* conf_load */
     NULL,		/* conf_save */
+    NULL,               /* query_swdb */
     llass_set_io_cbs,
     llass_io_event,
     llass_cancel,

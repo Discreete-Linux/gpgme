@@ -27,11 +27,12 @@ NO_ERROR = None
 EOF = None
 
 util.process_constants('GPG_ERR_', globals())
+del util
 
-class PymeError(Exception):
+class GpgError(Exception):
     pass
 
-class GPGMEError(PymeError):
+class GPGMEError(GpgError):
     def __init__(self, error = None, message = None):
         self.error = error
         self.message = message
@@ -76,7 +77,7 @@ class KeyNotFound(GPGMEError, KeyError):
 
 # These errors are raised in the idiomatic interface code.
 
-class EncryptionError(PymeError):
+class EncryptionError(GpgError):
     pass
 
 class InvalidRecipients(EncryptionError):
@@ -87,7 +88,7 @@ class InvalidRecipients(EncryptionError):
                                          gpgme.gpgme_strerror(r.reason))
                          for r in self.recipients)
 
-class DeryptionError(PymeError):
+class DeryptionError(GpgError):
     pass
 
 class UnsupportedAlgorithm(DeryptionError):
@@ -96,7 +97,7 @@ class UnsupportedAlgorithm(DeryptionError):
     def __str__(self):
         return self.algorithm
 
-class SigningError(PymeError):
+class SigningError(GpgError):
     pass
 
 class InvalidSigners(SigningError):
@@ -107,7 +108,7 @@ class InvalidSigners(SigningError):
                                          gpgme.gpgme_strerror(s.reason))
                          for s in self.signers)
 
-class VerificationError(PymeError):
+class VerificationError(GpgError):
     pass
 
 class BadSignatures(VerificationError):

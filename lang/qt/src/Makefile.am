@@ -19,7 +19,8 @@
 # 02111-1307, USA
 lib_LTLIBRARIES = libqgpgme.la
 EXTRA_DIST = QGpgmeConfig.cmake.in.in QGpgmeConfigVersion.cmake.in \
-             gpgme_backend_debug.h qgpgme_version.h.in
+             gpgme_backend_debug.h qgpgme_version.h.in \
+             QGpgmeConfig.cmake.in.in
 
 qgpgme_sources = \
     dataprovider.cpp job.cpp multideletejob.cpp qgpgmeadduseridjob.cpp \
@@ -35,7 +36,8 @@ qgpgme_sources = \
     qgpgmeverifyopaquejob.cpp threadedjobmixin.cpp \
     qgpgmekeyformailboxjob.cpp gpgme_backend_debug.cpp \
     qgpgmetofupolicyjob.cpp \
-    defaultkeygenerationjob.cpp qgpgmewkspublishjob.cpp
+    defaultkeygenerationjob.cpp qgpgmewkspublishjob.cpp \
+    dn.cpp
 
 # If you add one here make sure that you also add one in camelcase
 qgpgme_headers= \
@@ -73,7 +75,8 @@ qgpgme_headers= \
     verifydetachedjob.h \
     defaultkeygenerationjob.h \
     tofupolicyjob.h \
-    wkspublishjob.h
+    wkspublishjob.h \
+    dn.h
 
 camelcase_headers= \
     AddUserIDJob \
@@ -84,6 +87,7 @@ camelcase_headers= \
     DataProvider \
     DecryptJob \
     DecryptVerifyJob \
+    DN \
     DownloadJob \
     EncryptJob \
     ExportJob \
@@ -203,7 +207,7 @@ qgpgmeincludedir = $(includedir)/qgpgme
 qgpgmeinclude_HEADERS = $(qgpgme_headers)
 camelcaseincludedir = $(includedir)/QGpgME
 camelcaseinclude_HEADERS = $(camelcase_headers)
-nodist_include_HEADERS = qgpgme_version.h
+nodist_qgpgmeinclude_HEADERS = qgpgme_version.h
 
 libqgpgme_la_SOURCES = $(qgpgme_sources) $(qgpgme_headers) $(private_qgpgme_headers)
 
@@ -213,19 +217,19 @@ AM_CPPFLAGS = -I$(top_srcdir)/lang/cpp/src -I$(top_builddir)/src \
 
 libqgpgme_la_LIBADD = ../../cpp/src/libgpgmepp.la ../../../src/libgpgme.la \
                        @LIBASSUAN_LIBS@ @GPGME_QT_LIBS@
-libqgpgme_la_LDFLAGS = -version-info \
+libqgpgme_la_LDFLAGS = -no-undefined -version-info \
     @LIBQGPGME_LT_CURRENT@:@LIBQGPGME_LT_REVISION@:@LIBQGPGME_LT_AGE@
 
 if HAVE_W32_SYSTEM
-libsuffix=.dll.a
+QGpgmeConfig.cmake: QGpgmeConfig-w32.cmake.in
+	sed -e 's|[@]resolved_bindir@|$(bindir)|g' < "$<" | \
+	sed -e 's|[@]resolved_libdir@|$(libdir)|g' | \
+	sed -e 's|[@]resolved_includedir@|$(includedir)|g' > $@
 else
-libsuffix=.so
-endif
-
 QGpgmeConfig.cmake: QGpgmeConfig.cmake.in
 	sed -e 's|[@]resolved_libdir@|$(libdir)|g' < "$<" | \
-	sed -e 's|[@]libsuffix@|$(libsuffix)|g' | \
 	sed -e 's|[@]resolved_includedir@|$(includedir)|g' > $@
+endif
 
 $(camelcase_headers): Makefile.am
 	echo -n "#include \"qgpgme/" > "$@"
@@ -233,16 +237,16 @@ $(camelcase_headers): Makefile.am
 	echo ".h\"" >> "$@"
 
 install-cmake-files: QGpgmeConfig.cmake QGpgmeConfigVersion.cmake
-	-$(INSTALL) -d $(DESTDIR)$(libdir)/cmake/Gpgmepp
+	-$(INSTALL) -d $(DESTDIR)$(libdir)/cmake/QGpgme
 	$(INSTALL) -m 644 QGpgmeConfig.cmake \
-        $(DESTDIR)$(libdir)/cmake/Gpgmepp/QGpgmeConfig.cmake
+        $(DESTDIR)$(libdir)/cmake/QGpgme/QGpgmeConfig.cmake
 	$(INSTALL) -m 644 QGpgmeConfigVersion.cmake \
-        $(DESTDIR)$(libdir)/cmake/Gpgmepp/QGpgmeConfigVersion.cmake
+        $(DESTDIR)$(libdir)/cmake/QGpgme/QGpgmeConfigVersion.cmake
 
 uninstall-cmake-files:
-	-rm $(DESTDIR)$(libdir)/cmake/Gpgmepp/QGpgmeConfigVersion.cmake
-	-rm $(DESTDIR)$(libdir)/cmake/Gpgmepp/QGpgmeConfig.cmake
-	-rmdir $(DESTDIR)$(libdir)/cmake/Gpgmepp/
+	-rm $(DESTDIR)$(libdir)/cmake/QGpgme/QGpgmeConfigVersion.cmake
+	-rm $(DESTDIR)$(libdir)/cmake/QGpgme/QGpgmeConfig.cmake
+	-rmdir $(DESTDIR)$(libdir)/cmake/QGpgme/
 
 install-data-local: install-cmake-files
 
@@ -250,7 +254,9 @@ uninstall-local: uninstall-cmake-files
 
 BUILT_SOURCES = $(qgpgme_moc_sources) $(camelcase_headers)
 
-CLEANFILES = $(qgpgme_moc_sources) $(camelcase_headers) QGpgmeConfig.cmake
+CLEANFILES = $(qgpgme_moc_sources) $(camelcase_headers) QGpgmeConfig.cmake \
+             qgpgme_version.h QGpgmeConfig.cmake.in \
+             QGpgmeConfigVersion.cmake
 
 nodist_libqgpgme_la_SOURCES = $(qgpgme_moc_sources)
 

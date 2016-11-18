@@ -20,29 +20,28 @@
 from __future__ import absolute_import, print_function, unicode_literals
 del absolute_import, print_function, unicode_literals
 
-import pyme
-from pyme import core, constants
+import gpg
 import support
 
-support.init_gpgme(constants.PROTOCOL_OpenPGP)
-c = core.Context()
+support.init_gpgme(gpg.constants.protocol.OpenPGP)
+c = gpg.Context()
 c.set_armor(True)
 
-source = core.Data("Hallo Leute\n")
-sink = core.Data()
+source = gpg.Data("Hallo Leute\n")
+sink = gpg.Data()
 
 keys = []
 keys.append(c.get_key("A0FF4590BB6122EDEF6E3C542D727CC768697734", False))
 keys.append(c.get_key("D695676BDCEDCC2CDD6152BCFE180B1DA9E3B0B2", False))
 
-c.op_encrypt(keys, constants.ENCRYPT_ALWAYS_TRUST, source, sink)
+c.op_encrypt(keys, gpg.constants.ENCRYPT_ALWAYS_TRUST, source, sink)
 result = c.op_encrypt_result()
 assert not result.invalid_recipients, \
   "Invalid recipients: {}".format(", ".join(r.fpr for r in result.recipients))
 support.print_data(sink)
 
 # Idiomatic interface.
-with pyme.Context(armor=True) as c:
+with gpg.Context(armor=True) as c:
     ciphertext, _, _ = c.encrypt("Hallo Leute\n".encode(),
                                  recipients=keys,
                                  sign=False,
@@ -58,7 +57,7 @@ with pyme.Context(armor=True) as c:
         c.encrypt("Hallo Leute\n".encode(),
                   recipients=[c.get_key(support.sign_only, False)],
                   sign=False, always_trust=True)
-    except pyme.errors.InvalidRecipients as e:
+    except gpg.errors.InvalidRecipients as e:
         assert len(e.recipients) == 1
         assert support.sign_only.endswith(e.recipients[0].fpr)
     else:

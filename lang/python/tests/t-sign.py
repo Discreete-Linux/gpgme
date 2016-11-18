@@ -21,8 +21,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 del absolute_import, print_function, unicode_literals
 
 import os
-import pyme
-from pyme import core, constants
+import gpg
 import support
 
 def fail(msg):
@@ -39,11 +38,11 @@ def check_result(r, typ):
     if signature.type != typ:
         fail("Wrong type of signature created")
 
-    if signature.pubkey_algo != constants.PK_DSA:
+    if signature.pubkey_algo != gpg.constants.pk.DSA:
         fail("Wrong pubkey algorithm reported: {}".format(
             signature.pubkey_algo))
 
-    if signature.hash_algo != constants.MD_SHA1:
+    if signature.hash_algo != gpg.constants.md.SHA1:
         fail("Wrong hash algorithm reported: {}".format(
             signature.hash_algo))
 
@@ -55,58 +54,58 @@ def check_result(r, typ):
         fail("Wrong fingerprint reported: {}".format(signature.fpr))
 
 
-support.init_gpgme(constants.PROTOCOL_OpenPGP)
-c = core.Context()
+support.init_gpgme(gpg.constants.protocol.OpenPGP)
+c = gpg.Context()
 c.set_textmode(True)
 c.set_armor(True)
 
-source = core.Data("Hallo Leute\n")
-sink = core.Data()
+source = gpg.Data("Hallo Leute\n")
+sink = gpg.Data()
 
-c.op_sign(source, sink, constants.SIG_MODE_NORMAL)
+c.op_sign(source, sink, gpg.constants.sig.mode.NORMAL)
 
 result = c.op_sign_result()
-check_result(result, constants.SIG_MODE_NORMAL)
+check_result(result, gpg.constants.sig.mode.NORMAL)
 support.print_data(sink)
 
 # Now a detached signature.
 source.seek(0, os.SEEK_SET)
-sink = core.Data()
+sink = gpg.Data()
 
-c.op_sign(source, sink, constants.SIG_MODE_DETACH)
+c.op_sign(source, sink, gpg.constants.sig.mode.DETACH)
 
 result = c.op_sign_result()
-check_result(result, constants.SIG_MODE_DETACH)
+check_result(result, gpg.constants.sig.mode.DETACH)
 support.print_data(sink)
 
 # And finally a cleartext signature.  */
 source.seek(0, os.SEEK_SET)
-sink = core.Data()
+sink = gpg.Data()
 
-c.op_sign(source, sink, constants.SIG_MODE_CLEAR)
+c.op_sign(source, sink, gpg.constants.sig.mode.CLEAR)
 
 result = c.op_sign_result()
-check_result(result, constants.SIG_MODE_CLEAR)
+check_result(result, gpg.constants.sig.mode.CLEAR)
 support.print_data(sink)
 
 # Idiomatic interface.
-with pyme.Context(armor=True, textmode=True) as c:
+with gpg.Context(armor=True, textmode=True) as c:
     message = "Hallo Leute\n".encode()
     signed, _ = c.sign(message)
     assert len(signed) > 0
     assert signed.find(b'BEGIN PGP MESSAGE') > 0, 'Message not found'
 
-    signed, _ = c.sign(message, mode=pyme.constants.SIG_MODE_DETACH)
+    signed, _ = c.sign(message, mode=gpg.constants.sig.mode.DETACH)
     assert len(signed) > 0
     assert signed.find(b'BEGIN PGP SIGNATURE') > 0, 'Signature not found'
 
-    signed, _ = c.sign(message, mode=pyme.constants.SIG_MODE_CLEAR)
+    signed, _ = c.sign(message, mode=gpg.constants.sig.mode.CLEAR)
     assert len(signed) > 0
     assert signed.find(b'BEGIN PGP SIGNED MESSAGE') > 0, 'Message not found'
     assert signed.find(message) > 0, 'Message content not found'
     assert signed.find(b'BEGIN PGP SIGNATURE') > 0, 'Signature not found'
 
-with pyme.Context() as c:
+with gpg.Context() as c:
     message = "Hallo Leute\n".encode()
 
     c.signers = [c.get_key(support.sign_only, True)]
@@ -115,7 +114,7 @@ with pyme.Context() as c:
     c.signers = [c.get_key(support.encrypt_only, True)]
     try:
         c.sign(message)
-    except pyme.errors.InvalidSigners as e:
+    except gpg.errors.InvalidSigners as e:
         assert len(e.signers) == 1
         assert support.encrypt_only.endswith(e.signers[0].fpr)
     else:

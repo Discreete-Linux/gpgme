@@ -15,7 +15,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
 */
 
 #ifdef HAVE_CONFIG_H
@@ -653,7 +653,8 @@ _gpgme_engine_set_protocol (engine_t engine, gpgme_protocol_t protocol)
 
 gpgme_error_t
 _gpgme_engine_op_decrypt (engine_t engine, gpgme_data_t ciph,
-			  gpgme_data_t plain)
+			  gpgme_data_t plain, int export_session_key,
+                          const char *override_session_key)
 {
   if (!engine)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -661,13 +662,15 @@ _gpgme_engine_op_decrypt (engine_t engine, gpgme_data_t ciph,
   if (!engine->ops->decrypt)
     return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
 
-  return (*engine->ops->decrypt) (engine->engine, ciph, plain);
+  return (*engine->ops->decrypt) (engine->engine, ciph, plain,
+                                  export_session_key, override_session_key);
 }
 
 
 gpgme_error_t
 _gpgme_engine_op_decrypt_verify (engine_t engine, gpgme_data_t ciph,
-				 gpgme_data_t plain)
+				 gpgme_data_t plain, int export_session_key,
+                                 const char *override_session_key)
 {
   if (!engine)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -675,7 +678,9 @@ _gpgme_engine_op_decrypt_verify (engine_t engine, gpgme_data_t ciph,
   if (!engine->ops->decrypt_verify)
     return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
 
-  return (*engine->ops->decrypt_verify) (engine->engine, ciph, plain);
+  return (*engine->ops->decrypt_verify) (engine->engine, ciph, plain,
+                                         export_session_key,
+                                         override_session_key);
 }
 
 
@@ -902,7 +907,8 @@ _gpgme_engine_op_trustlist (engine_t engine, const char *pattern)
 
 gpgme_error_t
 _gpgme_engine_op_verify (engine_t engine, gpgme_data_t sig,
-			 gpgme_data_t signed_text, gpgme_data_t plaintext)
+			 gpgme_data_t signed_text, gpgme_data_t plaintext,
+                         gpgme_ctx_t ctx)
 {
   if (!engine)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -910,7 +916,8 @@ _gpgme_engine_op_verify (engine_t engine, gpgme_data_t sig,
   if (!engine->ops->verify)
     return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
 
-  return (*engine->ops->verify) (engine->engine, sig, signed_text, plaintext);
+  return (*engine->ops->verify) (engine->engine, sig, signed_text, plaintext,
+                                 ctx);
 }
 
 
@@ -975,6 +982,21 @@ _gpgme_engine_op_conf_save (engine_t engine, gpgme_conf_comp_t conf)
     return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
 
   return (*engine->ops->conf_save) (engine->engine, conf);
+}
+
+
+gpgme_error_t
+_gpgme_engine_op_query_swdb (engine_t engine,
+                             const char *name, const char *iversion,
+                             gpgme_query_swdb_result_t result)
+{
+  if (!engine)
+    return gpg_error (GPG_ERR_INV_VALUE);
+
+  if (!engine->ops->query_swdb)
+    return gpg_error (GPG_ERR_NOT_IMPLEMENTED);
+
+  return (*engine->ops->query_swdb) (engine->engine, name, iversion, result);
 }
 
 

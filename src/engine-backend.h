@@ -14,7 +14,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #ifndef ENGINE_BACKEND_H
@@ -62,9 +62,11 @@ struct engine_ops
   gpgme_error_t (*set_locale) (void *engine, int category, const char *value);
   gpgme_error_t (*set_protocol) (void *engine, gpgme_protocol_t protocol);
   gpgme_error_t (*decrypt) (void *engine, gpgme_data_t ciph,
-			    gpgme_data_t plain);
+			    gpgme_data_t plain, int export_session_key,
+                            const char *override_session_key);
   gpgme_error_t (*decrypt_verify) (void *engine, gpgme_data_t ciph,
-				   gpgme_data_t plain);
+				   gpgme_data_t plain, int export_session_key,
+                                   const char *override_session_key);
   gpgme_error_t (*delete) (void *engine, gpgme_key_t key, int allow_secret);
   gpgme_error_t (*edit) (void *engine, int type, gpgme_key_t key,
 			 gpgme_data_t out, gpgme_ctx_t ctx /* FIXME */);
@@ -111,7 +113,8 @@ struct engine_ops
 			 gpgme_ctx_t ctx /* FIXME */);
   gpgme_error_t (*trustlist) (void *engine, const char *pattern);
   gpgme_error_t (*verify) (void *engine, gpgme_data_t sig,
-			   gpgme_data_t signed_text, gpgme_data_t plaintext);
+			   gpgme_data_t signed_text, gpgme_data_t plaintext,
+                           gpgme_ctx_t ctx);
   gpgme_error_t  (*getauditlog) (void *engine, gpgme_data_t output,
                                  unsigned int flags);
   gpgme_error_t  (*opassuan_transact) (void *engine,
@@ -125,6 +128,10 @@ struct engine_ops
 
   gpgme_error_t  (*conf_load) (void *engine, gpgme_conf_comp_t *conf_p);
   gpgme_error_t  (*conf_save) (void *engine, gpgme_conf_comp_t conf);
+
+  gpgme_error_t  (*query_swdb) (void *engine,
+                                const char *name, const char *iversion,
+                                gpgme_query_swdb_result_t result);
 
   void (*set_io_cbs) (void *engine, gpgme_io_cbs_t io_cbs);
   void (*io_event) (void *engine, gpgme_event_io_t type, void *type_data);

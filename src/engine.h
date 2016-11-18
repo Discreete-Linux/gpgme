@@ -83,10 +83,15 @@ _gpgme_engine_set_colon_line_handler (engine_t engine,
 				      engine_colon_line_handler_t fnc,
 				      void *fnc_value);
 gpgme_error_t _gpgme_engine_op_decrypt (engine_t engine, gpgme_data_t ciph,
-					gpgme_data_t plain);
+					gpgme_data_t plain,
+                                        int export_session_key,
+                                        const char *override_session_key);
 gpgme_error_t _gpgme_engine_op_decrypt_verify (engine_t engine,
 					       gpgme_data_t ciph,
-					       gpgme_data_t plain);
+					       gpgme_data_t plain,
+                                               int export_session_key,
+                                               const char *override_session_key
+                                               );
 gpgme_error_t _gpgme_engine_op_delete (engine_t engine, gpgme_key_t key,
 				       int allow_secret);
 gpgme_error_t _gpgme_engine_op_edit (engine_t engine, int type,
@@ -152,7 +157,8 @@ gpgme_error_t _gpgme_engine_op_trustlist (engine_t engine,
 					  const char *pattern);
 gpgme_error_t _gpgme_engine_op_verify (engine_t engine, gpgme_data_t sig,
 				       gpgme_data_t signed_text,
-				       gpgme_data_t plaintext);
+				       gpgme_data_t plaintext,
+                                       gpgme_ctx_t ctx);
 
 gpgme_error_t _gpgme_engine_op_getauditlog (engine_t engine,
                                             gpgme_data_t output,
@@ -171,6 +177,12 @@ gpgme_error_t _gpgme_engine_op_conf_load (engine_t engine,
 					  gpgme_conf_comp_t *conf_p);
 gpgme_error_t _gpgme_engine_op_conf_save (engine_t engine,
 					  gpgme_conf_comp_t conf);
+
+gpgme_error_t _gpgme_engine_op_query_swdb (engine_t engine,
+                                           const char *name,
+                                           const char *iversion,
+                                           gpgme_query_swdb_result_t result);
+
 
 void _gpgme_engine_set_io_cbs (engine_t engine,
 			       gpgme_io_cbs_t io_cbs);

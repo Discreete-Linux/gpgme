@@ -16,7 +16,7 @@
    Lesser General Public License for more details.
 
    You should have received a copy of the GNU Lesser General Public
-   License along with this program; if not, see <http://www.gnu.org/licenses/>.
+   License along with this program; if not, see <https://www.gnu.org/licenses/>.
  */
 
 #if HAVE_CONFIG_H
@@ -38,6 +38,7 @@
 #include "debug.h"
 #include "priv-io.h"
 #include "sys-util.h"
+#include "mbox-util.h"
 
 
 /* The default locale.  */
@@ -81,39 +82,6 @@ gpgme_set_global_flag (const char *name, const char *value)
     return _gpgme_set_override_inst_dir (value);
   else
     return -1;
-}
-
-
-/* Set the flag NAME for CTX to VALUE.  The supported flags are:
- *
- * - full-status :: With a value of "1" the status callback set by
- *                  gpgme_set_status_cb returns all status lines
- *                  except for PROGRESS lines.  With the default of
- *                  "0" the status callback is only called in certain
- *                  situations.
- */
-gpgme_error_t
-gpgme_set_ctx_flag (gpgme_ctx_t ctx, const char *name, const char *value)
-{
-  int abool;
-
-  if (!ctx || !name || !value)
-    return gpg_error (GPG_ERR_INV_VALUE);
-
-  abool = *value? !!atoi (value) : 0;
-
-  if (!strcmp (name, "full-status"))
-    {
-      ctx->full_status = abool;
-    }
-  else if (!strcmp (name, "raw-description"))
-    {
-      ctx->raw_description = abool;
-    }
-  else
-    return gpg_error (GPG_ERR_UNKNOWN_NAME);
-
-  return 0;
 }
 
 
@@ -275,12 +243,11 @@ gpgme_release (gpgme_ctx_t ctx)
   _gpgme_release_result (ctx);
   _gpgme_signers_clear (ctx);
   _gpgme_sig_notation_clear (ctx);
-  if (ctx->signers)
-    free (ctx->signers);
-  if (ctx->lc_ctype)
-    free (ctx->lc_ctype);
-  if (ctx->lc_messages)
-    free (ctx->lc_messages);
+  free (ctx->sender);
+  free (ctx->signers);
+  free (ctx->lc_ctype);
+  free (ctx->lc_messages);
+  free (ctx->override_session_key);
   _gpgme_engine_info_release (ctx->engine_info);
   ctx->engine_info = NULL;
   DESTROY_LOCK (ctx->lock);
@@ -459,6 +426,42 @@ gpgme_get_protocol_name (gpgme_protocol_t protocol)
     }
 }
 
+
+/* Store the sender's address in the context.  ADDRESS is addr-spec of
+ * mailbox but my also be a complete mailbox, in which case this
+ * function extracts the addr-spec from it.  Returns 0 on success or
+ * an error code if no valid addr-spec could be extracted from
+ * ADDRESS.  */
+gpgme_error_t
+gpgme_set_sender (gpgme_ctx_t ctx, const char *address)
+{
+  char *p = NULL;
+
+  TRACE_BEG1 (DEBUG_CTX, "gpgme_set_sender", ctx, "sender='%s'",
+              address?address:"(null)");
+
+  if (!ctx || (address && !(p = _gpgme_mailbox_from_userid (address))))
+    return TRACE_ERR (gpg_error (GPG_ERR_INV_VALUE));
+
+  free (ctx->sender);
+  ctx->sender = p;
+  return TRACE_ERR (0);
+}
+
+
+/* Return the sender's address (addr-spec part) from the context or
+ * NULL if none was set.  The returned value is valid as long as the
+ * CTX is valid and gpgme_set_sender has not been used.  */
+const char *
+gpgme_get_sender (gpgme_ctx_t ctx)
+{
+  TRACE1 (DEBUG_CTX, "gpgme_get_sender", ctx, "sender='%s'",
+          ctx?ctx->sender:"");
+
+  return ctx->sender;
+}
+
+
 /* Enable or disable the use of an ascii armor for all output.  */
 void
 gpgme_set_armor (gpgme_ctx_t ctx, int use_armor)
@@ -469,7 +472,7 @@ gpgme_set_armor (gpgme_ctx_t ctx, int use_armor)
   if (!ctx)
     return;
 
-  ctx->use_armor = use_armor;
+  ctx->use_armor = !!use_armor;
 }
 
 
@@ -480,6 +483,85 @@ gpgme_get_armor (gpgme_ctx_t ctx)
   TRACE2 (DEBUG_CTX, "gpgme_get_armor", ctx, "ctx->use_armor=%i (%s)",
 	  ctx->use_armor, ctx->use_armor ? "yes" : "no");
   return ctx->use_armor;
+}
+
+
+/* Set the flag NAME for CTX to VALUE.  The supported flags are:
+ *
+ * - full-status :: With a value of "1" the status callback set by
+ *                  gpgme_set_status_cb returns all status lines
+ *                  except for PROGRESS lines.  With the default of
+ *                  "0" the status callback is only called in certain
+ *                  situations.
+ */
+gpgme_error_t
+gpgme_set_ctx_flag (gpgme_ctx_t ctx, const char *name, const char *value)
+{
+  gpgme_error_t err = 0;
+  int abool;
+
+  TRACE2 (DEBUG_CTX, "gpgme_set_ctx_flag", ctx,
+          "name='%s' value='%s'",
+	  name? name:"(null)", value?value:"(null)");
+
+  abool = (value && *value)? !!atoi (value) : 0;
+
+  if (!ctx || !name || !value)
+    err = gpg_error (GPG_ERR_INV_VALUE);
+  else if (!strcmp (name, "full-status"))
+    {
+      ctx->full_status = abool;
+    }
+  else if (!strcmp (name, "raw-description"))
+    {
+      ctx->raw_description = abool;
+    }
+  else if (!strcmp (name, "export-session-key"))
+    {
+      ctx->export_session_keys = abool;
+    }
+  else if (!strcmp (name, "override-session-key"))
+    {
+      free (ctx->override_session_key);
+      ctx->override_session_key = strdup (value);
+      if (!ctx->override_session_key)
+        err = gpg_error_from_syserror ();
+    }
+  else
+    err = gpg_error (GPG_ERR_UNKNOWN_NAME);
+
+  return err;
+}
+
+
+/* Get the context flag named NAME.  See gpgme_set_ctx_flag for a list
+ * of valid names.  If the NAME is unknown NULL is returned.  For a
+ * boolean flag an empty string is returned for False and the string
+ * "1" for True; thus either atoi or a simple string test can be
+ * used.  */
+const char *
+gpgme_get_ctx_flag (gpgme_ctx_t ctx, const char *name)
+{
+  if (!ctx || !name)
+    return NULL;
+  else if (!strcmp (name, "full-status"))
+    {
+      return ctx->full_status? "1":"";
+    }
+  else if (!strcmp (name, "raw-description"))
+    {
+      return ctx->raw_description? "1":"";
+    }
+  else if (!strcmp (name, "export-session-key"))
+    {
+      return ctx->export_session_keys? "1":"";
+    }
+  else if (!strcmp (name, "override-session-key"))
+    {
+      return ctx->override_session_key? ctx->override_session_key : "";
+    }
+  else
+    return NULL;
 }
 
 
@@ -496,7 +578,7 @@ gpgme_set_textmode (gpgme_ctx_t ctx, int use_textmode)
   if (!ctx)
     return;
 
-  ctx->use_textmode = use_textmode;
+  ctx->use_textmode = !!use_textmode;
 }
 
 /* Return the state of the textmode flag.  */
@@ -520,7 +602,7 @@ gpgme_set_offline (gpgme_ctx_t ctx, int offline)
   if (!ctx)
     return;
 
-  ctx->offline = offline;
+  ctx->offline = !!offline;
 }
 
 /* Return the state of the offline flag.  */

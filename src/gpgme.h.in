@@ -999,6 +999,9 @@ void gpgme_release (gpgme_ctx_t ctx);
 gpgme_error_t gpgme_set_ctx_flag (gpgme_ctx_t ctx,
                                   const char *name, const char *value);
 
+/* Get the value of the flag NAME from CTX.  */
+const char *gpgme_get_ctx_flag (gpgme_ctx_t ctx, const char *name);
+
 /* Set the protocol to be used by CTX to PROTO.  */
 gpgme_error_t gpgme_set_protocol (gpgme_ctx_t ctx, gpgme_protocol_t proto);
 
@@ -1160,6 +1163,12 @@ gpgme_error_t gpgme_sig_notation_add (gpgme_ctx_t ctx, const char *name,
 
 /* Get the sig notations for this context.  */
 gpgme_sig_notation_t gpgme_sig_notation_get (gpgme_ctx_t ctx);
+
+/* Store a sender address in the context.  */
+gpgme_error_t gpgme_set_sender (gpgme_ctx_t ctx, const char *address);
+
+/* Get the sender address from the context.  */
+const char *gpgme_get_sender (gpgme_ctx_t ctx);
 
 
 
@@ -1521,6 +1530,10 @@ struct _gpgme_op_decrypt_result
   /* The original file name of the plaintext message, if
      available.  */
   char *file_name;
+
+  /* A textual representation of the session key used to decrypt the
+   * message, if available */
+  char *session_key;
 };
 typedef struct _gpgme_op_decrypt_result *gpgme_decrypt_result_t;
 
@@ -2410,6 +2423,67 @@ gpgme_error_t gpgme_op_conf_load (gpgme_ctx_t ctx, gpgme_conf_comp_t *conf_p);
 /* Save the configuration of component comp.  This function does not
    follow chained components!  */
 gpgme_error_t gpgme_op_conf_save (gpgme_ctx_t ctx, gpgme_conf_comp_t comp);
+
+
+/* Information about software versions.  */
+typedef struct _gpgme_op_query_swdb_result
+{
+  /* RFU */
+  struct _gpgme_op_query_swdb_result *next;
+
+  /* The name of the package (e.g. "gpgme", "gnupg") */
+  char *name;
+
+  /* The version number of the installed version.  */
+  char *iversion;
+
+  /* The time the online info was created.  */
+  unsigned long created;
+
+  /* The time the online info was retrieved.  */
+  unsigned long retrieved;
+
+  /* This bit is set if an error occured or some of the information
+   * in this structure may not be set.  */
+  unsigned int warning : 1;
+
+  /* An update is available.  */
+  unsigned int update : 1;
+
+  /* The update is important.  */
+  unsigned int urgent : 1;
+
+  /* No information at all available.  */
+  unsigned int noinfo : 1;
+
+  /* The package name is not known. */
+  unsigned int unknown : 1;
+
+  /* The information here is too old.  */
+  unsigned int tooold : 1;
+
+  /* Other error.  */
+  unsigned int error : 1;
+
+  unsigned int _reserved : 25;
+
+  /* The version number of the latest released version.  */
+  char *version;
+
+  /* The release date of that version.  */
+  unsigned long reldate;
+
+} *gpgme_query_swdb_result_t;
+
+
+/* Run the gpgconf --query-swdb command.  */
+gpgme_error_t gpgme_op_query_swdb (gpgme_ctx_t ctx,
+                                   const char *name, const char *iversion,
+                                   unsigned int reserved);
+
+/* Return the result from the last query_swdb operation.  */
+gpgme_query_swdb_result_t gpgme_op_query_swdb_result (gpgme_ctx_t ctx);
+
 
 
 

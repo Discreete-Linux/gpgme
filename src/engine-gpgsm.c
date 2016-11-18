@@ -1120,10 +1120,16 @@ gpgsm_reset (void *engine)
 
 
 static gpgme_error_t
-gpgsm_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain)
+gpgsm_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain,
+               int export_session_key, const char *override_session_key)
 {
   engine_gpgsm_t gpgsm = engine;
   gpgme_error_t err;
+
+  /* gpgsm is not capable of exporting session keys right now, so we
+   * will ignore this if requested. */
+  (void)export_session_key;
+  (void)override_session_key;
 
   if (!gpgsm)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -1901,10 +1907,12 @@ gpgsm_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
 
 static gpgme_error_t
 gpgsm_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
-	      gpgme_data_t plaintext)
+	      gpgme_data_t plaintext, gpgme_ctx_t ctx)
 {
   engine_gpgsm_t gpgsm = engine;
   gpgme_error_t err;
+
+  (void)ctx;
 
   if (!gpgsm)
     return gpg_error (GPG_ERR_INV_VALUE);
@@ -2099,6 +2107,7 @@ struct engine_ops _gpgme_engine_ops_gpgsm =
     NULL,               /* opassuan_transact */
     NULL,		/* conf_load */
     NULL,		/* conf_save */
+    NULL,               /* query_swdb */
     gpgsm_set_io_cbs,
     gpgsm_io_event,
     gpgsm_cancel,
