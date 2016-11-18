@@ -41,6 +41,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_error_from_errno@GPGME_1.0 1.1.2
  gpgme_free@GPGME_1.1 1.1.2
  gpgme_get_armor@GPGME_1.0 1.1.2
+ gpgme_get_ctx_flag@GPGME_1.1 1.8.0
  gpgme_get_dirinfo@GPGME_1.1 1.5.0
  gpgme_get_engine_info@GPGME_1.0 1.1.2
  gpgme_get_include_certs@GPGME_1.0 1.1.2
@@ -53,6 +54,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_get_progress_cb@GPGME_1.0 1.1.2
  gpgme_get_protocol@GPGME_1.0 1.1.2
  gpgme_get_protocol_name@GPGME_1.0 1.1.6
+ gpgme_get_sender@GPGME_1.1 1.8.0
  gpgme_get_sig_key@GPGME_1.0 1.1.2
  gpgme_get_sig_status@GPGME_1.0 1.1.2
  gpgme_get_sig_string_attr@GPGME_1.0 1.1.2
@@ -129,6 +131,8 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_op_keysign_start@GPGME_1.1 1.7.0
  gpgme_op_passwd@GPGME_1.1 1.3.2
  gpgme_op_passwd_start@GPGME_1.1 1.3.2
+ gpgme_op_query_swdb@GPGME_1.1 1.8.0
+ gpgme_op_query_swdb_result@GPGME_1.1 1.8.0
  gpgme_op_revuid@GPGME_1.1 1.7.0
  gpgme_op_revuid_start@GPGME_1.1 1.7.0
  gpgme_op_sign@GPGME_1.0 1.1.2
@@ -165,6 +169,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_set_pinentry_mode@GPGME_1.1 1.4.1
  gpgme_set_progress_cb@GPGME_1.0 1.1.2
  gpgme_set_protocol@GPGME_1.0 1.1.6
+ gpgme_set_sender@GPGME_1.1 1.8.0
  gpgme_set_status_cb@GPGME_1.1 1.6.0
  gpgme_set_sub_protocol@GPGME_1.1 1.3.2
  gpgme_set_textmode@GPGME_1.0 1.1.2
