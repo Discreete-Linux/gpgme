@@ -1,3 +1,10 @@
+gpgme1.0 (1.8.0-2) unstable; urgency=medium
+
+  * pull a cleanup patch from upstream
+  * move to unstable
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Wed, 23 Nov 2016 01:39:59 -0500
+
 gpgme1.0 (1.8.0-1) experimental; urgency=medium
 
   * new upstream release
