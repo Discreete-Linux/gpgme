@@ -1,5 +1,5 @@
 Source: gpgme1.0
-Priority: standard
+Priority: optional
 Section: libs
 Maintainer: Debian GnuPG Maintainers <pkg-gnupg-maint@lists.alioth.debian.org>
 Uploaders:
@@ -33,6 +33,7 @@ Vcs-Browser: https://anonscm.debian.org/git/pkg-gnupg/gpgme.git
 
 Package: libgpgme-dev
 Section: libdevel
+Priority: extra
 Architecture: any
 Depends:
  libassuan-dev,
@@ -149,6 +150,7 @@ Description: C++ wrapper library for GPGME
 
 Package: libgpgmepp-dev
 Section: libdevel
+Priority: extra
 Architecture: any
 Depends:
  libgpgmepp6 (= ${binary:Version}),
@@ -174,6 +176,7 @@ Description: C++ and Qt bindings for GPGME (development files)
 
 Package: libgpgmepp-doc
 Section: doc
+Priority: extra
 Architecture: all
 Depends:
  ${misc:Depends},
