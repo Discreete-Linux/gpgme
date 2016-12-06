@@ -1,3 +1,10 @@
+gpgme1.0 (1.8.0-3) unstable; urgency=medium
+
+  * Reduce priority of most packages (closes: #845803)
+  * added versioned Provides for libgpgme11-dev to ease transition
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 06 Dec 2016 10:28:24 -0500
+
 gpgme1.0 (1.8.0-2) unstable; urgency=medium
 
   * pull a cleanup patch from upstream
