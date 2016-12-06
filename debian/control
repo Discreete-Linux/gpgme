@@ -47,7 +47,7 @@ Breaks:
 Replaces:
  libgpgme11-dev,
 Provides:
- libgpgme11-dev,
+ libgpgme11-dev (= ${binary:Version}),
 Description: GPGME - GnuPG Made Easy (development files)
  GPGME is a wrapper library which provides a C API to access some of the
  GnuPG functions, such as encrypt, decrypt, sign, verify, ...
