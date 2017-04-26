@@ -1,1 +1,2 @@
 0001-avoid-identifying-as-beta.patch
+0002-qt-pass-fmt-to-gpgrt_asprintf.patch
