@@ -1,3 +1,9 @@
+gpgme1.0 (1.9.0-1) experimental; urgency=medium
+
+  * New upstream version (to experimental)
+
+ -- Daniel Kahn Gillmor <dkg@fifthhorseman.net>  Tue, 25 Apr 2017 20:30:13 -0400
+
 gpgme1.0 (1.8.0-3) unstable; urgency=medium
 
   * Reduce priority of most packages (closes: #845803)
