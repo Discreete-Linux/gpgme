@@ -316,7 +316,7 @@ uiserver_new (void **engine, const char *file_name, const char *home_dir,
     goto leave;
   if (dft_display)
     {
-      if (asprintf (&optstr, "OPTION display=%s", dft_display) < 0)
+      if (gpgrt_asprintf (&optstr, "OPTION display=%s", dft_display) < 0)
         {
 	  err = gpg_error_from_syserror ();
 	  free (dft_display);
@@ -326,7 +326,7 @@ uiserver_new (void **engine, const char *file_name, const char *home_dir,
 
       err = assuan_transact (uiserver->assuan_ctx, optstr, NULL, NULL, NULL,
 			     NULL, NULL, NULL);
-      free (optstr);
+      gpgrt_free (optstr);
       if (err)
 	goto leave;
     }
@@ -350,14 +350,14 @@ uiserver_new (void **engine, const char *file_name, const char *home_dir,
 	 ways, e.g., when /dev/pts is not accessible under chroot.  */
       if (!rc)
 	{
-	  if (asprintf (&optstr, "OPTION ttyname=%s", dft_ttyname) < 0)
+	  if (gpgrt_asprintf (&optstr, "OPTION ttyname=%s", dft_ttyname) < 0)
 	    {
 	      err = gpg_error_from_syserror ();
 	      goto leave;
 	    }
 	  err = assuan_transact (uiserver->assuan_ctx, optstr, NULL, NULL, NULL,
 				 NULL, NULL, NULL);
-	  free (optstr);
+	  gpgrt_free (optstr);
 	  if (err)
 	    goto leave;
 
@@ -366,7 +366,7 @@ uiserver_new (void **engine, const char *file_name, const char *home_dir,
 	    goto leave;
 	  if (dft_ttytype)
 	    {
-	      if (asprintf (&optstr, "OPTION ttytype=%s", dft_ttytype) < 0)
+	      if (gpgrt_asprintf (&optstr, "OPTION ttytype=%s", dft_ttytype)< 0)
 		{
 		  err = gpg_error_from_syserror ();
 		  free (dft_ttytype);
@@ -376,7 +376,7 @@ uiserver_new (void **engine, const char *file_name, const char *home_dir,
 
 	      err = assuan_transact (uiserver->assuan_ctx, optstr, NULL, NULL,
 				     NULL, NULL, NULL, NULL);
-	      free (optstr);
+	      gpgrt_free (optstr);
 	      if (err)
 		goto leave;
 	    }
@@ -441,13 +441,13 @@ uiserver_set_locale (void *engine, int category, const char *value)
   if (!value)
     return 0;
 
-  if (asprintf (&optstr, "OPTION %s=%s", catstr, value) < 0)
+  if (gpgrt_asprintf (&optstr, "OPTION %s=%s", catstr, value) < 0)
     err = gpg_error_from_syserror ();
   else
     {
       err = assuan_transact (uiserver->assuan_ctx, optstr, NULL, NULL,
 			     NULL, NULL, NULL, NULL);
-      free (optstr);
+      gpgrt_free (optstr);
     }
 
   return err;
@@ -959,14 +959,16 @@ uiserver_reset (void *engine)
 
 
 static gpgme_error_t
-_uiserver_decrypt (void *engine, int verify,
-		   gpgme_data_t ciph, gpgme_data_t plain,
-                   int export_session_key, const char *override_session_key)
+uiserver_decrypt (void *engine,
+                  gpgme_decrypt_flags_t flags,
+                  gpgme_data_t ciph, gpgme_data_t plain,
+                  int export_session_key, const char *override_session_key)
 {
   engine_uiserver_t uiserver = engine;
   gpgme_error_t err;
   const char *protocol;
   char *cmd;
+  int verify = !!(flags & GPGME_DECRYPT_VERIFY);
 
   (void)override_session_key; /* Fixme: We need to see now to add this
                                * to the UI server protocol  */
@@ -982,7 +984,7 @@ _uiserver_decrypt (void *engine, int verify,
   else
     return gpgme_error (GPG_ERR_UNSUPPORTED_PROTOCOL);
 
-  if (asprintf (&cmd, "DECRYPT%s%s%s", protocol,
+  if (gpgrt_asprintf (&cmd, "DECRYPT%s%s%s", protocol,
 		verify ? "" : " --no-verify",
                 export_session_key ? " --export-session-key" : "") < 0)
     return gpg_error_from_syserror ();
@@ -992,40 +994,21 @@ _uiserver_decrypt (void *engine, int verify,
 			 map_data_enc (uiserver->input_cb.data));
   if (err)
     {
-      free (cmd);
+      gpgrt_free (cmd);
       return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
     }
   uiserver->output_cb.data = plain;
   err = uiserver_set_fd (uiserver, OUTPUT_FD, 0);
   if (err)
     {
-      free (cmd);
+      gpgrt_free (cmd);
       return gpg_error (GPG_ERR_GENERAL);	/* FIXME */
     }
   uiserver->inline_data = NULL;
 
   err = start (engine, cmd);
-  free (cmd);
+  gpgrt_free (cmd);
   return err;
-}
-
-
-static gpgme_error_t
-uiserver_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain,
-                  int export_session_key, const char *override_session_key)
-{
-  return _uiserver_decrypt (engine, 0, ciph, plain,
-                            export_session_key, override_session_key);
-}
-
-
-static gpgme_error_t
-uiserver_decrypt_verify (void *engine, gpgme_data_t ciph, gpgme_data_t plain,
-                         int export_session_key,
-                         const char *override_session_key)
-{
-  return _uiserver_decrypt (engine, 1, ciph, plain,
-                            export_session_key, override_session_key);
 }
 
 
@@ -1114,7 +1097,7 @@ uiserver_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
       if (!recp || plain || ciph)
 	return gpg_error (GPG_ERR_INV_VALUE);
 
-      if (asprintf (&cmd, "PREP_ENCRYPT%s%s", protocol,
+      if (gpgrt_asprintf (&cmd, "PREP_ENCRYPT%s%s", protocol,
 		    (flags & GPGME_ENCRYPT_EXPECT_SIGN)
 		    ? " --expect-sign" : "") < 0)
 	return gpg_error_from_syserror ();
@@ -1124,7 +1107,7 @@ uiserver_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
       if (!plain || !ciph)
 	return gpg_error (GPG_ERR_INV_VALUE);
 
-      if (asprintf (&cmd, "ENCRYPT%s", protocol) < 0)
+      if (gpgrt_asprintf (&cmd, "ENCRYPT%s", protocol) < 0)
 	return gpg_error_from_syserror ();
     }
 
@@ -1135,7 +1118,7 @@ uiserver_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
 			     map_data_enc (uiserver->input_cb.data));
       if (err)
 	{
-	  free (cmd);
+	  gpgrt_free (cmd);
 	  return err;
 	}
     }
@@ -1147,7 +1130,7 @@ uiserver_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
 			     : map_data_enc (uiserver->output_cb.data));
       if (err)
 	{
-	  free (cmd);
+	  gpgrt_free (cmd);
 	  return err;
 	}
     }
@@ -1159,13 +1142,13 @@ uiserver_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
       err = set_recipients (uiserver, recp);
       if (err)
 	{
-	  free (cmd);
+	  gpgrt_free (cmd);
 	  return err;
 	}
     }
 
   err = start (uiserver, cmd);
-  free (cmd);
+  gpgrt_free (cmd);
   return err;
 }
 
@@ -1195,7 +1178,7 @@ uiserver_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
   else
     return gpgme_error (GPG_ERR_UNSUPPORTED_PROTOCOL);
 
-  if (asprintf (&cmd, "SIGN%s%s", protocol,
+  if (gpgrt_asprintf (&cmd, "SIGN%s%s", protocol,
 		(mode == GPGME_SIG_MODE_DETACH) ? " --detached" : "") < 0)
     return gpg_error_from_syserror ();
 
@@ -1220,10 +1203,10 @@ uiserver_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
         err = gpg_error (GPG_ERR_INV_VALUE);
       gpgme_key_unref (key);
       if (err)
-      {
-	free (cmd);
-	return err;
-      }
+        {
+          gpgrt_free (cmd);
+          return err;
+        }
   }
 
   uiserver->input_cb.data = in;
@@ -1231,7 +1214,7 @@ uiserver_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
 			 map_data_enc (uiserver->input_cb.data));
   if (err)
     {
-      free (cmd);
+      gpgrt_free (cmd);
       return err;
     }
   uiserver->output_cb.data = out;
@@ -1239,13 +1222,13 @@ uiserver_sign (void *engine, gpgme_data_t in, gpgme_data_t out,
 			 : map_data_enc (uiserver->output_cb.data));
   if (err)
     {
-      free (cmd);
+      gpgrt_free (cmd);
       return err;
     }
   uiserver->inline_data = NULL;
 
   err = start (uiserver, cmd);
-  free (cmd);
+  gpgrt_free (cmd);
   return err;
 }
 
@@ -1274,7 +1257,7 @@ uiserver_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
   else
     return gpgme_error (GPG_ERR_UNSUPPORTED_PROTOCOL);
 
-  if (asprintf (&cmd, "VERIFY%s", protocol) < 0)
+  if (gpgrt_asprintf (&cmd, "VERIFY%s", protocol) < 0)
     return gpg_error_from_syserror ();
 
   uiserver->input_cb.data = sig;
@@ -1282,7 +1265,7 @@ uiserver_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
 			 map_data_enc (uiserver->input_cb.data));
   if (err)
     {
-      free (cmd);
+      gpgrt_free (cmd);
       return err;
     }
   if (plaintext)
@@ -1302,7 +1285,7 @@ uiserver_verify (void *engine, gpgme_data_t sig, gpgme_data_t signed_text,
   if (!err)
     err = start (uiserver, cmd);
 
-  free (cmd);
+  gpgrt_free (cmd);
   return err;
 }
 
@@ -1383,7 +1366,6 @@ struct engine_ops _gpgme_engine_ops_uiserver =
     uiserver_set_locale,
     uiserver_set_protocol,
     uiserver_decrypt,
-    uiserver_decrypt_verify,
     NULL,		/* delete */
     NULL,		/* edit */
     uiserver_encrypt,
@@ -1394,6 +1376,7 @@ struct engine_ops _gpgme_engine_ops_uiserver =
     NULL,		/* import */
     NULL,		/* keylist */
     NULL,		/* keylist_ext */
+    NULL,               /* keylist_data */
     NULL,               /* keysign */
     NULL,               /* tofu_policy */
     uiserver_sign,

@@ -34,12 +34,12 @@ in_tree = False
 extra_swig_opts = []
 extra_macros = dict()
 
-if os.path.exists("../../src/gpgme-config"):
+if os.path.exists("../../../src/gpgme-config"):
     # In-tree build.
     in_tree = True
-    gpgme_config = ["../../src/gpgme-config"] + gpgme_config_flags
-    gpgme_h = "../../src/gpgme.h"
-    library_dirs = ["../../src/.libs"] # XXX uses libtool internals
+    gpgme_config = ["../../../src/gpgme-config"] + gpgme_config_flags
+    gpgme_h = "../../../src/gpgme.h"
+    library_dirs = ["../../../src/.libs"] # XXX uses libtool internals
     extra_macros.update(
         HAVE_CONFIG_H=1,
         HAVE_DATA_H=1,
@@ -152,9 +152,10 @@ class BuildExtFirstHack(build):
         self.run_command('build_ext')
         build.run(self)
 
+py3 = [] if sys.version_info.major < 3 else ['-py3']
 swige = Extension("gpg._gpgme", ["gpgme.i", "helpers.c"],
-                  swig_opts = ['-py3', '-builtin', '-threads',
-                               '-outdir', 'gpg'] + extra_swig_opts,
+                  swig_opts = ['-threads',
+                               '-outdir', 'gpg'] + py3 + extra_swig_opts,
                   include_dirs = include_dirs,
                   define_macros = define_macros,
                   library_dirs = library_dirs,
@@ -171,7 +172,8 @@ setup(name="gpg",
       url='https://www.gnupg.org',
       ext_modules=[swige],
       packages = ['gpg', 'gpg.constants', 'gpg.constants.data',
-                  'gpg.constants.keylist', 'gpg.constants.sig'],
+                  'gpg.constants.keylist', 'gpg.constants.sig',
+                  'gpg.constants.tofu'],
       license="LGPL2.1+ (the library), GPL2+ (tests and examples)",
       classifiers=[
           'Development Status :: 4 - Beta',

@@ -236,11 +236,13 @@ _gpgme_key_append_name (gpgme_key_t key, const char *src, int convert)
 		   &uid->comment, dst);
 
   uid->address = _gpgme_mailbox_from_userid (uid->uid);
-  if (uid->address && uid->email && !strcmp (uid->address, uid->email))
+  if ((!uid->email || !*uid->email) && uid->address && uid->name
+      && !strcmp (uid->name, uid->address))
     {
-      /* The ADDRESS is the same as EMAIL: Save some space.  */
-      free (uid->address);
-      uid->address = uid->email;
+      /* Name and address are the same. This is a mailbox only key.
+         Use address as email and remove name. */
+      *uid->name = '\0';
+      uid->email = uid->address;
     }
 
   if (!key->uids)
@@ -339,14 +341,10 @@ gpgme_key_unref (gpgme_key_t key)
   while (subkey)
     {
       gpgme_subkey_t next = subkey->next;
-      if (subkey->fpr)
-	free (subkey->fpr);
-      if (subkey->curve)
-	free (subkey->curve);
-      if (subkey->keygrip)
-	free (subkey->keygrip);
-      if (subkey->card_number)
-	free (subkey->card_number);
+      free (subkey->fpr);
+      free (subkey->curve);
+      free (subkey->keygrip);
+      free (subkey->card_number);
       free (subkey);
       subkey = next;
     }
@@ -386,22 +384,15 @@ gpgme_key_unref (gpgme_key_t key)
           tofu = tofu_next;
         }
 
-      if (uid->address && uid->address != uid->email)
-        free (uid->address);
-
+      free (uid->address);
       free (uid);
       uid = next_uid;
     }
 
-  if (key->issuer_serial)
-    free (key->issuer_serial);
-  if (key->issuer_name)
-    free (key->issuer_name);
-
-  if (key->chain_id)
-    free (key->chain_id);
-  if (key->fpr)
-    free (key->fpr);
+  free (key->issuer_serial);
+  free (key->issuer_name);
+  free (key->chain_id);
+  free (key->fpr);
 
   free (key);
 }

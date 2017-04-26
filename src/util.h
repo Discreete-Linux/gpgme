@@ -95,11 +95,12 @@ _gpgme_stpcpy (char *a, const char *b)
 #define stpcpy(a,b) _gpgme_stpcpy ((a), (b))
 #endif /*!HAVE_STPCPY*/
 
-#if !HAVE_VASPRINTF
-#include <stdarg.h>
-int vasprintf (char **result, const char *format, va_list args);
-int asprintf (char **result, const char *format, ...);
-#endif
+
+/* Due to a bug in mingw32's snprintf related to the 'l' modifier and
+   for increased portability we use our snprintf on all systems. */
+#undef snprintf
+#define snprintf gpgrt_snprintf
+
 
 #if REPLACE_TTYNAME_R
 int _gpgme_ttyname_r (int fd, char *buf, size_t buflen);
@@ -164,6 +165,9 @@ gpgme_off_t _gpgme_string_to_off (const char *string);
    point to the next non-parsed character in TIMESTRING. */
 time_t _gpgme_parse_timestamp (const char *timestamp, char **endp);
 
+/* Variant of _gpgme_parse_timestamp to return an unsigned long or 0
+ * on error or missing timestamp.  */
+unsigned long _gpgme_parse_timestamp_ul (const char *timestamp);
 
 gpgme_error_t _gpgme_map_gnupg_error (char *err);
 

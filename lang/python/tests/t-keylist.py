@@ -23,7 +23,6 @@ del absolute_import, print_function, unicode_literals
 import gpg
 import support
 
-support.init_gpgme(gpg.constants.protocol.OpenPGP)
 c = gpg.Context()
 
 # Check expration of keys.  This test assumes three subkeys of which
@@ -217,6 +216,18 @@ while key:
 c.op_keylist_end()
 result = c.op_keylist_result()
 assert not result.truncated, "Key listing unexpectedly truncated"
+
+
+# We test for a parameter-less keylist
+keyring_length = len(list(c.op_keylist_all()))
+assert keyring_length > 1,\
+                "Expected to find some keys, but got %r" % keyring_length
+
+# Then we do want to call with a pattern, only
+# i.e. without giving secret=0
+alpha_keys = list(c.op_keylist_all(b"Alpha"))
+assert len(alpha_keys) == 1, "Expected only one key for 'Alpha', got %r" % len(alpha_keys)
+
 
 
 for i, key in enumerate(c.keylist()):

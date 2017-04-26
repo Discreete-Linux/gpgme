@@ -39,6 +39,8 @@ parser.add_argument('tests', metavar='TEST', type=str, nargs='+',
                     help='A test to run')
 parser.add_argument('-v', '--verbose', action="store_true", default=False,
                     help='Be verbose.')
+parser.add_argument('-q', '--quiet', action="store_true", default=False,
+                    help='Be quiet.')
 parser.add_argument('--interpreters', metavar='PYTHON', type=str,
                     default=[], action=SplitAndAccumulate,
                     help='Use these interpreters to run the tests, ' +
@@ -49,6 +51,8 @@ parser.add_argument('--srcdir', type=str,
 parser.add_argument('--builddir', type=str,
                     default=os.environ.get("abs_builddir", ""),
                     help='Location of the tests.')
+parser.add_argument('--parallel', action="store_true", default=False,
+                    help='Ignored.  For compatibility with run-tests.scm.')
 
 args = parser.parse_args()
 if not args.interpreters:
@@ -65,19 +69,29 @@ for interpreter in args.interpreters:
     version = subprocess.check_output(
         [interpreter, "-c", "import sys; print('{0}.{1}'.format(sys.version_info[0], sys.version_info[1]))"]).strip().decode()
 
-    builddirs = glob.glob(os.path.join(args.builddir, "..", "build",
-                                       "lib*"+version))
-    assert len(builddirs) == 1, \
-        "Expected one build directory, got {0}".format(builddirs)
+    pattern = os.path.join(args.builddir, "..",
+                           "python{0}-gpg".format(version),
+                           "build",
+                           "lib*"+version)
+    builddirs = glob.glob(pattern)
+    if len(builddirs) == 0:
+        sys.exit("Build directory matching {0!r} not found.".format(pattern))
+    elif len(builddirs) > 1:
+        sys.exit("Multiple build directories matching {0!r} found: {1}".format(
+            pattern, builddirs))
+
     env = dict(os.environ)
     env["PYTHONPATH"] = builddirs[0]
 
-    print("Running tests using {0} ({1})...".format(interpreter, version))
+    if not args.quiet:
+        print("Running tests using {0} ({1})...".format(interpreter, version))
+
     for test in args.tests:
         status = subprocess.call(
             [interpreter, os.path.join(args.srcdir, test)],
             env=env, stdout=out, stderr=err)
-        print("{0}: {1}".format(status_to_str(status), test))
+        if not args.quiet:
+            print("{0}: {1}".format(status_to_str(status), test))
         results.append(status)
 
 def count(status):
@@ -85,6 +99,8 @@ def count(status):
 def failed():
     return len(list(filter(lambda x: x not in (0, 77, 99), results)))
 
-print("{0} tests run, {1} succeeded, {2} failed, {3} skipped.".format(
-    len(results), count(0), failed(), count(77)))
-sys.exit(len(results) - count(0))
+if not args.quiet:
+    print("{0} tests run, {1} succeeded, {2} failed, {3} skipped.".format(
+        len(results), count(0), failed(), count(77)))
+    sys.exit(len(results) - count(0))
+sys.exit(results[0])

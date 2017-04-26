@@ -74,6 +74,10 @@ struct fd_data_map_s
 };
 
 
+/* NB.: R_LINE is allocated an gpgrt function and thus gpgrt_free
+ * shall be used to release it.  This takes care of custom memory
+ * allocators and avoids problems on Windows with different runtimes
+ * used for libgpg-error/gpgrt and gpgme.  */
 typedef gpgme_error_t (*colon_preprocessor_t) (char *line, char **rline);
 
 struct engine_gpg
@@ -1346,7 +1350,7 @@ read_colon_line (engine_gpg_t gpg)
                         }
                       while (linep && *linep);
 
-                      free (line);
+                      gpgrt_free (line);
                     }
                   else
                     gpg->colon.fnc (gpg->colon.fnc_value, buffer);
@@ -1555,13 +1559,23 @@ add_input_size_hint (engine_gpg_t gpg, gpgme_data_t data)
 
 
 static gpgme_error_t
-gpg_decrypt (void *engine, gpgme_data_t ciph, gpgme_data_t plain,
+gpg_decrypt (void *engine,
+             gpgme_decrypt_flags_t flags,
+             gpgme_data_t ciph, gpgme_data_t plain,
              int export_session_key, const char *override_session_key)
 {
   engine_gpg_t gpg = engine;
   gpgme_error_t err;
 
   err = add_arg (gpg, "--decrypt");
+
+  if (!err && (flags & GPGME_DECRYPT_UNWRAP))
+    {
+      if (!have_gpg_version (gpg, "2.1.12"))
+        err = gpg_error (GPG_ERR_NOT_SUPPORTED);
+      else
+        err = add_arg (gpg, "--unwrap");
+    }
 
   if (!err && export_session_key)
     err = add_arg (gpg, "--show-session-key");
@@ -1853,8 +1867,22 @@ gpg_encrypt (void *engine, gpgme_key_t recp[], gpgme_encrypt_flags_t flags,
   if (!err && use_armor)
     err = add_arg (gpg, "--armor");
 
+  if (!err && (flags & GPGME_ENCRYPT_WRAP))
+    {
+      /* gpg is current not abale to detect already compressed
+       * packets.  Thus when using
+       *   gpg --unwrap -d | gpg --no-literal -e
+       * the encryption would add an additional compression layer.
+       * We better suppress that.  */
+      flags |= GPGME_ENCRYPT_NO_COMPRESS;
+      err = add_arg (gpg, "--no-literal");
+    }
+
   if (!err && (flags & GPGME_ENCRYPT_NO_COMPRESS))
     err = add_arg (gpg, "--compress-algo=none");
+
+  if (!err && (flags & GPGME_ENCRYPT_THROW_KEYIDS))
+    err = add_arg (gpg, "--throw-keyids");
 
   if (gpgme_data_get_encoding (plain) == GPGME_DATA_ENCODING_MIME
       && have_gpg_version (gpg, "2.1.14"))
@@ -1924,6 +1952,9 @@ gpg_encrypt_sign (void *engine, gpgme_key_t recp[],
 
   if (!err && (flags & GPGME_ENCRYPT_NO_COMPRESS))
     err = add_arg (gpg, "--compress-algo=none");
+
+  if (!err && (flags & GPGME_ENCRYPT_THROW_KEYIDS))
+    err = add_arg (gpg, "--throw-keyids");
 
   if (gpgme_data_get_encoding (plain) == GPGME_DATA_ENCODING_MIME
       && have_gpg_version (gpg, "2.1.14"))
@@ -2072,7 +2103,8 @@ gpg_add_algo_usage_expire (engine_gpg_t gpg,
   /* This condition is only required to allow the use of gpg < 2.1.16 */
   if (algo
       || (flags & (GPGME_CREATE_SIGN | GPGME_CREATE_ENCR
-                   | GPGME_CREATE_CERT | GPGME_CREATE_AUTH))
+                   | GPGME_CREATE_CERT | GPGME_CREATE_AUTH
+                   | GPGME_CREATE_NOEXPIRE))
       || expires)
     {
       err = add_arg (gpg, algo? algo : "default");
@@ -2086,11 +2118,18 @@ gpg_add_algo_usage_expire (engine_gpg_t gpg,
                     (flags & GPGME_CREATE_AUTH)? " auth":"");
           err = add_arg (gpg, *tmpbuf? tmpbuf : "default");
         }
-      if (!err && expires)
+      if (!err)
         {
-          char tmpbuf[8+20];
-          snprintf (tmpbuf, sizeof tmpbuf, "seconds=%lu", expires);
-          err = add_arg (gpg, tmpbuf);
+          if ((flags & GPGME_CREATE_NOEXPIRE))
+            err = add_arg (gpg, "never");
+          else if (expires == 0)
+            err = add_arg (gpg, "-");
+          else
+            {
+              char tmpbuf[8+20];
+              snprintf (tmpbuf, sizeof tmpbuf, "seconds=%lu", expires);
+              err = add_arg (gpg, tmpbuf);
+            }
         }
     }
   else
@@ -2136,6 +2175,8 @@ gpg_createkey (engine_gpg_t gpg,
       err = add_arg (gpg, "--passphrase");
       if (!err)
         err = add_arg (gpg, "");
+      if (!err)
+        err = add_arg (gpg, "--batch");
     }
   if (!err && (flags & GPGME_CREATE_FORCE))
     err = add_arg (gpg, "--yes");
@@ -2174,6 +2215,8 @@ gpg_addkey (engine_gpg_t gpg,
       err = add_arg (gpg, "--passphrase");
       if (!err)
         err = add_arg (gpg, "");
+      if (!err)
+        err = add_arg (gpg, "--batch");
     }
   if (!err)
     err = add_arg (gpg, "--");
@@ -2200,7 +2243,14 @@ gpg_adduid (engine_gpg_t gpg,
   if (!key || !key->fpr || !userid)
     return gpg_error (GPG_ERR_INV_ARG);
 
-  if ((extraflags & GENKEY_EXTRAFLAG_REVOKE))
+  if ((extraflags & GENKEY_EXTRAFLAG_SETPRIMARY))
+    {
+      if (!have_gpg_version (gpg, "2.1.20"))
+        err = gpg_error (GPG_ERR_NOT_SUPPORTED);
+      else
+        err = add_arg (gpg, "--quick-set-primary-uid");
+    }
+  else if ((extraflags & GENKEY_EXTRAFLAG_REVOKE))
     err = add_arg (gpg, "--quick-revuid");
   else
     err = add_arg (gpg, "--quick-adduid");
@@ -2240,7 +2290,7 @@ gpg_genkey (void *engine,
    *  USERID && !KEY          - Create a new keyblock.
    * !USERID &&  KEY          - Add a new subkey to KEY (gpg >= 2.1.14)
    *  USERID &&  KEY && !ALGO - Add a new user id to KEY (gpg >= 2.1.14).
-   *
+   *                            or set a flag on a user id.
    */
   if (help_data)
     {
@@ -2509,7 +2559,7 @@ gpg_keylist_preprocess (char *line, char **r_line)
       n = strlen (field[1]);
       if (n > 16)
         {
-          if (asprintf (r_line,
+          if (gpgrt_asprintf (r_line,
                         "pub:o%s:%s:%s:%s:%s:%s::::::::\n"
                         "fpr:::::::::%s:",
                         field[6], field[3], field[2], field[1] + n - 16,
@@ -2518,7 +2568,7 @@ gpg_keylist_preprocess (char *line, char **r_line)
         }
       else
         {
-          if (asprintf (r_line,
+          if (gpgrt_asprintf (r_line,
                         "pub:o%s:%s:%s:%s:%s:%s::::::::",
                         field[6], field[3], field[2], field[1],
                         field[4], field[5]) < 0)
@@ -2576,7 +2626,7 @@ gpg_keylist_preprocess (char *line, char **r_line)
 	  }
 	*dst = '\0';
 
-	if (asprintf (r_line, "uid:o%s::::%s:%s:::%s:",
+	if (gpgrt_asprintf (r_line, "uid:o%s::::%s:%s:::%s:",
 		      field[4], field[2], field[3], uid) < 0)
 	  return gpg_error_from_syserror ();
       }
@@ -2706,6 +2756,38 @@ gpg_keylist_ext (void *engine, const char *pattern[], int secret_only,
       while (!err && *pattern && **pattern)
 	err = add_arg (gpg, *(pattern++));
     }
+
+  if (!err)
+    err = start (gpg);
+
+  return err;
+}
+
+
+static gpgme_error_t
+gpg_keylist_data (void *engine, gpgme_data_t data)
+{
+  engine_gpg_t gpg = engine;
+  gpgme_error_t err;
+
+  if (!have_gpg_version (gpg, "2.1.14"))
+    return gpg_error (GPG_ERR_NOT_SUPPORTED);
+
+  err = add_arg (gpg, "--with-colons");
+  if (!err)
+    err = add_arg (gpg, "--with-fingerprint");
+  if (!err)
+    err = add_arg (gpg, "--import-options");
+  if (!err)
+    err = add_arg (gpg, "import-show");
+  if (!err)
+    err = add_arg (gpg, "--dry-run");
+  if (!err)
+    err = add_arg (gpg, "--import");
+  if (!err)
+    err = add_arg (gpg, "--");
+  if (!err)
+    err = add_data (gpg, data, -1, 0);
 
   if (!err)
     err = start (gpg);
@@ -2986,7 +3068,6 @@ struct engine_ops _gpgme_engine_ops_gpg =
     gpg_set_locale,
     NULL,				/* set_protocol */
     gpg_decrypt,
-    gpg_decrypt,			/* decrypt_verify */
     gpg_delete,
     gpg_edit,
     gpg_encrypt,
@@ -2997,6 +3078,7 @@ struct engine_ops _gpgme_engine_ops_gpg =
     gpg_import,
     gpg_keylist,
     gpg_keylist_ext,
+    gpg_keylist_data,
     gpg_keysign,
     gpg_tofu_policy,    /* tofu_policy */
     gpg_sign,

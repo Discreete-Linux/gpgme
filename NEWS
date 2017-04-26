@@ -1,3 +1,85 @@
+Noteworthy changes in version 1.9.0 (2017-03-28)
+------------------------------------------------
+
+ * Clarified meaning of the 'expire' parameter of gpgme_op_createkey
+   and gpgme_op_createsubkey.  New flag to force a key without an
+   expiration date.
+
+ * New function gpgme_op_keylist_from_data_start to list keys from
+   data objects without importing them.
+
+ * New function gpgme_op_set_uid_flag to flag a key as primary.
+
+ * New function gpgme_op_decrypt_ext to run decryption with special
+   flags.  This can for example be used to unwrap keys (remove only
+   the encryption layer).
+
+ * New encryption flags to wrap a key (adding an encryption layer to
+   an OpenPGP message) or to create anonymously encrypted messages.
+
+ * Support for adduid and revuid operations in the C++ bindings.
+
+ * Support for smartcard key generation in the C++ bindings.
+
+ * Several new functions for the Python binding.
+
+ * Many smaller bug fixes.
+
+
+ * Interface changes relative to the 1.8.0 release:
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ gpgme_op_createkey          CHANGED: Meaning of 'expire' parameter.
+ gpgme_op_createsubkey       CHANGED: Meaning of 'expire' parameter.
+ GPGME_CREATE_NOEXPIRE       NEW.
+ gpgme_key_t                 EXTENDED: New field 'origin'.
+ gpgme_key_t                 EXTENDED: New field 'last_update'.
+ gpgme_subkey_t              EXTENDED: New field 'is_de_vs'.
+ gpgme_user_id_t             EXTENDED: New field 'origin'.
+ gpgme_user_id_t             EXTENDED: New field 'last_update'.
+ gpgme_op_keylist_from_data_start NEW.
+ gpgme_op_set_uid_flag_start      NEW.
+ gpgme_op_set_uid_flag            NEW.
+ gpgme_op_decrypt_ext_start       NEW.
+ gpgme_op_decrypt_ext             NEW.
+ GPGME_ENCRYPT_THROW_KEYIDS       NEW.
+ GPGME_ENCRYPT_WRAP               NEW.
+ GPGME_DECRYPT_VERIFY             NEW.
+ GPGME_DECRYPT_UNWRAP             NEW.
+ gpgme_data_rewind                UN-DEPRECATE.
+ cpp: Context::revUid(const Key&, const char*)      NEW.
+ cpp: Context::startRevUid(const Key&, const char*) NEW.
+ cpp: Context::addUid(const Key&, const char*)      NEW.
+ cpp: Context::startAddUid(const Key&, const char*) NEW.
+ cpp: Key::UserID::revoke()                         NEW.
+ cpp: Key::addUid()                                 NEW.
+ cpp: Key::isDeVs                                   NEW.
+ cpp: GpgGenCardKeyInteractor                       NEW.
+ cpp: Subkey::keyGrip                               NEW.
+ cpp: Subkey::isDeVs                                NEW.
+ cpp: Data::toKeys                                  NEW.
+ cpp: Context::setDecryptFlags                      NEW.
+ cpp: Context::decrypt                         EXTENDED: Flags added.
+ cpp: Context::startDecrypt                    EXTENDED: Flags added.
+ cpp: Context::decryptAndVerify                EXTENDED: Flags added.
+ cpp: Context::startCombinedDecryptionAndVerification EXTENDED: Flags.
+ cpp: Context::encryptFlags                    EXTENDED: New flags.
+ qt: CryptoConfig::stringValueList()                NEW.
+ py: Context.__init__        EXTENDED: New keyword arg home_dir.
+ py: Context.home_dir        NEW.
+ py: Context.keylist         EXTENDED: New keyword arg mode.
+ py: Context.keylist         EXTENDED: New keyword arg source.
+ py: Context.create_key      NEW.
+ py: Context.create_subkey   NEW.
+ py: Context.key_add_uid     NEW.
+ py: Context.key_revoke_uid  NEW.
+ py: Context.key_sign        NEW.
+ py: Context.key_tofu_policy NEW.
+ py: core.pubkey_algo_string NEW.
+ py: core.addrspec_from_uid  NEW.
+
+ [c=C29/A18/R0 cpp=C10/A4/R0 qt=C9/A2/R0]
+
+
 Noteworthy changes in version 1.8.0 (2016-11-16)
 ------------------------------------------------
 

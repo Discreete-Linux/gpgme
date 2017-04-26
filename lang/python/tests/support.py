@@ -18,9 +18,27 @@
 from __future__ import absolute_import, print_function, unicode_literals
 del absolute_import, print_function, unicode_literals
 
+import contextlib
+import shutil
 import sys
 import os
+import re
+import tempfile
+import time
 import gpg
+
+def assert_gpg_version(version=(2, 1, 0)):
+    with gpg.Context() as c:
+        clean_version = re.match(r'\d+\.\d+\.\d+', c.engine_info.version).group(0)
+        if tuple(map(int, clean_version.split('.'))) < version:
+            print("GnuPG too old: have {0}, need {1}.".format(
+                c.engine_info.version, '.'.join(map(str, version))))
+            sys.exit(77)
+
+# Skip the Python tests for GnuPG < 2.1.12.  Prior versions do not
+# understand the command line flags that we assume exist.  C.f. issue
+# 3008.
+assert_gpg_version((2, 1, 12))
 
 # known keys
 alpha = "A0FF4590BB6122EDEF6E3C542D727CC768697734"
@@ -35,9 +53,6 @@ def make_filename(name):
 def in_srcdir(name):
     return os.path.join(os.environ['srcdir'], name)
 
-def init_gpgme(proto):
-    gpg.core.engine_check_version(proto)
-
 verbose = int(os.environ.get('verbose', 0)) > 1
 def print_data(data):
     if verbose:
@@ -48,7 +63,11 @@ def print_data(data):
         except:
             # Hope for the best.
             pass
-        sys.stdout.buffer.write(data)
+
+        if hasattr(sys.stdout, "buffer"):
+            sys.stdout.buffer.write(data)
+        else:
+            sys.stdout.write(data)
 
 def mark_key_trusted(ctx, key):
     class Editor(object):
@@ -68,3 +87,41 @@ def mark_key_trusted(ctx, key):
             return result
     with gpg.Data() as sink:
         ctx.op_edit(key, Editor().edit, sink, sink)
+
+
+# Python3.2 and up has tempfile.TemporaryDirectory, but we cannot use
+# that, because there shutil.rmtree is used without
+# ignore_errors=True, and that races against gpg-agent deleting its
+# sockets.
+class TemporaryDirectory(object):
+    def __enter__(self):
+        self.path = tempfile.mkdtemp()
+        return self.path
+    def __exit__(self, *args):
+        shutil.rmtree(self.path, ignore_errors=True)
+
+@contextlib.contextmanager
+def EphemeralContext():
+    with TemporaryDirectory() as tmp:
+        home = os.environ['GNUPGHOME']
+        shutil.copy(os.path.join(home, "gpg.conf"), tmp)
+        shutil.copy(os.path.join(home, "gpg-agent.conf"), tmp)
+
+        with gpg.Context(home_dir=tmp) as ctx:
+            yield ctx
+
+            # Ask the agent to quit.
+            agent_socket = os.path.join(tmp, "S.gpg-agent")
+            ctx.protocol = gpg.constants.protocol.ASSUAN
+            ctx.set_engine_info(ctx.protocol, file_name=agent_socket)
+            try:
+                ctx.assuan_transact(["KILLAGENT"])
+            except gpg.errors.GPGMEError as e:
+                if e.getcode() == gpg.errors.ASS_CONNECT_FAILED:
+                    pass # the agent was not running
+                else:
+                    raise
+
+            # Block until it is really gone.
+            while os.path.exists(agent_socket):
+                time.sleep(.01)

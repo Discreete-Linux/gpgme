@@ -1,10 +1,950 @@
+2017-03-28  Werner Koch  <wk@gnupg.org>
+
+	Release 1.9.0.
+	+ commit aa0390ec3b910bbbc323a15ec3c3351e77785a9a
+	* configure.ac <c>: Bump LT version to C29/A18/R0.
+	<cpp>: Bump LT version to C10/A4/R0.
+	<qt>: Bump LT version to C9/A2/R0.
+
+	core: Prepare for new key listing data send by gpg.
+	+ commit 813ae5fa2d712aa9679b791c67c9c1c43d36ffe4
+	* src/gpgme.h.in (gpgme_user_id_t): New fields 'origin' and
+	'last_update'.
+	(gpgme_key_t): New fields 'origin' and 'last_update'.
+	* src/conversion.c (_gpgme_parse_timestamp_ul): New.
+	* src/keylist.c (keylist_colon_handler): Parse fields 19 and 20.
+
+	* tests/run-keylist.c (main): Print new fields.
+
+2017-03-27  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Disable testEncryptDecryptNowrap.
+	+ commit 57d60b20f16dd5f1bccbbcaa0a6ed75a554a6414
+	* lang/qt/tests/t-encrypt.cpp (EncryptTest::testEncryptDecryptNowrap):
+	Disable test.
+
+2017-03-27  Justus Winter  <justus@g10code.com>
+
+	python: Skip tests if running with GnuPG < 2.1.12.
+	+ commit 348da58fe0c3656e6177c98fef6b4c4331326c8e
+	* lang/python/tests/support.py (assert_gpg_version): Fix error
+	message.  Skip all tests when we use GnuPG older than 2.1.12.
+
+2017-03-24  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Respect decrypt flags in new functions.
+	+ commit 18b7906078cf08962c54c1e711cf2d91a24fd4e5
+	* lang/cpp/src/context.cpp: Respect directly provided flags
+	in the new decrypt functions.
+
+	qt: Add unittest for decrypt unwrap.
+	+ commit 5493164f8665fabf795f3b34a7084770a38ae940
+	* lang/qt/tests/t-encrypt.cpp
+	(EncryptTest::testEncryptDecryptNowrap): New.
+
+	cpp: Use gpgme_op_decrypt_ex and add new flags.
+	+ commit 8ad37ecc297f208d0a63783c1ffae33ad4c3c81a
+	* lang/cpp/src/context.cpp: New decrypt and decryptVerify functions
+	that take flags as arguments. Use new variants in old functions.
+	(Context::setDecryptionFlags): New helper.
+	(Context::Private::Private): Initialize new member.
+	* lang/cpp/src/context_p.h (Context::Private::decryptFlags): New.
+	* lang/cpp/src/context.h (Context::DecryptFlags): New enum.
+	(Context::EncryptionFlags): Extend for EncryptWrap.
+
+2017-03-24  Werner Koch  <wk@gnupg.org>
+
+	core: New flags GPGME_DECRYPT_UNWRAP and GPGME_ENCRYPT_WRAP.
+	+ commit 6ac1f2cdedb085b4ac9372c1e591497e2e618de4
+	* src/gpgme.h.in (GPGME_ENCRYPT_WRAP): New const.
+	(gpgme_decrypt_flags_t): New enum.
+	(GPGME_DECRYPT_VERIFY): New const
+	(GPGME_DECRYPT_UNWRAP): New const
+	(gpgme_op_decrypt_ext_start): New func.
+	(gpgme_op_decrypt_ext): New func.
+	* src/decrypt-verify.c (gpgme_op_decrypt_ext_start): New.
+	(gpgme_op_decrypt_ext): New.
+	(decrypt_verify_start): Add arg FLAGS.  Replace call to
+	engine_op_decrypt_verify by the plain decrypt with the flag set.
+	(gpgme_op_decrypt_verify_start): Pass the flag.
+	(gpgme_op_decrypt_verify): Pass the flag.
+	* src/decrypt.c (decrypt_start): Rename to ...
+	(_gpgme_decrypt_start): this.  Add arg FLAGS.  Pass FLAGS to
+	engine_op_decrypt.
+	(gpgme_op_decrypt_start): Adjust for chnage pass 0 for FLAG.
+	(gpgme_op_decrypt_start): Ditto.
+	* src/engine.c (_gpgme_engine_op_decrypt_verify): Remove.
+	(_gpgme_engine_op_decrypt): Add arg FLAGS.
+	* src/gpgme.def, src/libgpgme.vers: Add new functions.
+	* src/engine-backend.h (struct engine_ops): Remove member
+	'decrypt_verify'.  Add FLAGS to 'decrypt'.  Adjust all initialization.
+	* src/engine-uiserver.c (uiserver_decrypt): Remove.
+	(uiserver_decrypt_verify): Remove.
+	(_uiserver_decrypt): Rename to ...
+	(uiserver_decrypt): this.  Replace arg VERIFY by new arg FLAGS.
+	* src/engine-gpg.c (gpg_decrypt): Support GPGME_DECRYPT_UNWRAP.
+	(gpg_encrypt): Support GPGME_ENCRYPT_WRAP.
+
+	* tests/run-decrypt.c (main): New option --unwrap.
+	* tests/run-encrypt.c (main): New option --wrap.
+
+2017-03-22  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Add test for Data::toKeys.
+	+ commit 66c334650bd64fdb72c4bd5975e25b8659d320ec
+	* lang/qt/tests/t-various.cpp (TestVarious::testKeyFromFile): New.
+
+	cpp: Wrap keylist_from_data.
+	+ commit 8ddb42ada46f00d8393f6c2df7d6b79a4a5878f0
+	* lang/cpp/data.h, lang/cpp/data.cpp (GpgME::Data::toKeys): New.
+
+	qt: Initialize library first in tests.
+	+ commit 121873b821636052c10d9e0bd885eb9013c52096
+	* lang/qt/tests/t-support.cpp (QGpgMETest::initTestCase): Initialize
+	library.
+
+2017-03-22  Justus Winter  <justus@g10code.com>
+
+	python: Improve Python detection.
+	+ commit 104635eb503ec764146731888a6975b4329660fd
+	* m4/python.m4 (_AM_PYTHON_INTERPRETER_LIST): Prefer the generic
+	'pythonX' over 'pythonX.Y'.  This way we select the users preferred
+	version for both flavors.  Prefer 'python' over 'python3' but not over
+	'python2' so that the algorithm still finds a 'python2' even if
+	'python' is a Python3.
+
+2017-03-21  Werner Koch  <wk@gnupg.org>
+
+	core: New API gpgme_op_set_uid_flag.
+	+ commit 421ddd1e6706046c5062417fd69a87e10c9fc0a9
+	* src/gpgme.h.in (gpgme_op_set_uid_flag_start): New.
+	(gpgme_op_set_uid_flag_start): New.
+	* src/gpgme.def, src/libgpgme.vers: Add them.
+	* src/genkey.c (addrevuid_start): Change arg revoke to a flag.
+	(gpgme_op_revuid_start): Pass GENKEY_EXTRAFLAG_REVOKE for the fomer
+	revoke parameter.
+	(gpgme_op_revuid): Ditto.
+	(set_uid_flag): New.
+	(gpgme_op_set_uid_flag_start): New.
+	(gpgme_op_set_uid_flag): New.
+	* src/engine.h (GENKEY_EXTRAFLAG_SETPRIMARY): new.
+	* src/engine-gpg.c (gpg_adduid): Implement that flag.
+
+	* tests/run-genkey.c (main): New command --set-primary.
+
+2017-03-21  Justus Winter  <justus@g10code.com>
+
+	python: Wrap 'gpgme_op_keylist_from_data_start'.
+	+ commit f3e8d8a4518de2768692e0b392262d0da6d0fd84
+	* NEWS: Update.
+	* lang/python/gpg/core.py (Context.keylist): New keyword argument
+	'source'.  If given, list keys from 'source'.
+	* lang/python/gpgme.i: Wrap the argument to
+	'gpgme_op_keylist_from_data_start'.
+	* lang/python/tests/Makefile.am (py_tests): Add new test.
+	* lang/python/tests/support.py (EphemeralContext): Do not throw an
+	error if no agent has been started in the context.
+	* lang/python/tests/t-keylist-from-data.py: New file.
+
+2017-03-21  Werner Koch  <wk@gnupg.org>
+
+	core: Extend gpgme_get_dirinfo to return the gpg-wks-client name.
+	+ commit 55ac5eed9f59081283d34098a9e0ada753d61d59
+	* src/dirinfo.c (WANT_GPG_WKS_CLIENT_NAME): New const.
+	(struct dirinfo): New field 'gpg_wks_client_name'.
+	(get_gpgconf_item): Build it on demand.
+	(gpgme_get_dirinfo): New value "gpg-wks-client-name" for WHAT.
+
+	core: New encryption flag GPGME_ENCRYPT_THROW_KEYIDS.
+	+ commit fab8b1a166fff7265d8a7a7acbbf5f30d26cc93c
+	* src/gpgme.h.in (GPGME_ENCRYPT_THROW_KEYIDS): New flag.
+	* src/engine-gpg.c (gpg_encrypt): Implement flag
+	(gpg_encrypt_sign): Implement flag.
+
+	* tests/run-encrypt.c (main): New option --throw-keyids.
+
+2017-03-21  Andre Heinecke  <aheinecke@intevation.de>
+	    Werner Koch  <wk@gnupg.org>
+
+	core: New public API gpgme_op_keylist_from_data_start.
+	+ commit 35023f313622fb1b34108dd934e84831c58b81aa
+	* src/gpgme.h.in: New API gpgme_op_keylist_from_data_start.
+	* src/libgpgme.vers, src/gpgme.def: Add it.
+	* src/keylist.c (gpgme_op_keylist_from_data_start): New.
+	* src/engine-backend.h (engine_ops): Add field 'keylist_data'.  Change
+	all engines to pass NULL for it.
+	* src/engine.c (_gpgme_engine_op_keylist_data): New.
+	* src/engine-gpg.c (gpg_keylist_data): New.
+	(_gpgme_engine_ops_gpg): Register gpg_keylist_data.
+
+	* tests/run-keylist.c (main): New option --from-file.
+
+2017-03-20  Werner Koch  <wk@gnupg.org>
+
+	core,cpp: New key flag 'is_de_vs'.
+	+ commit ea9686ec71a2dd2225ce2b6d6d4038821d36205f
+	* src/gpgme.h.in (_gpgme_subkey): New flag is_de_vs.
+	* tests/run-keylist.c (main): Print that flag.
+	* src/keylist.c (parse_pub_field18): New.
+	(keylist_colon_handler): Parse compliance flags.
+	* lang/cpp/src/key.cpp (Key::isDeVs): New.
+	(Subkey::isDeVs): New.
+
+	* lang/cpp/src/key.h (class Key): New method isDeVs.
+	(class Subkey): New method isDeVs.
+
+2017-03-20  Justus Winter  <justus@g10code.com>
+
+	tests: Fix distcheck.
+	+ commit 392e51dd1181d035c19918222da65d08fdb2ee6d
+	* tests/start-stop-agent: Do not create 'gpg-agent.conf' if it does
+	not exist.
+
+	python: Fix version check.
+	+ commit 57e64d019d993fdeb4323def5352f8ecc98c6fd9
+	* lang/python/tests/support.py (assert_gpg_version): Cope with
+	non-released versions.
+
+	tests: Use 'gpg-agent --allow-loopback-pinentry' if applicable.
+	+ commit 16b202d9999591b71fb8bb49f6db10ef96d4cbe8
+	* lang/python/tests/Makefile.am (gpg-agent.conf): Do not hard-code the
+	option.  This breaks gpg-agent from GnuPG 2.0.
+	* tests/start-stop-agent: Rather, check if the option is supported and
+	add it to the configuration if it is.
+
+	python: Skip tests if GnuPG is too old.
+	+ commit e1cf8bab319ba1dea41ba5d711dbb66ffd8e6fd6
+	* lang/python/tests/support.py (assert_gpg_version): New function.
+	* lang/python/tests/t-callbacks.py: Use the new function to skip the
+	test if GnuPG is too old.
+	* lang/python/tests/t-edit.py: Likewise.
+	* lang/python/tests/t-encrypt-sym.py: Likewise.
+	* lang/python/tests/t-quick-key-creation.py: Likewise.
+	* lang/python/tests/t-quick-key-manipulation.py: Likewise.
+	* lang/python/tests/t-quick-key-signing.py: Likewise.
+
+	python: Remove superfluous initialization.
+	+ commit 4572e8d2ac1d3b45e75ce71265c99e591fbf0e28
+	* lang/python/tests/support.py (init_gpgme): Remove.  This is an
+	remnant from the c tests.  Nowadays, the Python bindings initialize
+	GPGME automagically.
+	* lang/python/tests/initial.py: Remove call to 'support.init_gpgme'.
+	* lang/python/tests/t-callbacks.py: Likewise.
+	* lang/python/tests/t-decrypt-verify.py: Likewise.
+	* lang/python/tests/t-decrypt.py: Likewise.
+	* lang/python/tests/t-edit.py: Likewise.
+	* lang/python/tests/t-encrypt-large.py: Likewise.
+	* lang/python/tests/t-encrypt-sign.py: Likewise.
+	* lang/python/tests/t-encrypt-sym.py: Likewise.
+	* lang/python/tests/t-encrypt.py: Likewise.
+	* lang/python/tests/t-export.py: Likewise.
+	* lang/python/tests/t-file-name.py: Likewise.
+	* lang/python/tests/t-idiomatic.py: Likewise.
+	* lang/python/tests/t-import.py: Likewise.
+	* lang/python/tests/t-keylist.py: Likewise.
+	* lang/python/tests/t-sig-notation.py: Likewise.
+	* lang/python/tests/t-sign.py: Likewise.
+	* lang/python/tests/t-signers.py: Likewise.
+	* lang/python/tests/t-trustlist.py: Likewise.
+	* lang/python/tests/t-verify.py: Likewise.
+	* lang/python/tests/t-wait.py: Likewise.
+
+2017-03-14  Justus Winter  <justus@g10code.com>
+
+	python: Make error message more helpful.
+	+ commit 9d6825be092f1590f28b5bab462eeb944d9b800c
+	* lang/python/tests/run-tests.py: Make the error message shown when we
+	cannot locate the python module in the build tree more helpful.
+
+	python: Make tests more robust.
+	+ commit ac4849953860547b06a167ca9612c4de369d02b6
+	* lang/python/tests/support.py (TemporaryDirectory): Always use our
+	own version even if 'tempfile.TemporaryDirectory' is provided, because
+	we need to use 'shutil.rmtree(..., ignore_errors=True)' to avoid it
+	tripping over gpg-agent deleting its own sockets.
+
+	python: Improve build system integration.
+	+ commit a4201035fdc050f337a6b9f520c8ddbb569e2eb4
+	* lang/python/Makefile.am: Use 'set -e' when chaining shell commands
+	together in rules.
+
+	build: Improve Python detection.
+	+ commit 6a371663886a7ba6073f385a3ab5f5a03de8e008
+	* configure.ac: Do not error out too early if we don't find a matching
+	Python version.  We handle this case later.
+
+	build: Tune M4 macros for our needs.
+	+ commit 5189c08af9468cdeb6f16a6ecd0fee53e1e3aa0e
+	* m4/ax_python_devel.m4: Do not emit 'HAVE_PYTHON'.
+	* m4/python.m4 (_AM_PYTHON_INTERPRETER_LIST): Add newer Python
+	versions, drop older ones.  Also, sort the list with older versions at
+	the front, newer and generic versions towards the end.  This makes the
+	algorithm pick the lowest version that meets the version requirement.
+
+	build: Add M4 macros for python.
+	+ commit 067da472f919e78c95a0a01b68e79a8b7dff173b
+	* m4/python.m4: New file.
+
+2017-03-13  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Add test for DN parser.
+	+ commit 43aa3eed15dcc4f848915ceabeff35c29c1c57e4
+	* qt/tests/t-various.cpp (testDN): New.
+
+	qt: Use gpgrt_asprintf instead of qstrdup.
+	+ commit 9d5048d47446450a34cae4f27eb81c02ea5d4afc
+	* lang/qt/src/dn.cpp (parse_dn_part): Use gpgrt_asprintf instead
+	of qstrdup.
+
+2017-03-09  Werner Koch  <wk@gnupg.org>
+
+	core: Fix status error return for gpgsm.
+	+ commit d2240a2a1819874929bdab820bcbd3bee7f94407
+	* src/engine-gpgsm.c (gpgsm_assuan_simple_command): Make sure CB_ERR
+	is returned.
+	* src/import.c (parse_import_res): Do not return an error for the last
+	field.
+	(import_status_handler): Actually return the error from
+	parse_import_res.
+
+2017-03-02  Justus Winter  <justus@g10code.com>
+
+	python: Print path of the Python module used during tests.
+	+ commit 41398779abbcb1ec2d7491e141469a752fc706ff
+	* lang/python/tests/initial.py: Print path of the Python module used
+	during tests.  Useful to detect if by any mistake the wrong module is
+	picked up.
+
+2017-03-02  Werner Koch  <wk@gnupg.org>
+
+	core: Fix minor code style thing.
+	+ commit ef035f079fb067f207e5477d5ed6c5a68fb41f59
+	* src/engine-gpg.c (gpg_add_algo_usage_expire): Use double parenthesis
+	for bit tests.
+
+2017-03-02  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Add subkey keygrip to API.
+	+ commit 8071a6b2ca33c2a46ed1d50ae7283241daaafcd3
+	* lang/cpp/src/key.cpp (Subkey::keyGrip): New.
+	* lang/cpp/src/key.h: Update accordingly.
+
+2017-03-01  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Add interactor to generate keys on smartcard.
+	+ commit d63258066d008de113ed1170f1b0e787a5bdaba1
+	* lang/cpp/src/editinteractor.cpp (EditInteractor::needsNoResponse):
+	Handle new states.
+	* lang/cpp/src/gpggencardkeyinteractor.cpp,
+	lang/cpp/src/gpggencardkeyinteractor.h: New.
+	* lang/cpp/src/Makefile.am: Update accordingly.
+
+	qt: Allow creation of default keys without name.
+	+ commit fbafb5474d8898ba1b267f4b4dfbefe39f04e72f
+	* lang/qt/src/defaultkeygenerationjob.cpp
+	(DefaultKeyGenerationJob::start): Handle empty name and email.
+
+2017-02-26  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	doc: Correct documentation for recp arg of gpgme_op_encrypt_sign_start.
+	+ commit 5b49095b89b07591c69827df3973ffabfb3e97b8
+	* doc/gpgme.texi (gpgme_op_encrypt_sign_start): recp is an array of
+	gpgme_key_t, not a single element.
+
+2017-02-20  Justus Winter  <justus@g10code.com>
+
+	python: Fix test.
+	+ commit a7c6353edab57b67180aa127ec77d9353c2366fb
+	* lang/python/tests/t-quick-key-manipulation.py: Modify the
+	configuration file in the ephemeral home directory, not the one used
+	by all the tests.
+
+2017-02-17  Justus Winter  <justus@g10code.com>
+
+	python: Support manipulating the TOFU policy.
+	+ commit 15fbac9e72a4d1bff9a3b9e9822f9175b09fbcd5
+	* NEWS: Update.
+	* doc/gpgme.texi: Fix typos.
+	* lang/python/gpg/constants/__init__.py: Import new files.
+	* lang/python/gpg/constants/tofu/__init__.py: New file.
+	* lang/python/gpg/constants/tofu/policy.py: New file.
+	* lang/python/gpg/core.py (Context.key_tofu_policy): New function.
+	* lang/python/gpgme.i: Nice reprs for gpgme_tofu_info_t.
+	* lang/python/setup.py.in: Install new package.
+	* lang/python/tests/t-quick-key-manipulation.py: Extend test.
+
+	python: Support quick key signing.
+	+ commit 48634e651fcd02431c0518d42ada1f3b402feb2c
+	* NEWS: Update.
+	* doc/gpgme.texi (gpgme_op_keysign): Fix the description of the
+	'expire' argument.
+	* lang/python/gpg/constants/__init__.py: Import new file.
+	* lang/python/gpg/constants/keysign.py: New file.
+	* lang/python/gpg/core.py (Context.key_sign): New function.
+	* lang/python/tests/Makefile.am (py_tests): Add new test.
+	* lang/python/tests/t-quick-key-signing.py: New test.
+
+	python: Fix teardown of ephemeral contexts.
+	+ commit de8494b16bc50c60a8438f2cae1f8c88e8949f7a
+	* lang/python/tests/support.py (EphemeralContext): New function.
+	* lang/python/tests/t-quick-key-creation.py: Use the new function to
+	manage ephemeral contexts.
+	* lang/python/tests/t-quick-key-manipulation.py: Likewise.
+	* lang/python/tests/t-quick-subkey-creation.py: Likewise.
+
+	python: Fix using strings as commands in the assuan protocol.
+	+ commit 9350168a1eed3f055040d7cc8a9bf4cdf745b23a
+	* lang/python/gpg/core.py (Context.assuan_transact): Fix testing
+	whether the command is a string on Python2.
+	* lang/python/tests/t-protocol-assuan.py: Improve the test to detect
+	this problem.
+
+2017-02-16  Justus Winter  <justus@g10code.com>
+
+	python: Support adding and revoking UIDs.
+	+ commit 7641b7b5f2c9d5b38c60cd9326bcb4810c37dae5
+	* NEWS: Update.
+	* lang/python/gpg/core.py (Context.key_add_uid): New function.
+	(Context.key_revoke_uid): Likewise.
+	* lang/python/tests/Makefile.am (XTESTS): Add new test.
+	* lang/python/tests/t-quick-key-manipulation.py: New file.
+
+	python: Support quick subkey creation.
+	+ commit 13bace25e3d8422f93fd24919994be36042fd220
+	* NEWS: Update.
+	* lang/python/gpg/core.py (Context.create_subkey): New function.
+	* lang/python/tests/Makefile.am (XTESTS): Add new test.
+	* lang/python/tests/t-quick-subkey-creation.py: New file.
+
+	python: Support quick key creation.
+	+ commit 476b97822b169c30cc246c1de2ff94cf89084706
+	* NEWS: Update.
+	* lang/python/gpg/constants/__init__.py: Import new file.
+	* lang/python/gpg/constants/create.py: New file.
+	* lang/python/gpg/core.py (Context.create_key): New function.
+	* lang/python/tests/Makefile.am (XTESTS): Add new test.
+	* lang/python/tests/support.py (TemporaryDirectory): New class.
+	* lang/python/tests/t-quick-key-creation.py: New file.
+
+	python: Fix passphrase callback wrapping.
+	+ commit 3bdce4aa3ddd4a3f55b24678faf978d61daa8909
+	* lang/python/helpers.c (pyPassphraseCb): Cope with 'passphrase_info'
+	being NULL.
+
+	python: Fix error handling.
+	+ commit 048c5f74b61d5e4fa7617ce7c9111c6754bd4409
+	* lang/python/gpgme.i (typemap gpgme_key_t[]): Set an error if a
+	non-key element is discovered.
+
+2017-02-15  Justus Winter  <justus@g10code.com>
+
+	core: Fix expiration time handling when creating keys.
+	+ commit de708e5934cda380dbc3ae51f587c09041de7562
+	* NEWS: Update.
+	* doc/gpgme.texi (gpgme_op_createkey): Clarify the meaning of the
+	'expire' parameter.
+	(GPGME_CREATE_NOEXPIRE): Document new flag.
+	(gpgme_op_createsubkey): Clarify the meaning of the 'expire'
+	parameter.
+	* src/engine-gpg.c (gpg_add_algo_usage_expire): Fix handling of the
+	expiration time.
+	* src/gpgme.h.in (GPGME_CREATE_NOEXPIRE): New macro.
+
+	python: Fix build system integration.
+	+ commit 27544d0a74267ab6057dc816ea3311bc9149a200
+	* lang/python/Makefile.am (copystamp): Also copy the setup script, and
+	link the header files.
+	(all-local): Use local setup script.
+	(sdist): Fix Python source distribution creation.
+	(CLEANFILES): Remove now obsolete files.
+	(install-exec-local): Use local setup script.
+	* lang/python/setup.py.in: Adjust relative paths to in-tree files.
+
+	python: Update lists of functions returning gpgme_error_t.
+	+ commit 25f0435a0022a70af77660d72d33f17bec2d4e51
+	* lang/python/gpg/core.py (Context._errorcheck): Add instructions how
+	to update the list.  Update list.
+	(Data._errorcheck): Likewise.
+	(Context.set_engine_info): Simplify.
+
+	core: Fix error types.
+	+ commit 6df6e01ed5a581765d245bf7303cda4497d0eb22
+	* NEWS: Update.
+	* src/data.c (gpgme_data_set_flag): Return a 'gpgme_error_t'.
+	* src/error.c (gpgme_strerror_r): Fix type of first argument.
+	* src/gpgme.h.in (gpgme_strerror_r): Adapt.
+	(gpgme_data_set_flag): Likewise.
+
+2017-02-14  Justus Winter  <justus@g10code.com>
+
+	python: Wrap utility functions.
+	+ commit 92adc9bbf640eb5d9177d3ba0189e0f6cee4e995
+	* NEWS: Update.
+	* lang/python/gpg/core.py (pubkey_algo_string): New function.
+	(pubkey_algo_name): Add docstring.
+	(hash_algo_name): Likewise.
+	(get_protocol_name): Likewise.
+	(addrspec_from_uid): New function.
+	* lang/python/gpgme.i (gpgme_pubkey_algo_string): Result must be
+	freed.
+	(gpgme_addrspec_from_uid): Likewise.
+
+	python: Use the correct function to free buffers.
+	+ commit 9fc9533c2835ec53c4fd4f822b09e9fec14626d0
+	* lang/python/gpgme.i (char *): Free using 'gpgme_free'.
+
+	python: Add keylist mode parameter.
+	+ commit fdc4e33dc3f6c84fe9d7bf9795c603ae3cf5f28d
+	* NEWS: Update.
+	* lang/python/gpg/core.py (Context.keylist): Add 'mode' parameter.
+
+	python: Nicer repr for user ids.
+	+ commit e17ab84129045512cf60c221ee43aa877507662f
+	* lang/python/gpgme.i (_gpgme_user_id): Provide a nicer repr() for
+	user ids.
+
+	python: Add convenience functions for the home directory.
+	+ commit 99b7f4f34dd595579181a696ae976a678fe00d49
+	* NEWS: Update.
+	* lang/python/gpg/core.py (Context.__init__): Add 'home_dir' argument.
+	(__repr__): Include 'home_dir'.
+	(Context.home_dir): New property.
+
+	qt: Make sure to remove the tofu.db on clean.
+	+ commit 30a603580e0f196c721fa4bd44d24077d9bc06c3
+	* lang/qt/tests/Makefile.am (CLEANFILES): Add 'tofu.db'.
+
+2017-02-14  Tobias Mueller  <muelli@cryptobitch.de>
+
+	python: Extend SWIG gpgme_{sub,}key with a __repr__ method.
+	+ commit 01d5c17587578c729bbbb60f8a65635975e35592
+	* lang/python/gpgme.i: Added a genericrepr macro and use it for
+	gpgme_key, gpgme_subkey, and gpgme_key_sig.
+
+	python: Remove the -builtin flag for SWIG.
+	+ commit aa49be1ab80c200ab6b62d33bf5d0f5aa334fc56
+	* lang/python/setup.py.in: Call SWIG without the builtin flag.
+
+	python: Call SWIG_NewPointerObj rather than SWIG_Python_NewPointerObj.
+	+ commit d35651917097ae2eee7d52396d53d010bc34df19
+	* lang/python/gpgme.i (pygpgme_wrap_gpgme_data_t): Provide a "self"
+	variable for SWIG_NewPointerObj and call SWIG_NewPointerObj rather than
+	SWIG_Python_NewPointerObj.
+
+	python: Conditionally provide py3 argument to SWIG.
+	+ commit d184dbbba8987d9f387feb25791ed891e108dabc
+	* lang/python/setup.py.in: Only call with -py3 when we run under python3
+	or higher.
+
+2017-02-13  Justus Winter  <justus@g10code.com>
+
+	python: Use one copy of the source tree per Python version.
+	+ commit fe65a26ab584bd70fad45c7c4d44330e30a748a4
+	* lang/python/Makefile.am (copystamp): Create one copy per Python
+	version.
+	(all-local): Adapt.
+	(clean-local): Likewise.
+	(install-exec-local): Likewise.
+	* lang/python/tests/run-tests.py: Likewise.
+
+	build: Use macOS' compatibility macros to enable all features.
+	+ commit 60273e8b2c11d42215a5707bc55e3e0d8f350e07
+	* configure.ac: On macOS, use the compatibility macros to expose every
+	feature of the libc.  This is the equivalent of _GNU_SOURCE on GNU
+	libc.
+
+	Revert "Disable fd-passing for Apple."
+	+ commit f8db658f8b4c3c7941d0029273fb23fbe1ba74ad
+	The actual bug has been located, so this can be reverted.
+
+	This reverts commit ef5b4ae37d13142e89a051908dc080cda3d24baa.
+
+2017-02-13  Igor Gnatenko  <ignatenkobrain@fedoraproject.org>
+
+	qt: Add missing #include <functional>
+	+ commit 60064c665ec98a2a994fc6c8ad701e60b963ce7e
+	* lang/qt/src/qgpgmenewcryptoconfig.cpp,
+	lang/qt/src/threadedjobmixin.h: Include functional.
+
+2017-02-07  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Don't rely on implicit include in t-verify.
+	+ commit 903bf16a416b1bf608b1e647937c9b06864b0141
+	* lang/qt/tests/t-various.cpp: Include QTemporaryDir
+
+2017-02-06  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
+
+	doc: Document that gpgme_op_genkey() parms parameter is not XML.
+	+ commit ad22bee5387b1e9a40e8c822a081db3228bb9def
+	* doc/gpgme.texi (GnupgKeyParms): document that input format is not
+	true XML.
+
+2017-02-03  Werner Koch  <wk@gnupg.org>
+
+	core: Optimize fork/exec for *BSD and Solaris.
+	+ commit 51bd69f216a9e2930eeba4b5f6c20e952a381720
+	* configure.ac (closefrom): Add to ac_check_funcs.
+	* src/posix-io.c (_gpgme_io_spawn): Use closefrom.
+
+	core: Fix possible deadlock due to get_max_fds.
+	+ commit 93a59070c699d569d1eac7ba22355fe3f5d10882
+	* src/posix-io.c (get_max_fds): Do not use the Linux optimization.
+
+	core: Minor cleanup of commit 195c735.
+	+ commit afc308598d1ddaf20d54b4eab30b959066a4e5e6
+	* src/verify.c (parse_tofu_user): For cleanness use gpg_error ...
+	(_gpgme_verify_status_handler): ... and gpg_err_code.
+
+2017-02-02  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Add test for tofu conflict.
+	+ commit 43160a39f27f6c3507447620666c85af00b3499c
+	* lang/qt/tests/t-tofuinfo.cpp (TofuInfoTest::testTofuConflict): New.
+
+	core: Handle multiple TOFU_USER lines in verify.
+	+ commit 195c73589232160f45d00f4901c9bb2b0162f0e5
+	* src/verify.c (op_data_t): Add conflict_user_seen.
+	(parse_tofu_user): Return ERR_DUP_VALUE for mutltiple TOFU_USERS.
+	(_gpgme_verify_status_handler): Handle ERR_DUP_VALUE from
+	parse_tofu_user to ignore the next TOFU_STATS.
+
+2017-02-02  Werner Koch  <wk@gnupg.org>
+
+	core: Replace all calls to *sprintf by gpgrt_*sprintf.
+	+ commit 15050ce5fce4ed815503db7c029abb38d08970d6
+	* configure.ac (vasprintf): Remove check.
+	* src/vasprintf.c: Remove file.
+	* src/util.h (vasprintf, asprintf): Remove prototypes.  Replace all
+	calls to vasprintf and asprintf by gpgrt_vasprintf or gpgrt_asprintf.
+	Also take care to use gpgrt_free on the returned value.
+	* src/w32-util.c (_gpgme_get_gpgconf_path): Replace a gpgrt_asprintf
+	by _gpgme_strconcat.
+	(snprintf): New macro to use gpgrt_snprintf instead of the system's
+	standard snprintf.
+
+	core: Remove unused check for funopen/fopencookie.
+	+ commit 563420a88f8a4f561a2faea4d2b4a1c58b375fd8
+	* configure.ac (funopen): Remove check.
+	* src/funopen.c: Remove file.
+
+	core: Un-deprecate gpgme_data_rewind.
+	+ commit d19bea52afe6efb66a46af6aa4d09928c5d05ee5
+	* src/gpgme.h.in (gpgme_data_rewind): Un-deprecate.
+	* src/data-compat.c (gpgme_data_rewind): Move to ...
+	* src/data.c (gpgme_data_rewind): here.
+
+	core: Move all deprecated stuff to the end of gpgme.h.
+	+ commit 9b7d81998b734fabeb4fbc697f08fc7795eaa90a
+
+
+2017-02-01  Andre Heinecke  <aheinecke@intevation.de>
+
+	core: Cleanup gpgme_key_unref frees.
+	+ commit 8ede86795a1d419c01b4910ec2fd1fb18b629452
+	* src/key.c (gpgme_key_unref): Nowadays we assume free(NULL) is ok.
+
+	core: Fix leakage of address for mail only uids.
+	+ commit b5075030bec9b21bf4e515bc1686df3fa43eced2
+	* src/key.c (gpgme_key_unref): Always free address if set.
+	(_gpgme_key_append_name): Remove memory optimization for address.
+
+	core: Improve mailbox only uid handling.
+	+ commit a28d31fdb623f2ee30e8094d09f1a0d1ae446a9b
+	* src/key.c (_gpgme_key_append_name): Set email and remove name
+	for uid only keys.
+
+2017-01-31  Justus Winter  <justus@g10code.com>
+
+	qt: Increase timeout when waiting for signals.
+	+ commit ba594d85e35e63301755977234d3af88a167a215
+	* lang/qt/tests/t-support.h (QSIGNALSPY_TIMEOUT): New macro.
+	* lang/qt/tests/t-encrypt.cpp: Use the new macro as timeout when
+	waiting for signals.
+	* lang/qt/tests/t-keylist.cpp: Likewise.
+	* lang/qt/tests/t-keylocate.cpp: Likewise.
+	* lang/qt/tests/t-ownertrust.cpp: Likewise.
+	* lang/qt/tests/t-wkspublish.cpp: Likewise.
+
+2017-01-31  Werner Koch  <wk@gnupg.org>
+
+	core: Add new context flag "redraw".
+	+ commit 752d3597ef02a95efd693373132bf1e246f0edb0
+	* src/context.h (struct gpgme_context): New field 'redraw_suggested'.
+	* src/op-support.c (_gpgme_op_reset): Clear REDRAW_SUGGESTED.
+	* src/progress.c (_gpgme_progress_status_handler): Set REDRAW_SUGGESTED.
+	* src/gpgme.c (gpgme_set_ctx_flag, gpgme_get_ctx_flag): Add "redraw".
+	* tests/run-sign.c (main): Use it.
+
+2017-01-30  Andre Heinecke  <aheinecke@intevation.de>
+
+	tests: Reduce iterations / threads.
+	+ commit 7bd6ab4a91d43d7cbf5d347c0c12e0e4f9f7e3bf
+	* tests/gpg/t-gpgconf.c (main): Reduce iterations to 10.
+	* tests/gpg/t-thread-keylist-verify.c,
+	tests/gpg/t-thread-keylist.c (THREAD_COUNT): Reduce to 10.
+
+2017-01-26  Andre Heinecke  <aheinecke@intevation.de>
+
+	python: Ensure quick-random is used if gpg is gpg2.
+	+ commit f3ca2c9ce9fd4a03e293065f10b92589a7e642d6
+	* lang/python/tests/Makefile.am (gpg.conf): Configure
+	agent-program accordingly.
+
+2017-01-25  Tobias Mueller  <muelli@cryptobitch.de>
+
+	python: default op_keylist_start parameters.
+	+ commit 9291ebaa4151a1f6c8c0601095ec45809b963383
+	* lang/python/gpgme.i: Added gpgme_op_keylist_start with defaults
+	* lang/python/tests/t-keylist.py: Added tests for default parameters
+
+2017-01-25  Andre Heinecke  <aheinecke@intevation.de>
+
+	tests: Use --debug-quick-random for tests.
+	+ commit a98951a30a6ae603ffac4ec8c5168aa6d1019933
+	* tests/start-stop-agent: Don't autostart agent on --stop and
+	running check. Use --debug-quick-random when starting.
+
+2017-01-23  Justus Winter  <justus@g10code.com>
+
+	w32: Fix closing file descriptors.
+	+ commit 6f02133bb07726afa6950e5b4685e75621276e60
+	* src/w32-io.c (writer): Only stop once the buffer is drained.
+	(destroy_writer): Wait for the writers buffer to be drained.  This
+	aligns '_gpgme_io_close's behavior with close(2) and fclose(3).
+
+2017-01-17  Andre Heinecke  <aheinecke@intevation.de>
+
+	tests: Add safeguards against nullptr deref.
+	+ commit ca69df8c8d3f044340aee2a118cc20d33cd600a1
+	* t-gpgconf.c (main): Test some values before dereferencing them.
+
+2017-01-16  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Use QVERIFY instead of Q_ASSERT in conf test.
+	+ commit abfd241d1a1ae8e30e18b7c5e0658b8c54d89544
+	* lang/qt/tests/t-config.cpp: Use QVERIFY instead of Q_ASSERT.
+
+	qt: Add test for CryptoConfig.
+	+ commit 8aba08d1d0871f439fb7193adc4a2f43a81ee216
+	* lang/qt/tests/t-config.cpp: New.
+	* lang/qt/tests/Makefile.am: Update accordingly.
+
+2017-01-16  Justus Winter  <justus@g10code.com>
+
+	tests: Fix distcheck.
+	+ commit 92543da94cbf8e807b1b33070d273f995cdd5c62
+	* tests/gpg/Makefile.am (CLEANFILES): Remove gpgconf backups.
+
+	Fix changing options with gpgconf.
+	+ commit 0e242278dfaa64ce31a45b72f5fa0806a3dba898
+	* src/engine-gpgconf.c (gpgconf_write): Connect a pipe to the child's
+	stderr, and wait for it to be closed as an indication that gpgconf has
+	exited.  Also improve error handling.
+
+2017-01-12  Justus Winter  <justus@g10code.com>
+
+	tests: Improve the gpgconf test.
+	+ commit 186dcd3494eda7383de57a530fd15776410531a5
+	* tests/gpg/t-gpgconf.c: Include support functions.
+	(fail_if_err): Remove macro.
+	(init_gpgme): Remove function.
+	(lookup): New function.
+	(main): Update some values and verify that the changes are applied.
+	* tests/gpg/t-support.h (test): New assert-like macro.
+
+2017-01-12  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Add support for stringValueList in CryptoConf.
+	+ commit 9640dc58e498966b482dcded6990cf4b47c556ac
+	* lang/qt/src/Makefile.am (qgpgme_sources): Add cryptoconfig.cpp
+	* lang/qt/src/cryptoconfig.cpp: New.
+	* lang/qt/src/cryptoconfig.h (CryptoConfigEntry::stringValueList):
+	New.
+	* lang/qt/src/qgpgmenewcryptoconfig.cpp
+	(QGpgMENewCryptoConfigEntry::stringValueList): New.
+	* lang/qt/src/qgpgmenewcryptoconfig.h: Update accordingly.
+
+	qt: Don't use qstrdup in test passphrase cb.
+	+ commit a09ed3f26a1fab54079c37c49df5c440cc792f78
+	* lang/qt/tests/t-support.h (TestPassphraseProvider::getPassphrase):
+	Use gpgrt_asprintf instead of strdup.
+
+2017-01-11  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Clean up test dirs on failure.
+	+ commit 56926c9b5012e8135541a933af1d69c5a81f02b3
+	* t-encrypt.cpp,
+	t-keylist.cpp,
+	t-keylocate.cpp,
+	t-ownertrust.cpp,
+	t-tofuinfo.cpp,
+	t-various.cpp,
+	t-verify.cpp,
+	t-wkspublish.cpp: Use QVERIFY instead of Q_ASSERT
+
+	qt: Add test for uid functions.
+	+ commit 9e643ab67168dfbd189ccc0bfed8fb59253ee79c
+	* lang/qt/tests/t-various.cpp: New.
+	* lang/qt/tests/Makefile.am: Update accordingly.
+
+	cpp: Add revuid and adduid support.
+	+ commit e416f9961837039f259558edf41fccbc181ad128
+	* lang/cpp/src/context.cpp
+	(Context::revUid, Context::startRevUid),
+	(Context::addUid, Context::startAddUid): New.
+	* lang/cpp/src/context.h: Declare new functions.
+	* lang/cpp/src/key.cpp (Key::UserID::revoke)
+	(Key::addUid): Idomatic helpers.
+	lang/cpp/src/key.h: Declare new functions.
+	* NEWS: Update accordingly.
+
+	Fix Qgpgme build for macos.
+	+ commit efe58fe011f195d98adb4f03b1e1068a26ba287b
+	* lang/qt/src/dn.cpp: Include string.h
+	(parse_dn_part): Use qstrdup.
+	* lang/qt/tests/t-support.h (getPassphrase): Use qstrdup.
+
+	Fix cmake configuration files for MacOS.
+	+ commit 2e661b9e1a9b50656a5c9646d7444a98477010c1
+	* configure.ac: Set HAVE_MACOS_SYSTEM conditional.
+	* lang/qt/src/Makefile.am,
+	lang/cpp/src/Makefile.am,
+	lang/qt/src/QGpgmeConfig.cmake.in.in,
+	lang/cpp/src/GpgmeConfig.cmake.in.in: Use libsuffix again to
+	distinguish between macos .dylib
+
+2017-01-03  Justus Winter  <justus@g10code.com>
+
+	python: Improve compatibility with Scheme tests.
+	+ commit b14419f68b3aaa90025e0e97151de7c3da7806fb
+	* lang/python/tests/run-tests.py: Add stub --parallel option.
+
+	python: Add a switch '--quiet' to the test runner.
+	+ commit d0e91d28f63b74e53673902e675be8a54b6b90d3
+	* lang/python/tests/run-tests.py: Add and honor a switch '--quiet'.
+	This way we can use this script to run Python tests one by one without
+	the noise, and the script will setup the necessary environment for us.
+
+2017-01-02  Andre Heinecke  <aheinecke@intevation.de>
+
+	qt: Update config sync doc / comment.
+	+ commit ececfd5de81f1851943be7b284b672d5b02aceb4
+	* lang/qt/src/cryptoconfig.h (CryptoConfig::sync): Document
+	that runtime option is always set.
+	* lang/qt/Src/qgpgmenewcryptoconfig.cpp
+	(QGpgMENewCryptoConfigComponent::sync): Remove outdated comment
+	and warn on error.
+
+	core: Always use runtime for gpgconf changes.
+	+ commit 7103315829847163f1c6f52cad25d1ddb33358f0
+	* src/engine-gpgconf.c (gpgconf_write): Add --runtime.
+	* src/gpgme.h.in (gpgme_conf_opt_change): Document this
+	behavior.
+
+2017-01-01  Ben Kibbey  <bjk@luxsci.net>
+
+	Fix gpg_addkey() to work with GPGME_CREATE_NOPASSWD as well.
+	+ commit a4b9f1a2b404fd8627d5ac567617510abd55d980
+	* src/engine-gpg.c (gpg_addkey): Pass --batch to gpg when
+	GPGME_CREATE_NOPASSWD is set to fix pinentry without loopback mode.
+
+2016-12-27  Ben Kibbey  <bjk@luxsci.net>
+
+	Fix GPGME_CREATE_NOPASSWD without pinentry loopback.
+	+ commit d83b8f0dc84d6cf7fe2e091bd1b103ceedfa3d6c
+	* src/engine-gpg.c(gpg_createkey): Pass --batch to gpg when
+	GPGME_CREATE_NOPASSWD is set.
+
+2016-12-19  Raphael Kubo da Costa  <rakuco@FreeBSD.org>
+
+	Qt: Make sure extended grep is used with '|'.
+	+ commit 211844f049d714cd4d5aab96347705cb0c209c5d
+	* m4/qt.m4: Use grep -E when using the alternation character.
+
+2016-12-16  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Ensure that hasSecret is correct after update.
+	+ commit da5343a9d2c8c0ca6431162aac4bd5c73b4ae6dd
+	* lang/cpp/src/key.cpp (Key::update): Check for
+	a secret key first before listing public keys.
+
+2016-12-15  Andre Heinecke  <aheinecke@intevation.de>
+
+	cpp: Fix addrSpec for keys without email.
+	+ commit 85e05537e15346896a271d3f62bead9dd7e3f180
+	* lang/cpp/src/key.cpp (UserID::addrSpec): Use uid->address instead
+	of normalizing again.
+	(&operator<<(std::ostream &, const UserID &): Print it.
+
+	cpp: Fix update of partial key in verifyresult.
+	+ commit 5673f3e54af535155893290a685b3afb44c7f58d
+	* lang/cpp/src/verificationresult.cpp
+	(Signature::key(bool,bool)): Don't update the returned copy
+	but the actual key of the signature.
+
+2016-12-07  Andre Heinecke  <aheinecke@intevation.de>
+
+	Clarify what "checking on bit" means.
+	+ commit 7880335273382f05cbbe38aa965a566c4127ba6a
+	* doc/gpgme.texi (gpgme_sigsum_t summary): Clarify what "you
+	can check one bit means"
+
+2016-12-05  Tobias Mueller  <muelli@cryptobitch.de>
+
+	python: Try to be more helpful when given a string to encrypt().
+	+ commit 05896c210f7fa9ce7b97784a75e49dc4489e9252
+	* lang/python/helpers.c (_gpg_obj2gpgme_data_t): Extended error
+	message.
+	* lang/python/tests/t-encrypt.py: Test for "encode" in error message.
+
+	python: Define a macro for wrapping fragile result objects.
+	+ commit fb7f4cb973abc9f5eb05eb240607be35c1be986c
+	* lang/python/gpgme.i (wrapresult): New Macro.
+
+2016-12-01  Tobias Mueller  <muelli@cryptobitch.de>
+
+	python: Check "buffer" when writing to sys.stdout for python2 compat.
+	+ commit ae21d2705fc46725e1f9af1651b68d16155d1501
+	* lang/python/tests/support.py (print_data): Add check for buffer.
+
+	python: Make Context have a repr method.
+	+ commit 154389f2a5e4c13081cf0624222aad29ee480b56
+	* lang/python/gpg/core.py (Context.__repr__): New function.
+
+	python: Make Results have a nicer __repr__.
+	+ commit db2f6c1ca3d2ef228f4ca6653d594537622c8588
+	* lang/python/gpg/results.py (Result.__str__): Renamed to '__repr__'
+	...
+	* lang/python/gpg/results.py (Result.__repr__): ... and added fields.
+
+2016-11-25  Justus Winter  <justus@g10code.com>
+
+	python: Fix removing the TOFU database.
+	+ commit fd4d476214ae06e33f4a6dac534d3deca5cc6cd3
+	* lang/python/Makefile.am (CLEANFILES): Move 'tofu.db'...
+	* lang/python/tests/Makefile.am (CLEANFILES): ... here.
+
+	tests: Remove tofu.db.
+	+ commit 9b22f82afc5518961e4bea1fc516b79800e379a2
+	* lang/python/Makefile.am (CLEANFILES): Add 'tofu.db'.
+	* tests/gpg/Makefile.am (CLEANFILES): Likewise.
+
+2016-11-17  Heiko Becker  <heirecka@exherbo.org>
+
+	Remove a forgotten instance of @libsuffix@
+	+ commit 572c1aac107125ce62230251713349348373db5a
+	* lang/cpp/src/GpgmeppConfig.cmake.in.in: Remove a forgotten
+	instance of @libsuffix@.
+
 2016-11-16  Werner Koch  <wk@gnupg.org>
 
 	Release 1.8.0.
+	+ commit f06220b691e9711afdabaa19886244ae7724eed5
 	* configure.ac: Set version to 1.8.0.  Set LT version C28/A17/RO.
 	Set CPP LT version to C9/A3/R0.  Set Qt LT version to C8/A1/R0.
 
 	core: Do not leak the override session key to ps(1).
+	+ commit 9fc92a15bd0a30437a39d0eb28b6f40edc22e6e8
 	* src/engine-gpg.c (struct engine_gpg): New field
 	override_session_key.
 	(gpg_release): Free that field.
@@ -15,6 +955,7 @@
 2016-11-16  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
 
 	doc,tests: Require use of ctx_flag before use of session_key.
+	+ commit 573064742145aa5f9bf04baa88af918c0c4d5e12
 	* doc/gpgme.texi: Document requirements of verifying that it is OK to
 	use session_key.
 	* tests/run-decrypt.c: Ensure that we fail if we're unable to access
@@ -39,6 +980,7 @@
 2016-11-15  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt, cpp: Add cmake config files for w32.
+	+ commit b2c07bd47bd608afa5cc819b60a7b5bb8c9dd96a
 	* lang/cpp/src/GpgmeppConfig-w32.cmake.in.in
 	lang/qt/src/QGpgmeConfig-w32.cmake.in.in: New.
 	* lang/cpp/src/GpgmeppConfig.cmake.in.in,
@@ -48,12 +990,14 @@
 	* configure.ac: Configure them.
 
 	qt: Use new style connect in th..mixin.
+	+ commit 45abe6d142e314ba7099ad80b6365af171b06fec
 	* lang/qt/src/threadedjobmixin.h
 	(ThreadedJobMixin::lateInitialization): Use new style connect.
 
 2016-11-15  Werner Koch  <wk@gnupg.org>
 
 	core: Implement context flag "override-session-key".
+	+ commit 7659d42468b604db2936b021425683f407eba4a7
 	* src/gpgme.c (gpgme_set_ctx_flag): Add flags "export-session-key" and
 	"override-session-key".
 	(gpgme_get_ctx_flag): Ditto.
@@ -82,6 +1026,7 @@
 	(main): Add options --export-session-key and --override-session-key.
 
 	core: Add public function gpgme_get_ctx_flag.
+	+ commit 3234b1bf1d6939772677d64f6c1e1820ec98e3cd
 	* src/gpgme.h.in (gpgme_get_ctx_flag): New.
 	* src/gpgme.c (gpgme_set_ctx_flag): Move down the file and add a trace
 	statement.
@@ -91,6 +1036,7 @@
 2016-11-15  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
 
 	core: Enable extraction of session keys.
+	+ commit cad1210fb8a7402cb29e607f8f9680005314120d
 	* src/gpgme.c (gpgme_set_export_session_keys): New function.
 	(gpgme_get_export_session_keys): New function.
 	* src/gpgme.h.in (struct _gpgme_op_decrypt_result): Add session_key
@@ -127,6 +1073,7 @@
 2016-11-14  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Add API to get the context for a Job.
+	+ commit 9451faa2ee333904cff59f92ab62918e13ab4b87
 	* lang/qt/src/job.cpp,
 	lang/qt/src/job.h (Job::context): New.
 	* lang/qt/src/threadedjobmixin.cpp
@@ -135,14 +1082,17 @@
 	* NEWS: Update for cpp and qt.
 
 	cpp: Add get / set Sender API.
+	+ commit d09a84eaf1e4f8c6c2e462995fa15c1a5690a6ce
 	* cpp/src/context.cpp, cpp/src/context.h (Context::setSender),
 	(Context::getSender): Add simple wrappers.
 
 	qt, cpp: Enable dll build for windows.
+	+ commit f3790ddf56558fb0a08af95fdbae979cd6589aad
 	* lang/cpp/src/Makefile.am,
 	lang/qt/src/Makefile.am: Add -no-undefined to LDFLAGS.
 
 	w32: Fix build of w32-glib.
+	+ commit b91c383386fe9eadd90afdb9bb1f8ec6c528173b
 	* src/Makefile.am (main_sources): Remove system_components_not_extra.
 	(libgpgme_la_SOURCES): Add system_components_not_extra.
 	(libgpgme_glib_la_SOURCES): Remove duplicated ath files.
@@ -150,14 +1100,17 @@
 2016-11-11  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
 
 	doc: Correct deftypefun for gpgme_op_decrypt_verify_start.
+	+ commit 16a30205064914eef578d84d07141b5d51d82838
 	* doc/gpgme.texi: Documentationabout gpgme_op_decrypt_verify_start was
 	stored under the name gpgme_op_decrypt_verify instead.
 
 	doc: Correct text about gpgme_cancel_async.
+	+ commit d50bdb269e86db36a443958e3bfc6816a44d468e
 	* doc/gpgme.texi: Documentation about gpgme_cancel_async should refer
 	to the correct name.
 
 	core: Non-zero values should set _armor, _textmode, and _online.
+	+ commit da035768bd9a880becee5d0d553dfe12299f96eb
 	* src/gpgme.c (gpgme_set_armor, gpgme_set_textmode,
 	gpgme_set_offline): Ensure that non-zero values actually set the
 	appropriate internal bit.
@@ -165,6 +1118,7 @@
 2016-11-11  Alon Bar-Lev  <alon.barlev@gmail.com>
 
 	tests,python: Atomic directory creation.
+	+ commit 41d8c7e51a8989be633b9ada124c58a01fae7d54
 	* lang/python/tests/Makefile.am:  Use MIDIR_P.
 	* tests/gpg/Makefile.am: Ditto.
 	* tests/gpgsm/Makefile.am: Ditto.
@@ -172,17 +1126,20 @@
 2016-11-10  Werner Koch  <wk@gnupg.org>
 
 	core: Use better error code when using select with a too high fd.
+	+ commit 6e57379c8e37c0863f7d12819a5a7d0781bd76d2
 	* src/posix-io.c (_gpgme_io_select): Return EMFILE instead of EBADF.
 
 2016-11-10  Andre Heinecke  <aheinecke@intevation.de>
 
 	tests: Reduce thread count in new thread tests.
+	+ commit ddd0a3cf90ac4b0a27ea610ebd7b9b8016ff43c4
 	* gpg/t-thread-keylist-verify.c,
 	gpg/t-thread-keylist.c: Reduce threads to 100
 
 2016-11-10  Werner Koch  <wk@gnupg.org>
 
 	core: Detect unreadable keyrings.
+	+ commit 2a39bd6c30d21c43c86645a7908ce6c57dad5e20
 	* src/keylist.c (op_data_t): Add field keydb_search_err.
 	(keylist_status_handler): Parse STATUS_ERROR into that var.
 	(gpgme_op_keylist_next): Use that err instead of GPG_ERR_EOF.
@@ -190,12 +1147,14 @@
 2016-11-10  Andre Heinecke  <aheinecke@intevation.de>
 
 	tests: Fix additional memleaks in thread tests.
+	+ commit d0030efb45ec8436dd84a9623d2f66b80c6b9e10
 	* tests/gpg/t-thread-keylist-verify.c (start_verify): Release
 	data.
 	(start_keylist): Unref keys.
 	* tests/gpg/t-thread-keylist.c (start_keylist): Unref keys.
 
 	tests: Improve new thread tests.
+	+ commit 4d5174e4a83dcd524f8085f6646145f81b50a02a
 	* tests/gpg/t-thread-keylist-verify.c (start_keylist): Mark
 	arg as unused. Release context.
 	(start_verify): Ditto.
@@ -205,6 +1164,7 @@
 	(main): Mark args as unused.
 
 	core: Use gpgrt locking for thread safeness.
+	+ commit 09b64554328445e99a8cc78fc34ea49c2ea2e7f9
 	* configure.ac: Require libgpg-error 1.17. No longer
 	check for pthread.
 	* doc/gpgme.texi: Document removed neccessity for thread
@@ -230,11 +1190,13 @@
 2016-11-09  Justus Winter  <justus@g10code.com>
 
 	python: Require at least GPGME 1.7 for out-of-tree builds.
+	+ commit f1f341062e24724e26928d893dd5769d3ccf5fa2
 	* lang/python/setup.py.in: Bump required version to 1.7.
 
 2016-11-09  Werner Koch  <wk@gnupg.org>
 
 	w32: Better protect the IO-system's fd_table.
+	+ commit 10f2e1c30be651e74a03f4563a9f212d7416adb3
 	* src/w32-io.c (fd_table_lock): New.
 	(new_fd): Lock allocation of a new slot.
 	(release_fd): Lock deallocation of a slot.
@@ -242,25 +1204,30 @@
 2016-11-04  Andre Heinecke  <aheinecke@intevation.de>
 
 	cpp: Add API for swdb queries.
+	+ commit 3509cf2f9846360848b6c08d36cbca18373c935e
 	* lang/cpp/src/swdbresult.cpp,
 	 lang/cpp/src/swdbresult.h (SwdbResult): New.
 	* lang/cpp/src/Makefile.am: Update accordingly.
 
 	cpp: Add more EngineInfo::Version ctors.
+	+ commit 512de91f9a8da8f491e09653eb4b5bdd0a027198
 	* lang/cpp/src/engineinfo.h
 	(EngineInfo::Version::Version(const char*)),
 	(EngineInfo::Version::Version()): New.
 
 	cpp: Don't include gpgme.h in tofuinfo header.
+	+ commit 4d3f33d0e9d960df2c34fb4d215987ab4d36111c
 	* lang/cpp/src/tofuinfo.h: Don't include gpgme.h
 
 	cpp: Extend gpgmefw for tofuinfo and swdb query.
+	+ commit 23979b9be5a6028e3e9cafc3aff632bc720b81f2
 	* lang/cpp/src/gpgmefw.h (gpgme_tofu_info_t)
 	(gpgme_query_swdb_result_t): New forwards.
 
 2016-11-04  Werner Koch  <wk@gnupg.org>
 
 	w32: Fix locating gpgconf on 64 bit systems.
+	+ commit df08a0ca3f029b06b7e3a6bd63330df5cb96585a
 	* src/w32-util.c (find_program_at_standard_place): Use access to check
 	whether the binary is at CSIDL_PROGRAM_FILES before testing
 	CSIDL_PROGRAM_FILESX86.
@@ -268,6 +1235,7 @@
 2016-11-03  Werner Koch  <wk@gnupg.org>
 
 	core: Add gpgme_op_query_swdb and helper.
+	+ commit aad94cb7c313d4501bed748f48830cbb93c67e20
 	* src/gpgme.h.in (gpgme_query_swdb_result_t): New.
 	(gpgme_op_query_swdb): New.
 	(gpgme_op_query_swdb_result): New.
@@ -291,12 +1259,14 @@
 2016-11-03  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Change license of export / version header.
+	+ commit 34a4e8017be452e8ead6b9c2da84be1ec7929cae
 	* lang/qt/src/qgpgme_export.h,
 	lang/qt/src/qgpgme_version.h: Change license to GPLv2+
 
 2016-11-03  Werner Koch  <wk@gnupg.org>
 
 	core: Make use of --homedir in gpgconf.
+	+ commit 0c2038c0043c1e79547b55e79c3d3e267dae801c
 	* src/engine-gpgconf.c (struct engine_gpgconf): Add field 'version'.
 	(have_gpgconf_version): New.
 	(gpgconf_release): Free VERSION.
@@ -306,6 +1276,7 @@
 2016-11-02  Andras Mantia  <andras@kdab.com>
 
 	qt: Fix build with g++ 4.8.x.
+	+ commit b4658f6a1110bb0b54bd5dfc9df8e8b390e38d61
 	* lang/qt/src/defaultkeygenerationjob.cpp
 	(DefaultKeyGenerationJob::start): Explicitly connect pointer
 	in the QPointer.
@@ -313,6 +1284,7 @@
 2016-11-02  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt, cpp: Fix versioning in cmake config and header.
+	+ commit bf9aa0ccf7b0165aa3a1af2bdb18daca7c02ce74
 	* configure.ac (VERSION_MAJOR, VERSION_MINOR, VERSION_MICRO): New
 	subst variables for the version header.
 	* lang/cpp/src/GpgmeppConfigVersion.cmake.in,
@@ -321,12 +1293,15 @@
 	lang/qt/src/qgpgme_version.h.in: Use new variables.
 
 	qt: Install cmake config into qgpgme subdir.
+	+ commit b5c4d56cfdcafade3467be100fca6f1c89ecab73
 	* lang/qt/src/Makefile.am: Install cmake config file in qgpgme subdir.
 
 	qt: Require gpgmepp from cmake config script.
+	+ commit 4149194d2e2f2f4d142926ba4d4efbd336b543f2
 	* lang/qt/src/QGpgmeConfig.cmake.in.in: Require cpp.
 
 	qt, cpp: Add all generated files to cleanfiles.
+	+ commit 8486f213423311174ebff5cba74127cbd9bb3c2a
 	* cpp/src/Makefile.am (CLEANFILES),
 	qt/src/Makefile.am (CLEANFILES): Add all generated files
 	to cleanfiles.
@@ -334,11 +1309,13 @@
 2016-11-01  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Add Distinguished Name parser from libkleo.
+	+ commit 627c5deed84b4481710b6c0de06b26e886679bbe
 	* lang/qt/src/dn.cpp (DN, DN::Attribute): New public API.
 	* lang/qt/src/dn.h: New.
 	* lang/qt/src/Makefile.am: Update accordingly.
 
 	qt, cpp: Install version headers in subdirs.
+	+ commit 567123de21247cab05762d799400739a12eb67ae
 	* lang/cpp/src/Makefile.am,
 	lang/qt/src/Makefile.am: Install version headers in include
 	subdirs.
@@ -346,6 +1323,7 @@
 2016-10-31  Justus Winter  <justus@g10code.com>
 
 	python: Use vanity modules for constants in tests and examples.
+	+ commit 4b3264345084a0c9bf9f97fb233df700d7608e66
 	* lang/python/gpg/constants/sig/notation.py: New file.
 	* lang/python/gpg/constants/sig/__init__.py: Import new module.
 
@@ -375,6 +1353,7 @@
 	* lang/python/tests/t-wait.py: Likewise.
 
 	python: Import the topmost module in tests and examples.
+	+ commit 20dc37a0e7e1531b0e568a6ec29b1c2d18de59c3
 	* examples/verifydetails.py: Only import the topmost module 'gpg' and
 	update the code accordingly.
 	* tests/support.py: Likewise.
@@ -400,6 +1379,7 @@
 	* tests/t-wrapper.py: Likewise.
 
 	python: Improve constants module.
+	+ commit 70b7064e5c4f3eff9c296c00156724bc0cdaa64f
 	* lang/python/gpg/constants/__init__.py: Import all modules below
 	'constants/'.  Interface hygiene: delete 'util'.
 	* lang/python/gpg/constants/data/encoding.py: Delete 'util'.
@@ -417,6 +1397,7 @@
 2016-10-31  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
 
 	python: Rename Python module from PyME to gpg.
+	+ commit 2fac017618a76882605125b05ff1f7393fe99860
 	This follows weeks of discussion on the gnupg-devel mailing list.
 	Hopefully it will make it easier for people using Python to use GnuPG
 	in the future.
@@ -424,6 +1405,7 @@
 2016-10-25  Werner Koch  <wk@gnupg.org>
 
 	core: New API functions gpgme_set_sender, gpgme_get_sender.
+	+ commit b8159eadb5636cd9d93ee60c41e75d5978927870
 	* src/context.h (struct gpgme_context): Add field 'sender'.
 	* src/gpgme.c: Include mbox-util.h.
 	(gpgme_release): Free SENDER.
@@ -446,31 +1428,37 @@
 2016-10-19  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Improve WKSPublishJob apidoc.
+	+ commit 26cbba3c9cb04a68b95f3a6000ac9bd93fe76dd7
 	* lang/qt/src/wkspublishjob.h: Improve doc.
 
 2016-10-18  Werner Koch  <wk@gnupg.org>
 
 	Release 1.7.1.
+	+ commit 2c490cdb3e50761c498357982445ebb01f18dc1e
 	* configure.ac: Set LT version to C27/A16/R0.  Note that the LT
 	versions for cpp and Qt have already been updated.
 
 2016-10-14  Werner Koch  <wk@gnupg.org>
 
 	tests: Make t-cancel more portable.
+	+ commit 05e8e1260baa5cbc6f1d6e387e642c1f6c188d44
 	* tests/gpg/t-cancel.c: Include sys/time.h and protect sys/select.h.
 
 	python: Call ln(1) in a portable way.
+	+ commit c6cab5a2bd6e7ed226c6c3f0b78b3f48b47db74c
 	* lang/python/Makefile.am: Specify target dir for ln.
 
 2016-10-14  Andre Heinecke  <aheinecke@intevation.de>
 
 	cpp: Fix init of string from null.
+	+ commit 1e8c34a9192956bb2fe96a7a6a76ff59de8d1c0c
 	* lang/cpp/src/key.cpp (UserID::addrSpecFromString): Check return
 	value before creating the string.
 
 2016-10-13  Justus Winter  <justus@g10code.com>
 
 	python: Make 'get_key' more idiomatic.
+	+ commit f526d0e22e8b881ccbca66b46a0e1b68bbc4cd6b
 	* lang/python/pyme/core.py (Context.get_key): Raise errors.KeyNotFound
 	if the key is not found.  This error is both a KeyError for idiomatic
 	error handling as well as a GPGMEError so we don't break existing
@@ -480,50 +1468,55 @@
 	* lang/python/tests/t-keylist.py: Test the new behavior.
 
 	python: Return public keys by default.
+	+ commit 1e6073ffa98db2c265adbcf0dbbe70c067a910f0
 	* lang/python/pyme/core.py (Core.get_key): Return public keys by
 	default, improve docstring.
 	* lang/python/examples/testCMSgetkey.py: Update example.
 	* lang/python/examples/verifydetails.py: Likewise.
 
-	GnuPG-bug-id: 2751
-
 	python: Fix example.
+	+ commit cabd4c74e52c8983d624b6877cddc7f8912eff04
 	* lang/python/examples/inter-edit.py: Fix example.
-
-	Fixes-commit: a458e7fe
 
 2016-10-13  Andre Heinecke  <aheinecke@intevation.de>
 
 	cpp: Fix version number.
+	+ commit 56302e7bb6a694a7c570f389f9a7883efdfdaf42
 	* configure.ac (LIBGPGMEPP_LT_CURRENT): Bump.
 
 	qt, cpp: Fix permissions of Config files.
+	+ commit a274c7590aa0e38d682d5177904983632f471cb0
 	* lang/cpp/src/Makefile.am,
 	lang/qt/src/Makefile.am: Do not install config files as executable.
 
 	qt: Install SpecialJob.
+	+ commit 2538c12fa0728f4113f83f69f8c8ec9efb163872
 	* lang/qt/src/Makefile.am: Install SpecialJob
 	* NEWS: mention it.
 
 	qt, cpp: Fix expected targets in Config files.
+	+ commit a3cf30f89418c8a6bc9456533d95ba7fc2a33a4c
 	* lang/cpp/src/GpgmeppConfig.cmake.in.in,
 	lang/qt/src/QGpgmeConfig.cmake.in.in: Remove KF5 variants.
 
 2016-10-11  Daniel Vrátil  <dvratil@kde.org>
 
 	qt: Add missing implementation of MultiDeleteJob.
+	+ commit e5a35af5573651b96a90ef4a537b040333595472
 	* lang/qt/src/multideletejob.h: Fix include, cryptobackend.h is now
 	called protocol.h
 	* lang/qt/src/multideletejob.cpp: New file.
 	* lang/qt/src/Makefile.am: Add multideletejob.cpp.
 
 	qt: Install abstractimportjob.h.
+	+ commit ce7385caabb57e5435695cc912acffe2815770b7
 	* lang/cpp/src/Makefile.am: Install abstractimportjob.h since it's
 	included from importjob.h
 
 2016-10-11  Andre Heinecke  <aheinecke@intevation.de>
 
 	cpp: Add API for gpgme_addrspec_from_uid.
+	+ commit 54f94b14e2bb9b38ffd89f509406bfbd012da632
 	* lang/cpp/src/key.cpp (UserID::addrSpecFromString): New static
 	function to expose addrspec from uid.
 	(UserID::addrSpec): New. Get addrSpec from Userid.
@@ -532,29 +1525,35 @@
 2016-10-10  Andre Heinecke  <aheinecke@intevation.de>
 
 	Add NEWS for cpp and qt, bump cpp version.
+	+ commit e7ceb83a5969581f5e1b0b6a69d18a93b594f6d4
 	* NEWS: Add entries for cpp and qt changes.
 	* configure.ac: Bump cpp version because of added API.
 
 	Add convenience function to get key from sig.
+	+ commit b6b820bff14a9aa8fa67755b246c90062ffdba14
 	* lang/cpp/src/verificationresult.cpp (Signature::key(bool, bool)):
 	New. Can be used to search / update the key associcated with this
 	signature.
 
 	cpp: Return null key if the signature had no key.
+	+ commit 34e9dfee81958160f6604849b63369ae4de67417
 	* lang/cpp/src/verificationresult.cpp (Private): Add null key
 	to list when there is no key associated with the signature.
 
 	qt: Add simple verify test.
+	+ commit f131a5e72b0881cafcc3b0a91da8f050af2684a6
 	* lang/qt/tests/t-verify.cpp: New. Small test if a signature
 	returns a key with fingerprint.
 	* lang/qt/tests/Makefile.am: Add new test.
 
 	core: Fix w32 crash in find_program_in_dir.
+	+ commit 098a2da15b1b46b145add623dec0488abd39bd74
 	* src/w32-util.c (find_program_in_dir): Fix call to _gpgme_strconcat.
 
 2016-10-08  Werner Koch  <wk@gnupg.org>
 
 	core: New helper function gpgme_addrspec_from_uid.
+	+ commit 0ea2ff67900c243fff9f689658dcb23d1c0961cd
 	* src/gpgme.h.in: Add gpgme_addrspec_from_uid.
 	* src/gpgme.def, src/libgpgme.vers: Ditto.
 	* src/mbox-util.c (gpgme_addrspec_from_uid): New.
@@ -562,6 +1561,7 @@
 2016-10-06  Justus Winter  <justus@g10code.com>
 
 	Add missing includes.
+	+ commit 857592041b8355cd58a7068c9f2446cf8dc0968f
 	* lang/cpp/src/key.cpp: Include <strings.h> for 'strcasecmp'.
 	* tests/gpg/t-cancel.c: Include <sys/select.h> for 'fd_set' and
 	friends.
@@ -569,9 +1569,11 @@
 2016-10-05  Andre Heinecke  <aheinecke@intevation.de>
 
 	cpp: Bump Revision.
+	+ commit 8033cff441e9ea185531290273ec343f3402703c
 	* configure.ac (LIBGPGMEPP_LT_REVISION): Bump revision.
 
 	qt: Fix spelling error in WKSPublishJob.
+	+ commit 88c7e84ede4b6017cac3a396e8c87c2bd3a2bf58
 	* src/qgpgmewkspublishjob.cpp,
 	src/qgpgmewkspublishjob.h,
 	src/wkspublishjob.h,
@@ -580,13 +1582,16 @@
 	accordingly.
 
 	qt: Disable tests that require a password for 2.0.
+	+ commit 24779c9e2301bd17fd328d65b0383e1cbc944119
 	* lang/qt/tests/t-encrypt.cpp: Disable tests that require
 	a password for 2.0.
 
 	Add warning flags for c++ compiler, too.
+	+ commit 4984cc93db6b55f2420a9abd844c074a5fb4ed0c
 	* configure.ac (CXXFLAGS): Add Wall and Wextra.
 
 	qt: Fix unused variable warnings.
+	+ commit 9d1df990386010e0581b542a76a4f5d85d8d11b5
 	* qt/src/qgpgmenewcryptoconfig.cpp,
 	qt/src/threadedjobmixin.h,
 	qt/tests/t-encrypt.cpp,
@@ -594,30 +1599,36 @@
 	qt/tests/t-wkspublish.cpp: Mark additional variables as unused.
 
 	cpp: Add support for URL Data encodings.
+	+ commit 370ee1aa802ec6a4030a39b2df7d24a0c47e5ac7
 	* lang/cpp/src/data.h (Data::Encoding): Extend enum.
 	* lang/cpp/src/data.cpp (Data::encoding),
 	Data::setEncoding): Support new values.
 
 	cpp: Fix gcc diagnostic push / pop.
+	+ commit 39dd7585f5a7d801942efcb375d6dd46d01d2968
 	* lang/cpp/src/context.cpp: Fix pragmas.
 
 	qt: Disable t-wkspublish test.
+	+ commit 52a91ccc6a25425d4374b77040e30efb6816940f
 	* lang/qt/tests/Makefile.am (TESTS): Remove t-wkspublish.
 
 2016-09-30  Alon Bar-Lev  <alon.barlev@gmail.com>
 
 	python: Link 'data.h' and 'config.h' into the builddir.
+	+ commit 453ab9d24ca48c9e01d21e1454d6b08de1938b76
 	* lang/python/Makefile.am: Link to the files.
 	* lang/python/gpgme.i: Update path.
 	* lang/python/setup.py.in: Do not add the top builddir to the include
 	path.
 
 	python: Add 'prepare' target.
+	+ commit 68fb8371a1dd5f4e05e50b1733f9996d139cbf38
 	* lang/python/Makefile.am: Add 'prepare' target.
 
 2016-09-29  Andre Heinecke  <aheinecke@intevation.de>
 
 	cpp, qt: Handle modified includedir installation.
+	+ commit 7302791c0d308c3284ac24a743035d27a0c0b6ba
 	* lang/cpp/src/Makefile.am,
 	lang/qt/src/Makefile.am: Replace resolved_includedir.
 	* lang/cpp/src/GpgmeppConfig.cmake.in.in,
@@ -627,6 +1638,7 @@
 2016-09-27  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
 
 	Clarify licensing.
+	+ commit 145392f07f42ef23ebcb83a917b4d8e2964e7aa8
 	* src/b64dec.c, src/mbox-util.c, src/mbox-util.h: These three files
 	  are explicitly licensed under LGPL, but their comments suggest that
 	  details about the warranty can be found in the GPL.  Adjust comments
@@ -635,19 +1647,23 @@
 2016-09-27  Justus Winter  <justus@g10code.com>
 
 	tests: Fix check for gpg versions not reporting the critical flag.
+	+ commit a423603f80d9eb653ce9c171662db2175d7456f5
 	* lang/python/tests/t-sig-notation.py: Also blacklist 2.0.x.
 	* tests/gpg/t-sig-notation.c: Likewise.
 
 2016-09-26  Justus Winter  <justus@g10code.com>
 
 	python: Correctly translate to size_t.
+	+ commit c38fabfea0601ed5f61e27e0bf43f8e74c67ce2a
 	* lang/python/gpgme.i: Correctly translate Python number to size_t.
 
 	python: Correctly translate off_t.
+	+ commit 1d80e7374aa3150306c86afe7acdc8e8eb05143f
 	* lang/python/gpgme.i: Improve int/long translations, correctly handle
 	off_t with large file support.
 
 	python: Include 'config.h'.
+	+ commit 3703a4723899d7563937b4b99f5bbe4dd8d3dfed
 	* lang/python/Makefile.am: Pass 'top_builddir' to 'setup.py'.
 	* lang/python/gpgme.i: Include 'config.h'.
 	* lang/python/helpers.c: Likewise.
@@ -657,11 +1673,13 @@
 2016-09-23  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
 
 	Fix spelling.
+	+ commit 95f38652f696476b38a040644eac40b4511d2b32
 	 * lang/cpp/src/context.h, lang/qt/src/protocol.h,
 	   lang/qt/src/wkspublishjob.h, src/data-identify.c, src/engine-gpg.c:
 	   minor spelling cleanup.
 
 	move some file encodings to UTF-8.
+	+ commit a11450eb048df79a3f2b00ebef6d7cab07ad5054
 	* THANKS, doc/ChangeLog-2011, tests/ChangeLog-2011,
 	  tests/gpg/geheim.txt: convert from iso 8859-1 to utf-8.
 	* lang/qt/src/dataprovider.cpp, lang/qt/src/qgpgmerefreshkeysjob.cpp,
@@ -671,10 +1689,12 @@
 2016-09-23  Andre Heinecke  <aheinecke@intevation.de>
 
 	tests: Check data after decryption.
+	+ commit 9b38817968b90caf73f123255fe427691e82fec4
 	* tests/gpgsm/t-decrypt.c (main): Check data matches expected.
 	Only print result if it does not.
 
 	cpp, qt: Include config.h.
+	+ commit a142f187b7ddb2728ec3e1743da4a0c4538ab40a
 	lang/cpp/src/callbacks.cpp,
 	lang/cpp/src/configuration.cpp,
 	lang/cpp/src/context.cpp,
@@ -748,14 +1768,17 @@
 2016-09-22  Werner Koch  <wk@gnupg.org>
 
 	w32: Silence some warnings about unused parameters.
+	+ commit 583aafdd6870a7fb12a34d90993fd0f46928592c
 	* src/assuan-support.c (my_recvmsg, my_sendmsg, my_waitpid)
 	(my_socketpair) [W32]: Mark unused parameters.
 
 	core: Fix error checking in _gpgme_mkstemp.
+	+ commit c447b64d5989845a2ae2cf8fb30a92d2a0bd05af
 	* src/w32-util.c (_gpgme_mkstemp): Fix error checking.
 	(dlopen): Mark FLAGS as unused.
 
 	core: New helper function _gpgme_strconcat.
+	+ commit dc39552d01094eff2bef5f9fcd1c16928909d20e
 	* src/conversion.c: Include stdarg.h.
 	(do_strconcat): New.
 	(_gpgme_strconcat): New.
@@ -773,6 +1796,7 @@
 2016-09-22  Daiki Ueno  <ueno@gnu.org>
 
 	tests: Add test for cancellation.
+	+ commit 7a6543c2dfeef874a34086c8f3eeb1dbdf1ce822
 	* tests/gpg/t-cancel.c: New file.
 	* tests/gpg/Makefile.am (tests_skipped): New variable, default to
 	t-genkey and t-cancel.
@@ -780,19 +1804,23 @@
 	* tests/gpg/.gitignore: Add t-cancel.
 
 	gpg: Add option --exit-on-status-write-error.
+	+ commit dee56820cabde60c43c9bf8281b8d411cb2ad644
 	* src/engine-gpg.c (gpg_new): Add --exit-on-status-write-error if the
 	engine version is latest enough to expect progress output from gpg.
 
 	tests: Fix select usage in t-eventloop.
+	+ commit d0cf6b15121c9b42dbcef243e5ce30c9996a449c
 	* tests/gpg/t-eventloop.c (do_select): Supply timeout value to select.
 
 	doc: Fix minor errors in I/O callback example.
+	+ commit 0aaf1dedd629446ab991fff76581b4b58e4872a0
 	* gpgme.texi (I/O Callback Example): Fix typos, add timeout to select,
 	and initialize mutex as recursive.
 
 2016-09-21  Andreas Stieger  <astieger@suse.com>
 
 	cpp: Avoid missing returns in non-void functions.
+	+ commit ae324b51ffa338b891387bff2657d60c1fd3ae40
 	* lang/cpp/src/context.cpp
 	  (Context::signaturePolicyURL): return nullptr on default
 	  (to_tofu_policy_t): add default case for unknown
@@ -804,14 +1832,17 @@
 2016-09-21  Werner Koch  <wk@gnupg.org>
 
 	Release 1.7.0.
+	+ commit e7ab75379feadcc2894d9d4cde0f16ad0044780d
 	* configure.ac: Bump LT vesion to C26/A15/R0.
 
 	python: Create install dir.
+	+ commit 936928632b02d7cc2ac645543bb03e4c94285f05
 	* lang/python/Makefile.am (install-exec-local): Create dir.
 
 2016-09-20  Werner Koch  <wk@gnupg.org>
 
 	tests: Make "make -j distcheck" work in Python.
+	+ commit 0763357e39d140b068ee9838a5da08be75426d9f
 	* lang/python/Makefile.am (SUBDIRS): Make current dir fist.
 	* lang/python/tests/Makefile.am (xcheck): Depend on pubring-stamp.
 	(CLEANFILES): Remove private-keys-v1.d/gpg-sample.stamp.
@@ -822,47 +1853,54 @@
 	basename.
 
 	tests: Use --batch for gpg import.
+	+ commit bfb6890ded99f040fe8ecf910f927a136e4acfda
 	* lang/python/tests/Makefile.am (./pubring-stamp): Use --batch with
 	GPG to avoid Pinentries during import when using GnuPG >= 2.1.
 	Replace touch by echo.
 	* tests/gpg/Makefile.am (./pubring-stamp): Ditto.
 
 	tests: Improve portability.
+	+ commit 29207bcd3bf4de7264197db6758130375b16d9bb
 	* lang/qt/tests/Makefile.am (clean-local): Avoid non-portable "--"
 	* lang/python/Makefile.am (copystamp): Use well defined cp -R instead
 	of cp -r.
 
 	build: Create swdb file.
+	+ commit df7e92b4d585b7dce919c5a3aab9524f6e183cbe
 	* Makefile.am (distcheck-hook): New.
 	(dist-hook): s/VERSION/PACKAGE_VERSION/ for future compatibility.
 
 2016-09-20  Justus Winter  <justus@g10code.com>
 
 	python: Fix detection of Python available versions.
+	+ commit ef99b74eb12463db7da5806a316e3b55f8097c5c
 	* configure.ac: Test for 'PYTHON_VERSION' as 'AX_PYTHON_DEVEL' sets
 	'PYTHON' but clears the former.
-
-	Fixes-commit: 99db3512
 
 2016-09-19  Andre Heinecke  <aheinecke@intevation.de>
 
 	core: Remove moc artifact.
+	+ commit e3c35147d6adb754d4eb0781a54af2a8f0803663
 	* src/moc_kdpipeiodevice.cpp: Removed.
 	* src/Makefile.am (EXTRA_DIST): Remove moc_kdpipeiodevice.cpp.
 
 	qt: Improve README.
+	+ commit 3f92253e0e476d77aa11463bc51ade367985855f
 	* lang/qt/README: Add more content. Clearly note license difference.
 
 	cpp: Improve README.
+	+ commit 66febf9942c321d30b8770f6aa6cd6ce2315d34f
 	* lang/cpp/README: Add more content, move license to bottom.
 
 	qt: Add debug output for testTofuPolicy.
+	+ commit d438cb59a068b6f076e6bd70d3a2c46bc05ccb5c
 	* lang/qt/tests/t-tofuinfo.cpp (testTofuPolicy): Add
 	debug output.
 
 2016-09-19  Ben Kibbey  <bjk@luxsci.net>
 
 	core: Check for GPG_TTY as well as DISPLAY.
+	+ commit 9d62bacac7826cb73bb18fac7268f3d2df662d7b
 	* src/engine-assuan.c (llass_new): Update --ttyname from GPG_TTY.
 	* src/engine-g13.c (g13_new): Ditto.
 	* src/engine-gpg.c (gpg_new): Ditto.
@@ -872,9 +1910,11 @@
 2016-09-16  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Add test for setting tofu policy.
+	+ commit a8ff34fc3025af4079cede7f8f9fdf40189b8638
 	* lang/qt/tests/t-tofuinfo.cpp (testTofuPolicy): New.
 
 	qt: Add job for tofupolicy.
+	+ commit 77aecfb5c97cea1a99f1ff627748cf71767bac5c
 	* lang/qt/src/job.cpp, lang/qt/src/protocol.h,
 	lang/qt/src/protocol_p.h: Register job.
 	* lang/qt/src/qgpgmetofupolicyjob.cpp,
@@ -883,24 +1923,29 @@
 	* lang/qt/src/Makefile.am: Update accordingly.
 
 	cpp: Add support for gpgme_op_tofu_policy.
+	+ commit 4d384d7bfef044094695271576ca233625bb520a
 	* src/context.cpp, src/context.h (setTofuPolicy, setTofuPolicyStart):
 	New.
 
 	cpp: Declare sizes of tofu-info enums.
+	+ commit 32baac8cdec6fee51bdfc3c55cb2ee141e086df4
 	* lang/cpp/src/tofuinfo.h (Policy, Validity): Declare sizes.
 
 2016-09-16  Werner Koch  <wk@gnupg.org>
 
 	cpp: Silence use of deprecated function warning.
+	+ commit bd24db313d860ae46d37776dcf1067455d1b9880
 	* lang/cpp/src/context.cpp (GpgME): Use pragma to silence wardning.
 
 	core: Document the version a function has been deprecated.
+	+ commit b615316168f4d33311909d4056b236d13c69488f
 	* src/gpgme.h.in (_GPGME_DEPRECATED): Change to take versio numbers
 	for documentation.  Change all places.
 	(_GPGME_DEPRECATED_OUTSIDE_GPGME): Ditto.
 	* lang/python/gpgme-h-clean.py: Adjust RE.
 
 	core: Map GPGME_STATUS_EOF to the empty string.
+	+ commit 3d6340e8c59ee11a95e03fb213ad9b228be47833
 	* src/status-table.c (_gpgme_status_to_string): Return "" for EOF.
 	* src/engine-gpg.c (read_status): Ditto.  The old code accidently used
 	GPGME_STATUS_EOF which is the integer 0 and neiteyr NULL nor a string.
@@ -909,6 +1954,7 @@
 	    Kai Michaelis  <kai@gnupg.org>
 
 	python: Release the GIL during calls into GPGME.
+	+ commit 6af7bee076bacbc0cdfe7de342bce43ca5671b3b
 	* lang/python/helpers.c (pyme_raise_callback_exception): Re-acquire
 	the Global Interpreter Lock.
 	(pyPassphraseCb, pyme_set_passphrase_cb, pyProgressCb,
@@ -922,6 +1968,7 @@
 2016-09-16  Justus Winter  <justus@g10code.com>
 
 	python: Adapt to 'gpgme_op_interact'.
+	+ commit a458e7fe2006d92bd5a838e2747fb66bbac4b1b8
 	* lang/python/examples/inter-edit.py: Update example.
 	* lang/python/gpgme.i (gpgme_edit_cb_t): Turn into
 	'gpgme_interact_cb_t'.
@@ -939,16 +1986,19 @@
 2016-09-16  Werner Koch  <wk@gnupg.org>
 
 	core: Remove stub to try implementing gpg < 2.1 support for createkey.
+	+ commit 268e251b802cc7c19831722d7e3a52777a0f412f
 	* src/engine-gpg.c (gpg_createkey_legacy): Remove.
 	(gpg_genkey): Remove call.
 
 	core: Fix setting og the verification result.
+	+ commit 1f9641dd0fb08e4a3df3b507b974a3f78887920f
 	* src/verify.c (parse_new_sig): Proberly handle the RC in an ERRSIG
 	status.
 
 2016-09-15  Werner Koch  <wk@gnupg.org>
 
 	core: New function gpgme_op_interact, deprecate gpgme_op_edit.
+	+ commit ed1f2700a73060e2615697491ea9e49ded4293e6
 	* src/gpgme.h.in (gpgme_interact_cb_t): New.
 	(GPGME_INTERACT_CARD): New.
 	(gpgme_op_interact_start, gpgme_op_interact): New.
@@ -966,6 +2016,7 @@
 	(main): s/gpgme_op_edit/gpgme_op_interact/.
 
 	core: Minor change of the gpgme_op_edit semantics.
+	+ commit d2b72d3cc19fe2a7d548dac38d55e069e0c9a904
 	* src/edit.c (command_handler): Handle special error code.
 	* src/engine-gpg.c (read_status): Ditto.
 	* src/engine-gpgsm.c (status_handler): Ditto.
@@ -975,6 +2026,7 @@
 2016-09-14  Werner Koch  <wk@gnupg.org>
 
 	core: New function gpgme_op_tofu_policy.
+	+ commit 7c37719d79345a665ec2f4570e3f257033b58c62
 	* src/gpgme.h.in (gpgme_op_tofu_policy_start): New function.
 	(gpgme_op_tofu_policy): New function.
 	* src/libgpgme.vers, src/gpgme.def: Add new functions.
@@ -991,9 +2043,11 @@
 	* tests/Makefile.am (noinst_PROGRAMS): Add it.
 
 	core: Defer implementation of gpgme_op_createkey with gpg < 2.1.
+	+ commit d79dcb78d867aaf55b85aea117c4ae6035a1531a
 	* src/engine-gpg.c (gpg_createkey_legacy): Mark unused variables.
 
 	core: New function gpgme_op_keysign.
+	+ commit bfd2bd0ccc9fed8284ef932ac788d4ca0dba0336
 	* src/gpgme.h.in (gpgme_op_keysign_start, gpgme_op_keysign): New.
 	(GPGME_KEYSIGN_LOCAL): New.
 	(GPGME_KEYSIGN_LFSEP): New.
@@ -1017,30 +2071,36 @@
 2016-09-14  Justus Winter  <justus@g10code.com>
 
 	python: Clarify that we support Python 2.7 too.
+	+ commit 594c3b8b052e60b6be77ed532fe46549133a9726
 	* lang/python/README: Use 'Python' instead of 'Python 3'.
 	* lang/python/pyme/version.py.in: Likewise.
 	* lang/python/setup.py.in: Add classifier for 2.7, drop 3 only.
 
 	python: Trim imports.
+	+ commit 4011b2b2a1050f0837e989da3db9b5459e71ccd6
 	* lang/python/examples/encrypt-to-all.py: Drop unused import of 'os'.
 	* lang/python/examples/signverify.py: Likewise.
 	* lang/python/examples/simple.py: Likewise.
 	* lang/python/examples/verifydetails.py: Likewise.
 
 	python: Improve error handling.
+	+ commit 44d18200d5ffe8691e18d93ce6c534660702b982
 	* lang/python/gpgme.i (gpgme_engine_info_t): Improve error handling.
 
 	python: Adapt to TOFU changes.
+	+ commit f6cd560ca74248dd719a37cfb34386148727a92d
 	* lang/python/pyme/results.py (TofuInfo): Drop.
 	(Signature): The TOFU information moved to the key.
 
 	python: Improve build system integration.
+	+ commit 99db351288d5bb075f124ef10e540e25bc36b70a
 	* configure.ac: Try to compile a Python module for each version.
 	* m4/m4_ax_swig_python.m4: Drop unused file.
 
 2016-09-14  Werner Koch  <wk@gnupg.org>
 
 	core: New function gpgme_op_revuid.
+	+ commit c943380b7a2cc9b32f81c22224fc6f92e8ea8469
 	* src/engine.h (GENKEY_EXTRAFLAG_REVOKE): New.
 	* src/genkey.c (adduid_start): Rename to addrevuid_start.  Add arg
 	REVOKE and pass it as extraflags.  Remove useless ARMOR extraflag.
@@ -1051,6 +2111,7 @@
 	* tests/run-genkey.c: Add option --revuid.
 
 	core: Change a parameter for the engine's genkey function.
+	+ commit c22f5884c50557f54704f4becc5a8c1ee0749547
 	* src/engine.h (GENKEY_EXTRAFLAG_ARMOR): New.
 	* src/engine-backend.h (engine_ops): Rename USE_ARMOR in genkey to
 	EXTRAFLAGS.
@@ -1065,6 +2126,7 @@
 2016-09-14  Justus Winter  <justus@g10code.com>
 
 	python: Build for both Python2 and Python3.
+	+ commit 24b4162d908b48a92660020be0b776c2874fb05a
 	* NEWS: Update.
 	* configure.ac: Check for multiple Python versions.
 	* lang/python/Makefile.am: Build and install for both Python versions.
@@ -1074,6 +2136,7 @@
 2016-09-14  Werner Koch  <wk@gnupg.org>
 
 	core: New function gpgme_op_adduid.
+	+ commit 3210f3e4725afc5ee2810b9a1361918ec9c42ca4
 	* src/genkey.c: Replace most error codes GPG_ERR_INV_VALUE by
 	GPG_ERR_INV_ARG.
 	(struct op_data_t): Add field UIDMODE.
@@ -1084,6 +2147,7 @@
 	* tests/run-genkey.c: Add option --adduid.
 
 	core: New function gpgme_op_createsubkey.
+	+ commit cc353701b0fde4c811ddc1e9a91b852dfe9f4e06
 	* src/genkey.c (createsubkey_start): New.
 	(gpgme_op_createsubkey_start, gpgme_op_createsubkey): New.
 	* src/gpgme.def, src/libgpgme.vers: Add them.
@@ -1095,28 +2159,41 @@
 2016-09-13  Werner Koch  <wk@gnupg.org>
 
 	core: Use const char * where appropriate.
+	+ commit 51f9acbca935c5287d9a28205037b0923e9a65f5
+
 
 	core: Cast away the common const problem with spawn and argv.
+	+ commit 686a065f639ef006e33c164e282d787bcd169754
 	* src/dirinfo.c (read_gpgconf_dirs): Use a cast to assignd to ARGV.
 
 	core: Fix condition-always-true warning in trace macro.
+	+ commit 3009e6162eaa39adaaf45f06fc4f88c7153360ee
 	* src/data-compat.c (old_user_read): Cast AMT.
 
 	core: Mark unused function args.
+	+ commit 4a200146b602349eebb4eac2e102357748d7ba5b
+
 
 	tests: Mark lots of unused vars and fix const mismatches.
+	+ commit 9064eebdc05e7149c2c8cc899fbd7874622fb769
+
 
 	tests: Use gpgme_io_write in passhrase callbacks.
+	+ commit 4491ef0a9a15d3b307d1ade37ff620ef9fcb2478
 	* tests/gpg/t-support.h (passphrase_cb): Use gpgme_io_write.
 	* tests/gpgsm/t-support.h (passphrase_cb): Ditto.
 	* tests/run-support.h (passphrase_cb): Ditto.
 
 	core: Do not pass const char* to functions taking a char*.
+	+ commit 3972f476e00f27d41a0aeabcb66600905b6737bd
+
 
 	build: Use more compiler warnings.
+	+ commit 0510591c36591816a6ff3f87a04451001b7ed46f
 	* configure.ac: Add useful compiler warnings.
 
 	core: New function gpgme_op_create_key.
+	+ commit 00c501d296da287bec2fd6a0e3912abfbde90a98
 	* src/engine-backend.h (engine_ops): Change prototype of genkey.
 	* src/engine-gpgsm.c (gpgsm_genkey): Change accordingly.
 	* src/engine-gpg.c (gpg_genkey): Change it to a dispatcher.
@@ -1153,6 +2230,7 @@
 2016-09-13  Justus Winter  <justus@g10code.com>
 
 	python: Handle slight differences between Python 2 and 3.
+	+ commit 70a3be27a509a1b5ea7372bee93d83c5019427ff
 	* lang/python/helpers.c (pyDataWriteCb): Handle Python integers being
 	returned on Python 2.
 	(pyDataSeekCb): Likewise.
@@ -1169,12 +2247,14 @@
 	using bytestrings in Python 3 would be very inconvenient.
 
 	python: Fix types and error handling.
+	+ commit 4abff7d750a1abf5b388a4c87ec321fc3e4aed10
 	* lang/python/helpers.c (_pyme_edit_cb): Drop the const.
 	(_pyme_assuan_{data,inquire,status}_cb): Fix error handling.
 
 2016-09-12  Justus Winter  <justus@g10code.com>
 
 	python: Avoid Python3-only form of super().
+	+ commit c0c50318bd8ef6c8119ad9fdc53ad9087ded4c32
 	* lang/python/pyme/core.py (GpgmeWrapper.__repr__): Use more
 	compatible form of super.
 	(GpgmeWrapper.__setattr__): Likewise.
@@ -1182,30 +2262,32 @@
 	(Data.__init__): Likewise.
 
 	python: Make type translation compatible with Python 2.7.
+	+ commit 1d5bbbf1185a0d1f82750f10b69dad3999f7ef4c
 	* lang/python/gpgme.i: Avoid functions not available in Python 2.7.
 	* lang/python/helpers.c: Likewise.
 
 	python: Avoid hardcoding the interpreter.
+	+ commit 70999d81618b3d3ae6b61a43be2ce703ad284275
 	* lang/python/setup.py.in: Avoid hardcoding the interpreter.
 
 	python: Do not rely on subprocess.DEVNULL.
+	+ commit b48b852a846129914d6c63ec7b47388cdcf6acca
 	* lang/python/setup.py.in: Do not rely on subprocess.DEVNULL.
 
 	tests: Fix version comparison.
+	+ commit dfd99ab50c3bc1d6745b6f682791e4885e8d8a9a
 	* tests/gpg/t-sig-notation.c: Fix version comparison.
 
-	Fixes-commit: a0263ad2
-
 	tests: Make signature notation test compatible with older GnuPGs.
+	+ commit a0263ad282d350b548cbbc27e96f196d9217d040
 	* lang/python/tests/t-sig-notation.py: Only check the critical flag
 	when GnuPG >= 2.1.13 is used.
 	* tests/gpg/t-sig-notation.c: Likewise.
 
-	Fixes-commit: c88c9ef3
-
 2016-09-12  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Fix some includes.
+	+ commit d480f6b701894f78f3f4016d69c0e3b87939930b
 	* lang/qt/src/qgpgmekeyformailboxjob.cpp: Explicitly include
 	QStringList.
 	* lang/qt/tests/t-support.h, lang/qt/tests/t-support.cpp: Move
@@ -1214,13 +2296,13 @@
 2016-09-12  Justus Winter  <justus@g10code.com>
 
 	qt: Fix tofu test.
+	+ commit 7b9e6ea376d04fb4694ed22369abaae92ce3ec86
 	* lang/qt/tests/t-tofuinfo.cpp: Adjust member names.
-
-	Fixes-commit: 120b1478
 
 2016-09-07  Werner Koch  <wk@gnupg.org>
 
 	core,cpp: Extend the TOFU information.
+	+ commit 120b14783c0312d782dc08ce4949a6209d5ccc7b
 	* src/gpgme.h.in (struct _gpeme_tofu_info): Rename FIRSTSEEN to
 	SIGNFIRST and LASTSEEN to SIGNLAST.  Add ENCRFIST and ENCRLAST.
 	* src/keylist.c (parse_tfs_record): Parse to ENCRFIRST and ENCRLAST.
@@ -1235,83 +2317,102 @@
 2016-09-06  Andre Heinecke  <aheinecke@intevation.de>
 
 	tests: Set passphrase cb in t-encrypt-mixed.
+	+ commit 151da95470f174dc770b2111890ad650a1697276
 	* tests/gpg/t-encrypt-mixed.c (main): Set passphrase cb.
 
 	core: Check for gpg version for loopback mode.
+	+ commit e8cb143c8337b122a6790f769ddb0a97c4baccd3
 	* src/engine-gpg.c (build_argv): Check for version 2.1.0
 	before adding pinentry-mode.
 
 	core: Fix passphrase cb for mixed sym encrypt.
+	+ commit efe7e11dfa2ff911b477ce748292e53e7a50347e
 	* src/encrypt.c (encrypt_start): Handle SYMMETRIC flag.
 	* src/encrypt-sign.c (encrypt_sign_start): Ditto.
 
 2016-09-05  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Clarify comment and strings in tofuinfo test.
+	+ commit ab3fbdbd05cfd1b039bb5b1eb3941fbb4bcf6307
 	* lang/qt/tests/t-tofuinfo.cpp (testTofuSignCount)
 	(testTofuKeyList): Ensure distinct messages. Clarify comment.
 
 	qt: Enable signcount checks in tofuinfo test.
+	+ commit 965b842fad6ec6fbd8902f3a32119abcd0728fe4
 	* lang/qt/tests/t-tofuinfo.cpp: Enable checks for signcount.
 
 	cpp: Add convenience update function to a key.
+	+ commit 79439e76cc5b302222874a1f9e93665cb12801ac
 	* lang/cpp/src/key.cpp (Key::update): New.
 	* lang/cpp/src/key.h: Update accordingly.
 
 	cpp: Add ostream operators for key and uid.
+	+ commit 444d85ace0dddff5c511961927052d9946035b00
 	* lang/cpp/src/key.cpp (Key, UserID): Add ostream operator.
 	* lang/cpp/src/key.h: Update accordingly.
 
 	qt: Add missing header redirection.
+	+ commit 8a39a595eb802b80a6ad756b0ee8939e9733e86f
 	* lang/qt/src/keyformailboxjob.h,
 	lang/qt/src/qgpgmekeyformailboxjob.h: Fix includes.
 
 	qt: Include cpp before core directory.
+	+ commit e3a4697894cc5a93c295e84bb10c743bc7fdc87e
 	* lang/qt/src/Makefile.am (AM_CPPFLAGS): Include cpp before core.
 
 2016-08-25  Andre Heinecke  <aheinecke@intevation.de>
 
 	qt: Fix 2.1 t-support copy.
+	+ commit 05570bd3d05fb3d7934c1122f0d5ef5fdbaa7974
 	* lang/qt/src/t-support.cpp (copyKeyring): Fix seckey copy.
 
 	qt: Fix and extend TofuInfo test.
+	+ commit 9fc72e928bf2cf239bd3b0facdf33ceb1acc975b
 	* lang/qt/tests/t-tofuinfo.cpp: Delete executed jobs.
 	(testTofuKeyList): New.
 	(testSupported): Activate for 2.1.16
 	(signAndVerify): Disable sigcount tests.
 
 	qt: Fix keyring copy in tests.
+	+ commit c875f07e559a7c53fc173b4c3f9f5715f3fbb8f8
 	* lang/qt/test/t-encrypt.cpp,
 	lang/qt/test/t-tofuinfo.cpp: Assert on copy failure.
 	* lang/qt/test/t-support.cpp (copyKeyrings): Fix path.
 
 	qt: Add generic flag support for keylistjobs.
+	+ commit 4e37d0bb1255558ce20e1a5ac83a2d06a37f8b0b
 	* lang/qt/src/keylistjob.h (addMode): New.
 	* lang/qt/src/qgpgmekeylistjob.h (addMode): New.
 	* lang/qt/src/qgpgmekeylistjob.cpp (addMode: New.
 
 	qt: Ensure that current src dir is included first.
+	+ commit 5a92cc96da183ebb19867a2a910f53ba41e76ae9
 	* lang/qt/src/Makefile.am: Reorder include directives.
 
 	cpp: Add WithTofu Keylist Mode.
+	+ commit f311b92ceaedb12c9e00a722b6b47bbe6b50871e
 	* lang/cpp/src/context.cpp: Handle WithTofu.
 	* lang/cpp/src/global.h (KeyListMode): Add WithTofu.
 	* lang/cpp/src/util.h (add_to_gpgme_keylist_mode_t): Handle WithTofu.
 
 	qt: Fix tofuinfo test when gpg is gpg2.
+	+ commit 053e6e0a7b8ea38ad9d4160c84814867bbb9fcf6
 	* lang/qt/tests/t-support.cpp (QGpgMETest::copyKeyrings): New helper.
 	* lang/qt/tests/t-support.h: Declare.
 	* lang/qt/tests/t-encrypt.cpp: use it
 	* lang/qt/tests/t-tofuinbo.cpp: ditto.
 
 	qt: Remove unused variable in test.
+	+ commit f08904b810d77d87c66d9c7875c4e7f2bde5dd92
 	* t-wkspublish.cpp (testWKSPublishCreate): Remove context.
 
 	qt: Add test for wkspublishjob.
+	+ commit df04b232b8897f030534f8c3fbc87064edf8ae7d
 	* lang/qt/tests/t-wkspublish.cpp: New.
 	* lang/qt/tests/Makefile.am: Update accordingly.
 
 	qt: Add WKSPublishJob.
+	+ commit 94420b05775122b25885c66ac67f77c59d01644d
 	* lang/qt/src/Makefile.am: Add new files.
 	* lang/qt/src/job.cpp: Include moc / subclass stub.
 	* lang/qt/src/protocol.h: Add virtual for new job.
@@ -1321,15 +2422,18 @@
 	lang/qt/src/qgpgmewkspublishjob.h: New.
 
 	Cpp: Change firstSeen / lastSeen return values.
+	+ commit de7b67f9b2e6bd43a036fa0bcc6a8ca4f5b10986
 	* lang/cpp/src/tofuinfo.cpp,
 	lang/cpp/src/tofuinfo.h (TofuInfo::firstSeen, TofuInfo::lastSeen):
 	Change return values to unsigned long and update doc.
 
 	Cpp: Add wrapper for gpgme_get_dirinfo.
+	+ commit abcd9a283ee8f81870622c8e1dbdc7aad38c0358
 	* lang/cpp/src/context.cpp (dirInfo): New.
 	* lang/cpp/src/global.h (dirInfo): New.
 
 	Cpp: Add support for spawn engine.
+	+ commit ece8b02a839d6fc566fea7b6e59fabff164f6cf5
 	* lang/cpp/src/context.cpp (Context::spawn, Context::spawnAsync): New.
 	* lang/cpp/src/context.h: Add prototypes.
 	(SpawnFlags): New.
@@ -1338,6 +2442,7 @@
 2016-08-25  Werner Koch  <wk@gnupg.org>
 
 	core: Add GPGME_KEYLIST_MODE_WITH_TOFU.
+	+ commit 9ee103957e4136337b92d238283f8ef30fd4a7c5
 	* src/gpgme.h.in (GPGME_KEYLIST_MODE_WITH_TOFU): New.
 	* src/engine-gpg.c (gpg_keylist_build_options): Use that.
 	* src/keylist.c: Include limits.h.
@@ -1353,14 +2458,17 @@
 2016-08-24  Werner Koch  <wk@gnupg.org>
 
 	core: Adjust for TOFU_STATS change in gnupg 2.1.16.
+	+ commit 38798fee5b539d6153a8a7856152959412ee59b5
 	* src/gpgme.h.in (_gpgme_tofu_info): Change 'firstseen' and 'lastseen'
 	to a timestamp value.
 	* src/verify.c (parse_tofu_stats): Do not cap these values at UINT_MAX.
 
 	core: Set the 'encrcount' field in gpgme_tofu_info_t.
+	+ commit 1eefc2d43c0adb2ce516f8e3509ace2fb562e401
 	* src/verify.c (parse_tofu_stats): Set ENCRCOUNT field.
 
 	cpp: Get rid of AssuanResult due to its deprecation.
+	+ commit e20b0f0201543834f15c5d50cd3b2ece69a35d70
 	* lang/cpp/src/assuanresult.cpp: Remove.
 	* lang/cpp/src/assuanresult.h: Remove.
 	* lang/cpp/src/Makefile.am: Remove these files.
@@ -1374,19 +2482,23 @@
 2016-08-24  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Adapt (disabled) tofuinfo test to new API.
+	+ commit d2e40fb7adf667f3e2d2457ee4c646ea4d4d88b3
 	* lang/qt/tests/t-tofuinfo.cpp: Switch to UID based API.
 
 	Cpp: Add Key to signature.
+	+ commit 7c5a4974b71c30e824cbfcb3a0a70064e5ed5adb
 	* lang/cpp/src/verificationresult.cpp,
 	lang/cpp/src/verificationresult.h (Signature::key): New.
 
 	Cpp: Use fpr field for primaryFingerprint.
+	+ commit 40ea1c85773cbe324557c34b3a4282f609fcdaf6
 	* lang/cpp/src/key.cpp (Key::primaryFingerprint): Return
 	fpr value if available.
 
 2016-08-23  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Move tofuinfo from signature to userid.
+	+ commit 799b168243e6499ac01bf59e0656547f353a2589
 	* lang/cpp/src/key.cpp (UserID::tofuInfo): New.
 	* lang/cpp/src/key.h: Update accordingly.
 	* lang/cpp/src/tofuinfo.cpp: Remove dropped fields.
@@ -1398,11 +2510,13 @@
 2016-08-23  Werner Koch  <wk@gnupg.org>
 
 	core: Put the protocol into a TOFU created key object.
+	+ commit 2972c44bd7e97b2169dea9c4a49d9754afdae3f0
 	* src/verify.c (parse_tofu_user): Add arg 'protocol' and store it in
 	the KEY.
 	(_gpgme_verify_status_handler): Pass protocol.
 
 	core: Change the way TOFU information are represented.
+	+ commit be4ff75d7d5ac6ed15feb245ef3cec59b4bad561
 	* src/gpgme.h.in (struct _gpgme_signature): Remove field 'tofu'.  Add
 	field 'key'.
 	(struct _gpgme_key): Add field 'fpr'.
@@ -1420,6 +2534,7 @@
 	* tests/run-keylist.c (main): Print more fields.
 
 	core: Extend gpgme_user_id_t with 'address'.
+	+ commit 3955dce06e9d056599e5ec7d40301e66b9305195
 	* src/mbox-util.c, src/mbox-util.h: Adjust for use in gpgme.
 	* src/Makefile.am (main_sources): Add mbox-util.
 	* src/key.c (_gpgme_key_append_name): Set 'address' field of uid.
@@ -1428,10 +2543,12 @@
 2016-08-22  Werner Koch  <wk@gnupg.org>
 
 	core: New code for parsing mail addresses.
+	+ commit 26c5ba528ce1411d96655952ec48359105695c0f
 	* src/mbox-util.c: New.
 	* src/mbox-util.h: New.
 
 	core: Add new items for gpgme_get_dirinfo.
+	+ commit 24e61984c9532924135c57b8ff98489a2d3bd4a3
 	* src/dirinfo.c (WANT_SYSCONFDIR, WANT_LIBEXECDIR, WANT_LIBDIR): New.
 	(WANT_DATADIR, WANT_LCOALEDIR, WANT_AGENT_SSH_SOCKET): New
 	(WANT_DIRMNGR_SOCKET): New.
@@ -1442,12 +2559,14 @@
 	(gpgme_get_dirinfo): Likewise.
 
 	core: Base gpgme_get_dirinfo(uiserver-socket) on the socket dir.
+	+ commit c9e7dcb100d807583d8e312da459561138231376
 	* src/dirinfo.c (dirname_len): New.
 	(parse_output): Change computation of UISRV_SOCKET.
 
 2016-08-21  Werner Koch  <wk@gnupg.org>
 
 	core: New commands --lang and --have-lang for gpgme-config.
+	+ commit 3e60788810f93cfcd7f08e5882aff32ed7b6f831
 	* configure.ac (GPGME_CONFIG_AVAIL_LANG): New ac_subst.
 	* src/gpgme-config.in (avail_lang): Add commands --lang and
 	--have-lang.
@@ -1455,16 +2574,19 @@
 2016-08-18  Andre Heinecke  <aheinecke@intevation.de>
 
 	core: Remove (now) useless diagnostic.
+	+ commit 30f156280f18500ee522db58aecd40711c8af685
 	* src/w32-io.c(_gpgme_io_spawn): Remove spawnhelper not found
 	diagnostic.
 
 	core: Fail loudly in case w32 spawner not found.
+	+ commit 9cf983b0199950c8f8cccee2cb8e45aafcba9fd1
 	* src/w32-io.c (_gpgme_io_spawn): Show a message box in
 	case gpgme-w32spawn.exe not found.
 
 2016-08-17  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Fix some pedantic warnings.
+	+ commit 64194b0f8df1afe6135cd119fd3216fc8db68033
 	* lang/cpp/src/context.cpp,
 	lang/cpp/src/context.h (Context::getKeysFromRecipients): Remove
 	ignored / invalid const qualifier.
@@ -1473,6 +2595,7 @@
 2016-08-16  Werner Koch  <wk@gnupg.org>
 
 	core: New global flag "require-gnupg".
+	+ commit 8c09dd9989bcd434a8cb5997770cb8414b96bd5c
 	* src/gpgme.c (gpgme_set_global_flag): Add flag.
 	* src/engine.c (engine_minimal_version): New variable.
 	(_gpgme_set_engine_minimal_version): New function.
@@ -1481,6 +2604,7 @@
 	* tests/run-keylist.c (main): New option --require-gnupg.
 
 	core: Simplify setting of dummy versions.
+	+ commit b7b0e7b5bfefd51c8092ea54f262b18aebf78128
 	* src/engine.c (_gpgme_engine_info_release): Do not assert but free
 	FILE_NAME.
 	(gpgme_get_engine_info): Provide default for VERSION and REQ_VERSION.
@@ -1496,15 +2620,18 @@
 2016-08-12  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Add test for progress signal of encryptjob.
+	+ commit 391e55411cda11446ca9de4dd0dc2b54d3e6fff5
 	* lang/qt/tests/t-encrypt.cpp (testProgress): New.
 
 	Cpp: Provide size-hint for seekable and mem data.
+	+ commit df7bbf5a66576a5a320b54c8f6ad52bc84f0e833
 	* lang/cpp/src/data.cpp (GpgME::Data::Data): Set size-hint for
 	mem and DataProvider based Data.
 
 2016-08-12  Werner Koch  <wk@gnupg.org>
 
 	core: Make use of the "size-hint" in engine-gpg.
+	+ commit fe1e8e71aa18b4ac6471292b2894b8859f42f7c8
 	* src/engine-gpg.c: Include data.h.
 	(add_input_size_hint): New.
 	(gpg_decrypt, gpg_encrypt, gpg_encrypt_sign, gpg_sign)
@@ -1516,6 +2643,7 @@
 	size for the input data.
 
 	core: Add gpgme_data_set_flag to add more meta data to data objects.
+	+ commit 293d1736911fd5e77b8cec305168b35b2420c612
 	* src/gpgme.h.in (gpgme_data_set_flag): New public function.
 	* src/data.c (gpgme_data_set_flag): New.
 	(_gpgme_data_get_size_hint): New.
@@ -1526,16 +2654,19 @@
 2016-08-12  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Fix defaultkeygenerationjob build.
+	+ commit 75c974c4e0a31981325f7d151bd13f2523f5df20
 	* lang/qt/src/defaultkeygenerationjob.cpp: Include moc.
 
 2016-08-11  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Add DefaultKeyGenerationJob.
+	+ commit 105f5446e69db00291164397cf0d8e68374cf420
 	* lang/qt/src/defaultkeygenerationjob.cpp,
 	lang/qt/src/defaultkeygenerationjob.h: New.
 	* lang/qt/src/Makefile.am: Update accordingly.
 
 	Qt: Ensure all public classes are exported.
+	+ commit 59e2251a083b0ed61b3ab6d47015cef7cc6ceb05
 	* src/abstractimportjob.h,
 	src/cryptoconfig.h,
 	src/deletejob.h,
@@ -1551,6 +2682,7 @@
 	src/verifydetachedjob.h: Export classes.
 
 	Qt: Add KeyForMailboxJob.
+	+ commit 8c5abc8d932affab4bc79a85e3f98f6f6b982ae8
 	* lang/qt/src/job.cpp: Include moc and make subclass.
 	* lang/qt/src/keyformailboxjob.h,
 	lang/qt/src/qgpgmekeyformailboxjob.cpp,
@@ -1564,6 +2696,7 @@
 2016-08-10  Werner Koch  <wk@gnupg.org>
 
 	doc: Get rid of version.texi.
+	+ commit b7d99e02188b7907b09fec3032fc1fd82fc2668a
 	* configure.ac (CC_FOR_BUILD): New.
 	* doc/mkdefsinc.c: New.  Taken from GnuPG and modified for gpgme.
 	* doc/Makefile.am (EXTRA_DIST): Add defsincdate and mkdefsinc.c
@@ -1574,14 +2707,17 @@
 	* doc/gpgme.texi: Include defs.inc.  Remove version.texi.
 
 	build: Declare all languages for make dist.
+	+ commit 48691db97b759d67aa7b49c36bb704b5806ade2e
 	* lang/Makefile.am (DIST_SUBDIRS): New.
 
 	core: Do not identify PNG files as PGP signatures.
+	+ commit a9168185ba97aa1d827315cd8017899bf904aded
 	* src/data-identify.c (next_openpgp_packet): Blacklist PNG files.
 
 2016-08-10  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Handle empty recipients consistently.
+	+ commit 09667a6006986a782af98ca1de4d6521e1b8f353
 	* lang/cpp/src/context.cpp (Context::getKeysFromRecipients):
 	New helper.
 	(Context::encrypt, Context::startEncryption, Context::signAndEncrypt)
@@ -1590,41 +2726,50 @@
 	as private helper.
 
 	core: Handle ENCRYPT_SYMMETRIC also for sig & enc.
+	+ commit b602d8bc7bd726afb52dc60cc07e4609e88d4511
 	* src/engine-gpg.c (gpg_encrypt_sign): Handle ENCRYPT_SYMMETRIC
 	flag.
 
 	Qt: Remove unused variable.
+	+ commit d467018ce36f5be36751267c3b6079e8c1ee5d8a
 	* lang/qt/src/qgpgmerefreshkeysjob.cpp (slotStatus): Remove
 	unused variable typ.
 
 	Qt: Create TestPassphraseProvider on stack.
+	+ commit a27d7755d071aad42efc2aa4ea3899ba7b17f8bf
 	* lang/qt/tests/t-encrypt.cpp, lang/qt/tests/t-tofuinfo.cpp: Create
 	TestPassphraseProvider on stack.
 
 	Cpp: Clarify ownership of provider classes.
+	+ commit 21d5e71d486da8e37cf53f2b968646b39a6daa72
 	* lang/cpp/src/context.h: Note that the context does not take
 	ownership of providers.
 
 2016-08-10  Justus Winter  <justus@g10code.com>
 
 	tests: Fix memory leak.
+	+ commit 04f994d5db6db0575dc73c2356c7d51424e2d9fe
 	* tests/gpg/t-encrypt-mixed.c (main): Free 'text2'.
 
 2016-08-10  Andre Heinecke  <aheinecke@intevation.de>
 
 	core: Ensure err is initalized in gpg_encrypt.
+	+ commit 270887309f4b673b13e58c29ea3989c56989590e
 	* src/engine-gpg.c (gpg_encrypt): Initialize err.
 
 	Qt: Fix t-keylist moc include.
+	+ commit 0c222e1b3cabe1a8b84a2877420cdd5df56171b5
 	* lang/qt/tests/t-keylist.cpp: Don't include t-support.moc
 
 2016-08-09  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Clean up debug output in tests.
+	+ commit 969f223d8de21d7c8b0f7646bbf8dbb5864e8d03
 	* lang/qt/tests/t-support.cpp: Remove accidentally commited
 	debug output.
 
 	Qt: Add encryption test and refactor testsuite.
+	+ commit f209ec8f581ae597b37f2e3a5e452e4b53b2d4c7
 	* lang/qt/tests/Makefile.am: Add t-encrypt and t-support.
 	* lang/qt/tests/t-support.cpp, lang/qt/tests/t-support.c (QGpgMETest):
 	New. Class to handle common cleanup / init.
@@ -1636,6 +2781,7 @@
 	encryption. Mixed encryption test is disabled.
 
 	Qt: Add support for EncryptJobs with generic flags.
+	+ commit 34b456c3fb9e59788b07a75441da482bb28bda87
 	* lang/qt/src/encryptjob.h, lang/qt/src/signencryptjob.h,
 	lang/qt/src/qgpgmeencryptjob.h, lang/qt/src/qgpgmeencryptjob.cpp,
 	lang/qt/src/qgpgmesignencryptjob.cpp,
@@ -1643,14 +2789,17 @@
 	that accept generic EncryptFlags.
 
 	Cpp: Add support for all EncryptionFlags.
+	+ commit 17372393798ea5e2d6838f3dd1e001dd4a66c941
 	* lang/cpp/src/context.h (EncryptionFlags): Extend.
 	* lang/cpp/src/context.cpp (encryptflags2encryptflags): Ditto.
 
 	Cpp: Fix simple symmetric encryption.
+	+ commit bf776ce94cf454f1b3f1645b1cde09cd1c54324b
 	* lang/cpp/src/context.cpp (Context::encrypt): If no recipients
 	are provided encrypt with NULL and not an empty array.
 
 	core: Add support for mixed symmetric and asym enc.
+	+ commit 3d2f027d0f40e7ec4ab48cee89ff0ee10b423566
 	* src/gpgme.h.in (gpgme_encrypt_flags_t): New flag
 	GPGME_ENCRYPT_SYMMETRIC.
 	* src/engine-gpg.c (gpg_encrypt): Also add --symmetric if the flag
@@ -1667,17 +2816,20 @@
 2016-08-08  Werner Koch  <wk@gnupg.org>
 
 	core: Let GPGME_PROTOCOL_ASSUAN pass Assuan comments through.
+	+ commit b5e16b036f0045524a583d8a366d8a3366fc0005
 	* src/engine-assuan.c (llass_new): Set ASSUAN_CONVEY_COMMENTS,
 
 2016-08-08  Andre Heinecke  <aheinecke@intevation.de>
 
 	Prepend LD_LIBRARY_PATH for python tests.
+	+ commit ab6f66d676581cb497e581e4af40e2fe5bff507b
 	* lang/python/tests/Makefile.am (TESTS_ENVIRONMENT): Prepend path
 	instead of setting the value.
 
 2016-08-05  Justus Winter  <justus@g10code.com>
 
 	python: Clean up and modernize examples.
+	+ commit 2a613e87156b23c4aa6aa5ce38505cb285de6a18
 	* lang/python/examples/Examples.rst: Delete file.
 	* lang/python/examples/t-edit.py: Likewise.  This is actually a test
 	case and has been moved to 'tests'.
@@ -1697,6 +2849,7 @@
 2016-08-04  Werner Koch  <wk@gnupg.org>
 
 	core: Extend gpgme_subkey_t to carry the keygrip.
+	+ commit 6f3dc66634e30d86aa6250c4ac22f9b8f7ec1be9
 	* src/gpgme.h.in (struct _gpgme_subkey): Add file 'keygrip'.
 	* src/key.c (gpgme_key_unref): Free KEYGRIP.
 	* src/keylist.c (keylist_colon_handler): Parse GRP records.
@@ -1708,12 +2861,14 @@
 2016-08-03  Justus Winter  <justus@g10code.com>
 
 	python: Add a nicer interface to list keys.
+	+ commit 56e26b54da9f16961209275d7a61883d3ea898ca
 	* lang/python/pyme/core.py (Context.keylist): New method.
 	* lang/python/tests/t-keylist.py: Test new method.
 
 2016-08-02  Justus Winter  <justus@g10code.com>
 
 	python: Add a flag identifying in-tree builds.
+	+ commit 4c8265d32ddff5960a464b8d4e8d7d2258495b2e
 	* lang/python/helpers.c (pyme_in_tree_build): New variable.
 	* lang/python/helpers.h (pyme_in_tree_build): New declaration.
 	* lang/python/pyme/version.py.in (in_tree_build): New variable.
@@ -1721,27 +2876,28 @@
 	as appropriate.
 
 	python: Fix build system integration.
+	+ commit 0bd7d8c1977183abc414e11aafa26a4f834ca2a5
 	* lang/python/Makefile.am: Be more careful when cleaning the build
 	directory, we must not delete the generated file 'pyme/version.py'.
 
 	doc: Document the Assuan protocol.
+	+ commit 135185b7ef2225aa5e8c54a6cf1265d3e6cbbe48
 	* doc/gpgme.texi: Document the Assuan protocol.
-
-	GnuPG-bug-id: 2407
 
 2016-07-28  Justus Winter  <justus@g10code.com>
 
 	python: Fix out-of-tree build.
+	+ commit 4e728de8421e2ade2061786aaebcdae3f60da3b8
 	* lang/python/MANIFEST.in: Add 'private.h'.
 
-	Fixes-commit: 3d4dc3f0
-
 	python: Improve error handling.
+	+ commit 5a7c7a86f7e8eaf10e37138617a2d838f9d4466f
 	* lang/python/pyme/core.py (Context.protocol): Check that the engine
 	is usable before setting the protocol.
 	(Context._errorcheck): Add missing functions.
 
 	src: Fix dummy engine versions.
+	+ commit b9e6eacd06ffeb36854c208aa4325cff3e3dfbbe
 	Previously, 'gpgme_engine_check_version' failed for these protocols
 	because the version parser failed to parse the dummy versions.
 
@@ -1754,6 +2910,7 @@
 	(uiserver_get_req_version): Likewise.
 
 	python: Drop superfluous imports and trim public interface.
+	+ commit 2ff58fcbd5c060dac3a7feec478819d2c5a164ec
 	* lang/python/pyme/__init__.py: Avoid leaking low-level 'gpgme', make
 	sure the main module looks nice and tidy, appease pyflakes.
 	* lang/python/pyme/errors.py: Appease pyflakes.
@@ -1766,6 +2923,7 @@
 	* lang/python/tests/t-signers.py: Likewise.
 
 	python: Rename compiled SWIG module.
+	+ commit 2f754440f28e8f81babdf7efa6186edbc8ad99fd
 	Avoid the name pygpgme, as this is the name of another popular Python
 	binding for GPGME.
 
@@ -1780,6 +2938,7 @@
 	* lang/python/setup.py.in: Likewise.
 
 	python: Rename exported functions.
+	+ commit b5aa05c3b261c3846ebbcf76e7505cff5459f918
 	Avoid the name pygpgme, as this is the name of another popular Python
 	binding for GPGME.
 
@@ -1791,6 +2950,7 @@
 	* lang/python/pyme/core.py: Likewise.
 
 	python: Rename private functions.
+	+ commit 1d2f22aae668ce136cacd254875e118dc1faa6a2
 	Avoid the name pygpgme, as this is the name of another popular Python
 	binding for GPGME.
 
@@ -1804,6 +2964,7 @@
 	prototypes here.
 
 	python: Support the Assuan engine.
+	+ commit de69fa496c09386d5e99747670d6887cf52dd09e
 	* lang/python/gpgme.i: Add typemaps for the Assuan protocol callbacks.
 	* lang/python/helpers.c (_pyme_assuan_{data,inquire,status}_cb): New
 	functions.
@@ -1815,17 +2976,20 @@
 	* lang/python/tests/t-protocol-assuan.py: New file.
 
 	python: Improve engine information handling.
+	+ commit 355d7072863ac1f0f725e77141a59f3ed8a5e4af
 	* lang/python/gpgme.i (gpgme_engine_info_t): Wrap engine infos.
 	* lang/python/pyme/core.py (Context.engine_info): New property.
 	(Context.{g,s}et_engine_info): Improve docstrings.
 	* lang/python/pyme/results.py (EngineInfo): New class.
 
 	python: Add accessors for the protocol.
+	+ commit 78f7bf4dcf75206faae5776c2ee4166628313532
 	* lang/python/pyme/core.py (Context.__init__): Add 'protocol'
 	parameter.
 	(Context.protocol): New accessors.
 
 	python: Expose less functions to the Python world.
+	+ commit 3d4dc3f0218234a27103bdb6f93b17c0703b71a2
 	* lang/python/Makefile.am (EXTRA_DIST, COPY_FILES): Add new file.
 	* lang/python/gpgme.i: Include new file and add comments.
 	* lang/python/helpers.c: Include new file.
@@ -1835,14 +2999,17 @@
 2016-07-19  Ben Kibbey  <bjk@luxsci.net>
 
 	Fix including nil bytes in keylist output.
+	+ commit 6a7ee33abd5059f5ae2f70a7dd9f610c16552f8e
 	* src/gpgme-tool.c (cmd_keylist,gt_result): use strlen().
 
 2016-07-15  Justus Winter  <justus@g10code.com>
 
 	python: Make GPGME's version easily accessible.
+	+ commit e545ca3f682b615ce447c186a2c73489a32b0592
 	* lang/python/pyme/version.py.in (gpgme_versionstr): New variable.
 
 	python: Add an idiomatic interface.
+	+ commit 1f318b7aaaa77672fab117d54fe75221780df83c
 	* configure.ac: Bump required Python version.
 	* lang/python/pyme/__init__.py: Update docstring.  Import Context and
 	Data.
@@ -1877,33 +3044,40 @@
 2016-07-14  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Disable keylocate test for gnupg < 2.0.10.
+	+ commit d2f2cbd297c4d2f2c3264ecc3ffb7a2b3a70bd55
 	* lang/qt/tests/t-keylocate.cpp: Disable test for gnupg < 2.0.10
 
 	Cpp: Add EngineInfo::Version class.
+	+ commit 41de1ab904eaddffb2de17b1de8ef41e462daabe
 	* lang/cpp/src/engineinfo.cpp (EngineInfo::engineVersion): New.
 	* lang/cpp/src/engineinfo.h (EngineInfo::engineVersion): Declare.
 	(EngineInfo::Version): Small helper to work with versions.
 
 	Qt: Fix usage of ignore-invalid-option in tests.
+	+ commit e7f4c364732660c6cda25720b7dbc5b1c917e368
 	* Makefile.am (pubring-stamp): Fix config.
 
 	Qt: Fix tests if gpg2 is gpg.
+	+ commit e4c0645c1eea9380d80a20895eb83c9dd7228776
 	* lang/qt/tests/Makefile.am (pubring-stamp): Loopback and provide
 	passphrase on command line when importing.
 
 2016-07-14  Justus Winter  <justus@g10code.com>
 
 	python: Fix test.
+	+ commit fddcc62abd57cb04e84861abd3991c7d529c2464
 	* lang/python/tests/t-keylist.py: Do not assume key alpha is trusted
 	yet.
 
 2016-07-13  Werner Koch  <wk@gnupg.org>
 
 	build: Update config.{guess,sub} to {2016-05-15,2016-06-20}.
+	+ commit a9670d152a4598aef1ae0960a79fb6f5d8db55ad
 	* build-aux/config.guess: Update.
 	* build-aux/config.sub: Update.
 
 	core: New GPGME_DATA_ENCODING_MIME.
+	+ commit d8d5f5a16712244fe6eff860b6ac5f007b1bf870
 	* src/gpgme.h.in (GPGME_DATA_ENCODING_MIME): New.
 	* src/data.c (gpgme_data_set_encoding): Adjust check.
 	* src/engine-gpg.c (have_gpg_version): New.
@@ -1916,6 +3090,7 @@
 	* src/gpgme-tool.c (server_data_encoding): Add flag --mime.
 
 	core: Pass the engine's version string to the engine's new function.
+	+ commit 2095b1573a8196ba3efdf817324d1b3ee05cbb93
 	* src/engine-backend.h (engine_ops): Add arg 'version' to NEW.
 	* src/engine-assuan.c (llass_new): Add dummy arg 'version'.
 	* src/engine-g13.c (g13_new): Ditto.
@@ -1932,6 +3107,7 @@
 2016-07-13  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Add feature enum for new identify.
+	+ commit 537cb871fd59f3a20c697a046715e6339ff6633b
 	* lang/cpp/src/context.cpp (supported_features2): Add
 	BinaryAndFineGrainedIdentify
 	* lang/cpp/src/global.h (Feature2): ditto.
@@ -1939,6 +3115,7 @@
 2016-07-12  Justus Winter  <justus@g10code.com>
 
 	python: Port more tests.
+	+ commit 1bff47ee58bcf9d0016fb7ac7e37cbf075abd059
 	* lang/python/pyme/core.py (Context.op_keylist_all): Add missing
 	'op_keylist_end'.
 	(Context.op_trustlist_all): Fix function. Add missing
@@ -1949,52 +3126,63 @@
 	* lang/python/tests/t-trustlist.py: Check alternate interface.
 
 	python: Improve python packaging.
+	+ commit 57b51685528153f5a50ab0999feec25c83190501
 	* lang/python/Makefile.am: Sign source releases, and upload them.
 	* lang/python/setup.py.in: Add categories.
 
 2016-07-12  Andre Heinecke  <aheinecke@intevation.de>
 
 	m4: Don't set fpic for qt on windows.
+	+ commit 938f7e9c8b466594d05c0347fe627b225263a6a6
 	* m4/qt.m4 (FIND_QT): Do not set fpic for windows.
 
 	m4: Use LIBS instead of LDFLAGS for Qt libs.
+	+ commit 744978cce8f9dfb2363b9d274ee99f25cfcf0e40
 	* m4/qt.m4: Modify LIBS instead of LDFLAGS for link test.
 
 	Bump version to 1.7.0.
+	+ commit bf742fb88545689addfca18192baf2f56a1895e1
 	* configure.ac(mym4_version_minor),
 	(mym4_version_micro): Next release will be 1.7.0
 
 	Qt: Install CamelCase forward includes.
+	+ commit fd87c4679c4bfe19390fa2047dff23bb213a4b18
 	* lang/qt/src/Makefile.am (camelcase_headers): New. Create and install
 	CamelCase headers.
 
 	Qt: Export VerifyDetachedJob.
+	+ commit 86ab2ee2d603111d24500b8d64a9a1dd82f8bdc0
 	* lang/qt/src/verifydetachedjob.h (VerifyDetachedJob): Export it.
 
 	Qt/Cpp: Add version headers.
+	+ commit b03c48cfb06faae7d7033a0532f319cbcf13f18a
 	* lang/cpp/src/gpgmepp_version.h.in,
 	lang/qt/src/qgpgme_version.h.in: New. Version information.
 	* lang/qt/src/Makefile.am, lang/cpp/src/Makefile.am: Add them.
 	* configure.ac: Configure them.
 
 	Qt/Cpp: Add license blurb to export headers.
+	+ commit 362b8cdf4e0d5cd54ec2b325508dcdefac686f2c
 	* lang/cpp/src/gpgmepp_export.h,
 	lang/qt/src/qgpgme_export.h: Add license blurb.
 
 2016-07-11  Justus Winter  <justus@g10code.com>
 
 	python: Fix distcheck.
+	+ commit ce662891373eba6cce1cf8df516cb2370970737e
 	* lang/python/Makefile.am (EXTRA_DIST): Add missing files.
 
 2016-07-11  Andre Heinecke  <aheinecke@intevation.de>
 
 	m4: Add compile / link check for qt.
+	+ commit ed070313155a1c79a57ba69f4299f2aefc65fad7
 	* m4/qt.m4 (FIND_QT): Check if a qt application can be compiled and
 	linked.
 
 2016-07-11  Justus Winter  <justus@g10code.com>
 
 	python: Enable out-of-tree build of pyme bindings.
+	+ commit 007382ce94a6318557370c440f7d609a030a119e
 	* lang/python/MANIFEST.in: Update manifest template.
 	* lang/python/Makefile.am: Copy more files, move generation of files
 	to Python build script, add 'sdist' target to build a Python source
@@ -2003,16 +3191,19 @@
 	* lang/python/setup.py.in: Generate files, enable out-of-tree builds.
 
 	python: Do not depend on access to internal data structures.
+	+ commit 98cba522c906115efcba1f8cc0bec7e5edb51ecd
 	* lang/python/gpgme.i (gpgme_data_t): Rework so that it works without
 	access to the definition of 'struct gpgme_data'.
 	* lang/python/helpers.c (object_to_gpgme_data_t): Add assertion.
 
 	python: Make result wrapping backwards compatible.
+	+ commit c53f87c5f9ca63119152f41dcebfb175d4df2cef
 	* lang/python/pyme/results.py (Result.__init__): Skip missing fields.
 
 2016-07-11  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Fix memleaks in tests.
+	+ commit bfa8ac7e02c16790ee5bd3b42c26699f4821d72e
 	* lang/qt/tests/t-keylist.cpp(cleanupTestCase): Ensure that
 	posted events are handled for autodeletion.
 	(testSingleKeylistSync): delete job.
@@ -2022,18 +3213,22 @@
 	* lang/qt/tests/t-keylocate.cpp(cleanupTestCase): Ditto
 
 	Qt: Add some general Protocol documentation.
+	+ commit b1f42e8f25ada220ec8e4762cfebc3a49b1f7d56
 	* lang/qt/src/protocol.h (Protocol): Add doc.
 
 	Qt: Disable t-tofuinfo tests.
+	+ commit 02babb29612d554c37b63a49f78acc45653b557e
 	* lang/qt/tests/t-tofuinfo.cpp: Disable tests.
 
 2016-07-08  Justus Winter  <justus@g10code.com>
 
 	src: Fix error handling.
+	+ commit de74fe59feef9adc858ac04004880bfd44315d0d
 	* src/encrypt.c (encrypt_status_handler): Fix error handling, ||
 	conflates errors.
 
 	python: Fix raising stashed exceptions.
+	+ commit 8a93f345b701332270c9829a4d0a93537f98a8d8
 	Fixes an issue with newer versions of Python.
 
 	* lang/python/helpers.c (pygpgme_raise_callback_exception): Be more
@@ -2042,6 +3237,7 @@
 2016-07-07  Justus Winter  <justus@g10code.com>
 
 	python: Fix distcheck.
+	+ commit 52efcf1ee9fc8ba4c6bd23d8fe4f5f7993ba9fb1
 	* lang/python/INSTALL: Drop obsolete file.
 	* lang/python/Makefile.am (EXTRA_DIST): Add missing files.
 	(CLEANFILES): Remove generated files.
@@ -2053,80 +3249,96 @@
 	* lang/python/tests/initial.py: Likewise.
 
 	qt: Fix distcheck.
+	+ commit 38c408560c6ebc3ea5eeeade01d38750bf5799e5
 	* lang/qt/src/Makefile.am (qgpgme_headers): Add missing file.
 	(CLEANFILES): Add generated file.
 	* lang/qt/tests/Makefile.am (clean-local): Remove private keys.
 
 	cpp: Fix distcheck.
+	+ commit 49286ac1c82c480e2c718f828c57da9778ccd0b9
 	* lang/cpp/src/Makefile.am (CLEANFILES): Remove generated file.
 
 2016-07-06  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Add test for publicKeyAlgorithmAsString.
+	+ commit fc0267233239b42e9fb74a8acd7511503e287a9e
 	* lang/qt/tests/t-keylist.cpp (testPubkeyAlgoAsString): New.
 
 	Cpp: Expose gpgme_pubkey_algo_name.
+	+ commit e41ae4db9e70d9aebf80ebbd4ce03977435c2ccf
 	* lang/cpp/src/key.cpp (Subkey::publicKeyAlgorithmAsString): New
 	static variant.
 	* lang/cpp/src/key.h: Declare function. Clarify comment about name
 	mismatch.
 
 	Qt: Add check for pubkeyAlgo in t-keylist.
+	+ commit 9f93346d21271b916f15d80420669f5d659a40de
 	* lang/qt/tests/t-keylist.cpp (testSingleKeyListSync): Check
 	pubkeyAlgo.
 
 	Cpp: Add PubkeyAlgo enum.
+	+ commit c28007d0407bcc3621b8266d6d77eb0d069aec35
 	* lang/cpp/src/key.h (Subkey::PubkeyAlgo): New enum.
 	(Subkey::publicKeyAlgorithm): Change return type.
 	* lang/cpp/src/key.cpp (Subkey::publicKeyAlgorithm): Use enum.
 
 	Qt: Fix include order when buildin test.
+	+ commit 4934893e27a50f5715dcd4d2907ecbe629921b32
 	* lang/qt/tests/Makefile.am (AM_CPPFLAGS): Include cpp before
 	gpgme src directory.
 
 	Revert "Qt: More robust lookup of Cpp's context.h"
+	+ commit 7a8c04f66d382dc49d962ad18c46d7ad332ccc0f
 	* lang/qt/src/threadedjobmixin.h: Revert using full path
 	for context.h
 
 2016-07-05  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Fix test build with Qt < 5.4.0.
+	+ commit 49a6ee50587c9d4b6f07e60ce1a939c863e7f15c
 	* lang/qt/tests/t-keylist.cpp,
 	lang/qt/tests/t-keylocate.cpp,
 	lang/qt/tests/t-ownertrust.cpp: Use old style SIGNAl syntax for
 	QSignalSpy
 
 	Qt: More robust lookup of Cpp's context.h.
+	+ commit 47bfbc9026b49b9918359af5fcc1621aab0d1065
 	* lang/qt/src/threadedjobmixin.h: When building qgpgme look for
 	context.h in the full cpp subdirectory.
 
 	w32: Fallback to 2.1 reg key for gpgconf search.
+	+ commit 72b83ffc4d7581f4efef3bd7c261d7d7424bcf0e
 	* src/w32-util.c (_gpgme_get_gpgconf_path): Fallback to 2.1 installer
 	 registry key.
 
 2016-07-04  Andre Heinecke  <aheinecke@intevation.de>
 
 	Doc: Document pinentry mode.
+	+ commit 329ab93f7ed862d7f4c0501fca5355936a74ac52
 	* doc/gpgme.texi (Passphrase Callback): Document as context
 	attribute.
 	(gpgme_set_passphrase_cb): Note that this requires LOOPBACK mode
 	with GnuPG 2.1.
 
 	Qt: Add testTofuSignCount.
+	+ commit 8fa9b5696ca9f8386971e6f36646536f9579ceaa
 	* src/lang/qt/tests/t-tofuinfo.cpp(testTofuSignCount): New.
 	(initTestCase): Set gpg-agent loopback pinentry config.
 	(signAndVerify): Helper for tofuTestSignCount.
 
 	Qt: Add test passphrase provider.
+	+ commit efb5059b9b6e81db7b0c016aa9fb70abe98308ea
 	* lang/qt/tests/t-support.h (TestPassphraseProvider): New.
 	* lang/qt/tests/Makefile.am (t_tofuinfo_SOURCES): Add t-support.h
 
 	Cpp: Add support for TOFU_CONFLICT sigsum.
+	+ commit 80498ab662238a31325e78c0037ea6752f680a37
 	* lang/cpp/src/verificationresult.cpp (GpgME::Signature::Summary):
 	Handle TOFU_CONFLICT.
 	* lang/cpp/src/verificationresult.h (Summary): Add TofuConflict.
 
 	Cpp: Add support for pinentry_mode.
+	+ commit d75c118aae18e20f08dbbb69c7998e1f3694ccd0
 	* lang/cpp/src/context.cpp (Context::pinentryMode): Return mode.
 	(Context::setPinentryMode): Set mode.
 	* lang/cpp/src/context.h (PinentryMode): Add enum.
@@ -2134,10 +3346,12 @@
 2016-07-01  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Add test for TofuInfo.
+	+ commit fbd6ac4655ebf56d91ebd9a4ff499c8319fcd087
 	* lang/qt/tests/t-tofuinfo.cpp: New.
 	* lang/qt/tests/Makefile.am: Update accordingly.
 
 	Cpp: Add TofuInfo to signatures.
+	+ commit 93c5d420fcfe275aeff2b3d5ce99629edbe6625d
 	* lang/cpp/src/tofuinfo.cpp, lang/cpp/src/tofuinfo.h: New class.
 	* lang/cpp/src/verificationresult.cpp (Signature::tofuInfo): New.
 	(VerificationResult::Private): Handle tofu info.
@@ -2149,36 +3363,43 @@
 	* configure.ac (LIBGPGMEPP_LT_REVISION): Bump for new API.
 
 	core: Clarify documentation of tofu_stats address.
+	+ commit 948ce7d1edf12ecb5080a4816ca15f495d6393f5
 	* src/gpgme.h.in: Mention that Address is not always in addr-spec.
 
 	core: Fix identify for armored detached sigs.
+	+ commit 570bf2a648f14b34c4c45d3890b7300529a82d37
 	* src/data-identify.c (basic_detection): Return signature for
 	signature.
 
 2016-06-27  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Expose new data_identify values.
+	+ commit 15fc5c34c88ecbb61272705af60f7054b41c57f7
 	* lang/cpp/src/data.cpp (GpgME::Data::type): Handle PGP Encrypted
 	 and Signature.
 	* lang/cpp/src/data.h: Add values accordingly.
 
 	Cpp: Do not treat KEYEXPIRED as error.
+	+ commit 82d484c852d07958ac93efb3d2d7b7726fbb5231
 	* lang/cpp/src/editinteractor.cpp (status_to_error): No error
 	for KEYEXPIRED.
 
 2016-06-24  Andre Heinecke  <aheinecke@intevation.de>
 
 	tests: Add new test tool run-decrypt.
+	+ commit 3364549c19682f56d4d9c52ab7f76862c5a456cf
 	* tests/run-decrypt.c: New.
 	* tests/Makefile.am (noinst_PROGRAMS): Add run-decrypt.
 
 2016-06-23  Werner Koch  <wk@gnupg.org>
 
 	core: Add closer inspection of "PGP MESSAGE".
+	+ commit cf37a57d28c43ec36277e84ca44458b7287b940b
 	* src/data-identify.c (inspect_pgp_message): New.
 	(basic_detection): Un-const arg DATA. Call inspect_pgp_message.
 
 	core: Add a base 64 decoder.
+	+ commit f8b8027ae63c957557ed6bdc7e5a30ef1bdd8e77
 	* src/b64dec.c: New. Taken from gnupg.  Prefix function names with
 	_gpgme_ and change to use standard C malloc functions.
 	* src/util.h.h (struct b64state): New.
@@ -2187,17 +3408,20 @@
 2016-06-22  Werner Koch  <wk@gnupg.org>
 
 	core: Detect compressed signed OpenPGP data.
+	+ commit bb8cf6236582fc9eb6564046599989af52779a26
 	* src/data-identify.c (next_openpgp_packet): Allow partial encoding.
 	(pgp_binary_detection): Handle compressed packets.
 
 2016-06-21  Werner Koch  <wk@gnupg.org>
 
 	tests: Add new test tool run-identify.
+	+ commit 5905e8bbd809c1408edad4fa4eb0527fa51cbea3
 	* src/gpgme-tool.c (gt_identify): Add new strings.
 	* tests/run-identify.c: New.
 	* tests/Makefile.am (noinst_PROGRAMS): Add run-identify.
 
 	core: Enhance gpgme_data_identify to detect binary PGP messages.
+	+ commit 32d4bbf5e3e5f88e4a6852d72a35ee30df9d5279
 	* src/gpgme.h.in (GPGME_DATA_TYPE_PGP_ENCRYPTED): New.
 	(GPGME_DATA_TYPE_PGP_SIGNATURE): New.
 	* src/data-identify.c: Add enum for OpenPGP packet types.
@@ -2211,11 +3435,13 @@
 2016-06-16  Justus Winter  <justus@g10code.com>
 
 	python: Improve autmatically generated docstrings.
+	+ commit 8997d88bf97d1784706becbf8e9dc74e4656e311
 	* lang/python/gpgme.i: Add comment.
 	* lang/python/pyme/core.py (__getattr__): Rewrite automatically
 	generated doctrings for the wrapper methods.
 
 	python: Make result objects more robust.
+	+ commit a324d0cffe93cab955698c2c065b2f2227e379e4
 	Results returned by the GPGME are fragile, i.e. they are only valid
 	until the next operation is performed in the context.
 
@@ -2229,16 +3455,19 @@
 	* lang/python/pyme/results.py: New file.
 
 	python: Avoid creating SWIG proxy classes.
+	+ commit 856bcfe2934237011984fab0bc69800a7c25c34b
 	* lang/python/Makefile.am (gpgme_wrap.c): Use '-builtin' to make SWIG
 	generate builtin types for c types.
 	* lang/python/gpgme.i (pygpgme_wrap_gpgme_data_t): Adapt slightly.
 
 	python: Simplify wrapping glue.
+	+ commit 6641c7814b30e3e8f18105b2636545cc1bd07552
 	* lang/python/pyme/core.py: Rename '_getctype' to '_ctype' and turn it
 	  into a string.  Likewise rename '_getnameprepend' to '_cprefix'.
 	* lang/python/helpers.c: Adapt accordingly.
 
 	python: Rework callbacks.
+	+ commit f3618bc615e3eff1f52fb5849cbf0f0b95515a61
 	Simplify how the lifetime of callback arguments is managed.
 
 	* lang/python/gpgme.i (gpgme_edit_cb_t): Check arguments.
@@ -2262,6 +3491,7 @@
 	* lang/python/pyme/core.py (Context, Data): Update callsites.
 
 	python: Wrap objects implementing the buffer protocol.
+	+ commit 616929b6edf00b4a774b727385d39b785a112b90
 	* lang/python/Makefile.am: Add the toplevel source directory to CFLAGS
 	when compiling the bindings so that we can use private header files.
 	* lang/python/gpgme.i (gpgme_data_t): Rework the object wrapping.  Do
@@ -2276,6 +3506,7 @@
 	* lang/python/tests/t-idiomatic.py: Demonstrate this.
 
 	python: Add properties to wrapped object.
+	+ commit 5464060baef2da8f5ea377118758e451c55e3787
 	* lang/python/pyme/core.py (GpgmeWrapper.__repr__): Saner
 	representation.
 	(GpgmeWrapper.__str__): Construct a nicer human readable string.
@@ -2290,6 +3521,7 @@
 	them.
 
 	python: Improve the documentation.
+	+ commit 5492853d7b84b4e1d0b11b234e32252ba8d1608d
 	* lang/python/Makefile.am: Copy the README file.
 	* lang/python/README: Rename, convert to org, and update.
 	* lang/python/pyme/__init__.py: Move license out of the docstring,
@@ -2297,6 +3529,7 @@
 	* lang/python/pyme/core.py: Add and update docstrings.
 
 	python: Get version information from the build system.
+	+ commit 7eef399d89d4c3877cb795ed5ba45ecb241e67be
 	* configure.ac: Generate 'setup.py' and 'version.py'.
 	* lang/python/Makefile.am: Use generated setup script.
 	* lang/python/pyme/version.py: Turn it into a template, and get
@@ -2305,9 +3538,11 @@
 	version module, which is frowned upon and actually caused a problem.
 
 	python: Fix exception leak.
+	+ commit a852f99a0ac9dc7f7493b403f811f5f7518fae40
 	* lang/python/helpers.c (pygpgme_stash_callback_exception): Fix leak.
 
 	python: Fix license.
+	+ commit 3bacce03e60dc45cc2da99a2f5c504612202e802
 	Other parts of the build system are also LGPLed.
 
 	* lang/python/Makefile.am: Fix license.
@@ -2315,27 +3550,33 @@
 2016-06-14  Werner Koch  <wk@gnupg.org>
 
 	core: Make sure FD_SET is not used with an out of range fd.
+	+ commit 8173c4f1f8a145c4b1d454f6f05e26950e23d675
 	* src/posix-io.c (_gpgme_io_select): Check for FD out of range.
 
 2016-06-08  Justus Winter  <justus@g10code.com>
 
 	python: Improve error handling.
+	+ commit 77d149e8614c381458e07808a7930ce3fb92cdc3
 	* lang/python/helpers.c (pyPassphraseCb): Handle write errors.
 	(pyEditCb): Likewise.
 
 	python: Add function to raise exceptions from c.
+	+ commit 5ebc205439cac266685d2532466df8b3457dea23
 	* lang/python/helpers.c (pygpgme_raise_exception): New function.
 
 	python: Fix stripping deprecated functionality.
+	+ commit 8426304b67a0b0a5630db500abf740b0e0b9e43c
 	* lang/python/Makefile.am (gpgme.h): Add script as input.
 	* lang/python/gpgme-h-clean.py (deprec_func): Also match struct
 	members.
 	(line_break): Fix matching on struct members.
 
 	python: Fix type.
+	+ commit 990492ea4f7dafbb75de15ea91c30cbf090034b5
 	* lang/python/gpgme.i: Use correct Python type for size.
 
 	python: Implement the context manager protocol.
+	+ commit e3c5913a33edcbd7329b8d154c669f95ce782038
 	* lang/python/pyme/core.py (Context.__del__): Make function
 	idemptotent.
 	(Context.{__enter__,__exit__}): Implement the context manager
@@ -2348,6 +3589,7 @@
 2016-06-07  Justus Winter  <justus@g10code.com>
 
 	python: Fix error handling.
+	+ commit f8f9bf06bc3190968ba6613032d60a3bf2c8a6d9
 	* lang/python/gpgme.i: Fix freeing an uninitialized pointer in the
 	error handling of generated wrapper functions by explicitly storing
 	the pointer in a local variable which can be initialized.
@@ -2355,6 +3597,7 @@
 2016-06-06  Justus Winter  <justus@g10code.com>
 
 	python: Wrap file-like objects on demand.
+	+ commit 8196edf9ca5c8f2f02553e7f22d9c79dbd229882
 	* lang/python/gpgme.i (gpgme_data_t): Use new function to create
 	wrapper objects if necessary, and deallocate them after the function
 	call.
@@ -2364,25 +3607,30 @@
 	* lang/python/tests/t-idiomatic.py: New file.
 
 	python: Move helper function.
+	+ commit 26c3accc95ab77ddbe60db822e2938ad5f480d41
 	* lang/python/gpgme.i (object_to_gpgme_t): Move...
 	* lang/python/helpers.c: ... here.
 	* lang/python/helpers.h (object_to_gpgme_t): New prototype.
 
 	python: Fix error handling.
+	+ commit 89eb0cd4d65bc033ed6342810b26232797482d64
 	* lang/python/gpgme.i (object_to_gpgme_t): Properly propagate
 	exceptions.
 
 	python: Initialize GPGME for the user.
+	+ commit ae06f7c2fe0e49baeab5a827dc38ba8c57a6404c
 	* lang/python/pyme/core.py: Call 'check_version' and explain why.
 	* lang/python/tests/support.py (init_gpgme): Drop call here.
 
 2016-06-01  Justus Winter  <justus@g10code.com>
 
 	python: Fix test suite with GnuPG prior to 2.1.12.
+	+ commit bbf19124bbec9eb6298cef2914baae7ac74382fe
 	* lang/python/tests/Makefile.am (gpg-agent.conf): Use
 	'allow-loopback-pinentry'.
 
 	python: Make Python detection more robust.
+	+ commit 1607aa7fe5dd686ba3bfb6de4a2b602d6a458c86
 	Previously, missing Python development packages made configure fail
 	instead of merely disabling the bindings.
 
@@ -2390,6 +3638,7 @@
 	* m4/ax_python_devel.m4: Make test non-fatal.
 
 	python: Improve build system integration, fix warnings.
+	+ commit 73c47535b631a55687ecc5eff1d1d9a9fd71021e
 	* lang/python/Makefile.am: Pass CFLAGS to python build system.
 	* lang/python/helpers.c (pyPassphraseCb): Use correct type for length.
 	(pygpgme_data_new_from_cbs): Drop unused variable.
@@ -2397,25 +3646,27 @@
 2016-06-01  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Use whitelist for status messages.
+	+ commit 54314a9c7d7ad52981c836ca742644a1fa69b518
 	* lang/cpp/src/editinteractor.cpp (EditInteractor::needsNoResponse):
 	Use whitelist instead of blacklist.
 
 	Qt: Fix debug output in t-ownertrust.
+	+ commit 9d6f85bd25e51445f1776b498875e77b529311b1
 	* lang/qt/tests/t-ownertrust.cpp (testChangeOwnerTrust): Remove
 	general debug of trust level. Add debug output for error.
 
 2016-06-01  Justus Winter  <justus@gnupg.org>
 
 	tests: Fix notation tests.
+	+ commit c88c9ef384b6f7bda9a61b58f26c2f89ae25f684
 	* lang/python/tests/t-sig-notation.py (check_result): Check critical
 	flag.
 	* tests/gpg/t-sig-notation.c (check_result): Likewise.
 
-	Fixes-commit: 1cacd7d0
-
 2016-06-01  Werner Koch  <wk@gnupg.org>
 
 	core: Set notation flags for verify.
+	+ commit 1cacd7d00a7b3de4a5e11ccce5ee6c50e0a5516d
 	* src/gpgme.h.in (GPGME_STATUS_NOTATION_FLAGS): New.
 	* src/status-table.c (status_table): Add new status.
 	* src/verify.c (parse_notation): Handle flags.  Also fix NOTATION_DATA
@@ -2426,6 +3677,7 @@
 2016-05-31  Tobias Mueller  <muelli@cryptobitch.de>
 
 	python: use GPG_ERROR_CONFIG variable.
+	+ commit 8ad17f402f6420880dcf06a13a54feadb52c0208
 	instead of calling gpg-error-config.
 	This is useful when configuring with --with-gpgerror-prefix
 	because then GPG_ERROR_CONFIG contains the correct
@@ -2436,6 +3688,7 @@
 2016-05-31  Justus Winter  <justus@gnupg.org>
 
 	python: Port more tests.
+	+ commit afa0dd56e1cce64fe08bff3c64b12aecce54fd2d
 	* lang/python/gpgme.i: Hide length fields of notations.
 	* lang/python/tests/Makefile.am (pytests): Add new tests.
 	* lang/python/tests/t-decrypt-verify.py: New file.
@@ -2445,12 +3698,14 @@
 2016-05-27  Werner Koch  <wk@gnupg.org>
 
 	Speedup closing of fds before exec.
+	+ commit 89d22f9229f2ecd559ac6ea91dae60eeff940fa5
 	* src/posix-io.c [__linux__]: Include dirent.h.
 	(get_max_fds) [__linux__]: Try to figure out the highest used fd.
 
 2016-05-27  Justus Winter  <justus@gnupg.org>
 
 	python: Port more tests.
+	+ commit 3915842657f0849a038752fd7445f96081a89dd9
 	* lang/python/pyme/core.py (Data._error_check): Add
 	'gpgme_data_get_file_name' to the list of functions not returning an
 	error code.
@@ -2462,6 +3717,7 @@
 	* lang/python/tests/t-trustlist.py: Likewise.
 
 	python: Implement data callbacks.
+	+ commit 2ae847c02731994d99e69d3d025ff01f41406452
 	* lang/python/gpgme.i (object_to_gpgme_t): Set exception on error.
 	* lang/python/helpers.c (pyDataReadCb): New function.
 	(pyDataWriteCb): Likewise.
@@ -2481,6 +3737,7 @@
 	* lang/python/tests/t-data.py: Likewise.
 
 	python: Fix object deallocation.
+	+ commit ebfe2300c33a3bad311e9ac1530e6c92636a08a4
 	Handing a reference to the wrapper object created a non-trivial
 	circular reference that Pythons garbage collector is unable to break.
 	Explicitly break it by using a weak reference.
@@ -2494,11 +3751,13 @@
 	(Context.op_edit): Likewise.
 
 	Improve comments.
+	+ commit e74cd9fb80f12b764d5e4561e73d55644147e9e7
 	* src/gpgme.h.in (gpgme_data_seek_cb_t, gpgme_data_seek): Clarify that
 	these functions return the new offset.
 	(gpgme_data_release_cb_t): Fix name of parameter.
 
 	python: Fix reading data from existing files.
+	+ commit bf188e280b8b4fc775f33c47e2e1e275ed044004
 	* lang/python/pyme/core.py (Data.__init__): Add 'copy' kwargument, and
 	pass it to functions supporting it.  PEP8 fix.
 	(Data.new_from_fd): PEP8 fix.
@@ -2511,11 +3770,13 @@
 2016-05-25  Justus Winter  <justus@gnupg.org>
 
 	src: Fix trace string.
+	+ commit ce73ae9d0cbf782cd3a1949fc4f568f0d1da60d9
 	* src/data-compat.c (gpgme_data_new_from_file): Fix trace string.
 
 2016-05-24  Justus Winter  <justus@gnupg.org>
 
 	python: Improve and test Context.wait.
+	+ commit 00ff6d07330028da370c869e3ec442eb76f8cbb8
 	* lang/python/pyme/core.py (Context.wait): Improve docstring.  As the
 	context passed to 'gpgme_wait' is never NULL, it is pointless to look
 	at the returned context.  Always raise exceptions.
@@ -2523,15 +3784,18 @@
 	* lang/python/tests/t-wait.py: New file.
 
 	python: Make all GnuPG errors available.
+	+ commit 7bc9cc717e428f48d4b27016f44c9f3900b1fba6
 	* lang/python/Makefile.am (errors.i): Generate file.
 	* lang/python/gpgme.i: Include generated file.
 	* lang/python/pyme/errors.py: Pull in all errors and error sources.
 
 	python: Move the base wrapper class.
+	+ commit 0ebd6a1b43a96bffa78da89dc8629edac0a74d35
 	* python/lang/pyme/util.py (GpgmeWrapper): Move...
 	* python/lang/pyme/core.py: ... here.
 
 	python: Support status callbacks.
+	+ commit 8b57f06e0c04f5c9b87a3c76618230d757412076
 	* lang/python/helpers.c (pyStatusCb): New function.
 	(pygpgme_set_status_cb): Likewise.
 	* lang/python/helpers.h (pygpgme_set_status_cb): New prototype.
@@ -2542,21 +3806,25 @@
 	* lang/python/tests/t-callbacks.py: Test status callbacks.
 
 	python: Improve docstring.
+	+ commit 72afb68f8c2f0cb326f20b289215402fd849339d
 	* lang/python/pyme/core.py (Context.set_progress_cb): Improve
 	docstring.
 
 2016-05-24  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Fix test build with clang.
+	+ commit 00e93b2cae0585ff10425421d9097a846943b21c
 	* lang/qt/tests/Makefile.am (LDADD): Explicitly add -lstdc++
 
 	Cpp: Set -std=c++11 also if CXXCPP is already set.
+	+ commit b107fc8a92bd16bc0d868c771b6334d6594e6395
 	* m4/ax_cxx_compile_stdxx.m4 (AX_CXX_COMPILE_STDCXX): Set CXXCPP if
 	neccessary.
 
 2016-05-24  Justus Winter  <justus@gnupg.org>
 
 	python: Improve support for edit callbacks.
+	+ commit 09803c4a81b9431fd4c8f30abb1c60c4c735f0cb
 	* lang/python/helpers.c (pyEditCb): Stash exceptions.
 	* lang/python/pyme/core.py (Context.op_edit): Hand in 'self'.
 	* lang/python/tests/Makefile.am (py_tests): Add new test.
@@ -2566,15 +3834,18 @@
 2016-05-23  Justus Winter  <justus@gnupg.org>
 
 	python: Fix hook.
+	+ commit 283f0bdc3d32624dac93d02ba3df516e69d8d4ba
 	* lang/python/helpers.c (pyProgressCb): Fix getting hook data.
 	* lang/python/tests/t-callbacks.py: Show that this works.
 
 	python: Move edit callback function.
+	+ commit 5476ca6813fc9d8833d5224f19d4bb7515380ab5
 	* lang/python/gpgme.i (pyEditCb): Move...
 	* lang/python/helpers.c: ... here.
 	* lang/python/helpers.h (pyEditCb): New prototype.
 
 	python: Port more tests.
+	+ commit a42d814a65fdc29a3be6efa97433997495696a88
 	* lang/python/tests/Makefile.am (TESTS_ENVIRONMENT): Set
 	LD_LIBRARY_PATH.
 	(pytests): Add new tests.
@@ -2584,11 +3855,13 @@
 	* lang/python/tests/t-signers.py: Likewise.
 
 	python: Translate list of strings.
+	+ commit c9cc0412e940c78c3e9bacb6ff1459b5bb5bb9ad
 	* lang/python/gpgme.i: Add typemap translating list of strings.
 
 2016-05-21  Werner Koch  <wk@gnupg.org>
 
 	api: Return Tofu info for signatures.
+	+ commit 10df06ee8f9192309bf124872438f7c32457e1c6
 	* src/gpgme.h.in (gpgme_tofu_policy_t): New.
 	(gpgme_status_code_t): Add status codes for TOFU.
 	(struct _gpgme_tofu_info, gpgme_tofu_info_t): New.
@@ -2606,26 +3879,31 @@
 	(print_result): print tofu info.
 
 	api: Add new context flag "raw-description".
+	+ commit dac2c5441d418536632f014c8b0e1359580279d1
 	* src/context.h (struct gpgme_context): Add field raw_description.
 	* src/gpgme.c (gpgme_set_ctx_flag): New flag.
 
 	core: New functions to help parsing of status lines.
+	+ commit a92946a8cacc44f655249d84b316deae59e62671
 	* src/conversion.c (_gpgme_split_fields): New.
 	(_gpgme_strtoul_field): New.
 
 2016-05-20  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Add test for changeownertrust.
+	+ commit eaf2d018e63c15cd9a81e5c1fd2fedbf8829f7b9
 	* lang/qt/tests/t-ownertrust.cpp: New test.
 	* lang/qt/tests/Makefile.am: Add test.
 
 	Cpp: Ignore STATUS_KEY_CONSIDERED when editing.
+	+ commit 5df858cbf196b2a53d600b7f45655f7b35c1fe93
 	* lang/cpp/src/editinteractor.cpp (EditInteractor::needsNoResponse):
 	Handle GPGME_STATUS_KEY_CONSIDERED.
 
 2016-05-19  Werner Koch  <wk@gnupg.org>
 
 	api: Add new function gpgme_set_ctx_flag.
+	+ commit 88f2c1c0d16eee6bb36a901623ea65ac69499f03
 	* src/gpgme.h.in (gpgme_set_ctx_flag): New prototype.
 	* src/gpgme.c (gpgme_set_ctx_flag): New.
 	* src/gpgme.def, src/libgpgme.vers: Add new function.
@@ -2664,18 +3942,21 @@
 	(main): Add option --status.
 
 	api: Remove arbitrary restriction from gpgme_op_verify.
+	+ commit 5aa8e588e166abeef2e3d677ab6830f2d7af1b5d
 	* src/verify.c (verify_start): Do not return GPG_ERR_INV_VALUES when
 	when SIGNED_TEXT is not given.
 
 2016-05-19  Justus Winter  <justus@gnupg.org>
 
 	python: Improve progress callbacks.
+	+ commit 0d4e95621e05d50cd454049a424bb9ee098a5db6
 	* lang/python/helpers.c (pyProgressCb): Stash python errors, convert
 	'what' to Unicode object.
 	* lang/python/pyme/core.py (Context.set_progress_cb): Hand in 'self'.
 	* lang/python/tests/t-callbacks.py: Test progress callbacks.
 
 	python: Robust exception handling in callbacks.
+	+ commit d90857a08c4fe5b73b6d6d46fd6200efdd72db44
 	* lang/python/helpers.c (pygpgme_stash_callback_exception): New
 	function.
 	(pygpgme_raise_callback_exception): Likewise.
@@ -2693,12 +3974,14 @@
 2016-05-19  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Check for graphviz and set HAVE_DOT correctly.
+	+ commit 2f748b5a2d162be4f23b18782219771ead54cb51
 	* configure.ac: Check for graphviz and define HAVE_DOT.
 	* lang/qt/doc/Doxyfile.in (HAVE_DOT): Use variable.
 
 2016-05-19  Justus Winter  <justus@gnupg.org>
 
 	python: Add more tests.
+	+ commit 464d404c8816fc93baf945816c93e86bdeb0ea39
 	* lang/python/tests/Makefile.am (py_tests): Add new tests.
 	* lang/python/tests/support.py (print_data): New function.
 	* lang/python/tests/t-decrypt.py: Use new function.
@@ -2707,37 +3990,44 @@
 	* lang/python/tests/t-encrypt-sym.py: Likewise.
 
 	python: More type conversion fixes.
+	+ commit c1c893e3384a07ff864507902fbac4a7fee4d6f1
 	* lang/python/helpers.c (pyPassphraseCb): Cope with 'uid_hint' being
 	NULL, convert it to an Unicode object, and cope with the callback
 	returning both Unicode and bytes objects.
 
 	python: Fix import.
+	+ commit 07f71cd17706093ca6b1507c41609356d479ae9f
 	* lang/python/helpers.c (pygpgme_exception_init): Make module import
 	relative.
 
 2016-05-19  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Fix compilation of unit tests.
+	+ commit 375523ead3a749d77d286c56f10d403c07f2b014
 	* lang/qt/tests/Makefile.am (AM_CPPFLAGS): Add -DBUILDING_QGPGME.
 
 2016-05-18  Justus Winter  <justus@gnupg.org>
 
 	python: Various fixes.
+	+ commit 2c3a5d93e78cfca22785e51c5a65184a47da4bff
 	* configure.ac: Fix SWIG detection, bump required Python version.
 	* lang/python/Makefile.am: Portability fix.
 
 2016-05-18  Andre Heinecke  <aheinecke@intevation.de>
 
 	Fix typo in compatibility declaration.
+	+ commit f0dca0ab92ed18d80e30d7d39db1596b4112794f
 	* src/op-support.c (GPG_ERR_SUBKEYS_EXP_REV): Change to
 	GPG_ERR_SUBKEYS_EXP_OR_REV.
 
 2016-05-17  Werner Koch  <wk@gnupg.org>
 
 	tests: New maintenance helper run-encrypt.
+	+ commit 30b447fcfe0e4f362c2575e1b9388e8144b5b2fd
 	* tests/run-encrypt.c: New.
 
 	Return dedicated error code for all subkeys expired or revoked.
+	+ commit 315fb73d4a774e2c699ac1804f5377559b4d0027
 	* src/gpgme.h.in (GPGME_STATUS_KEY_CONSIDERED): New.
 	(GPGME_SIGSUM_TOFU_CONFLICT): New.
 	* src/status-table.c (KEY_CONSIDERED): New.
@@ -2754,6 +4044,7 @@
 2016-05-17  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt / Cpp: Port auto_ptr to unique_ptr.
+	+ commit 9b36ebf37a3b889c955ba68038bd5b3d9c5cde4e
 	* lang/cpp/src/context.cpp,
 	lang/cpp/src/context.h,
 	lang/cpp/src/context_p.h (Context::createForEngine),
@@ -2771,9 +4062,11 @@
 2016-05-17  Justus Winter  <justus@gnupg.org>
 
 	build: Add python autoconf macro.
+	+ commit 4711a1e181153a2395e5f523047595abd47965db
 	* m4/ax_python_devel.m4: New file.
 
 	python: Clean up examples.
+	+ commit 10328324c8fc9725cd0c885eaebfc80dc32c1ff6
 	* lang/python/examples/delkey.py: Clean up example.
 	* lang/python/examples/encrypt-to-all.py: Likewise.
 	* lang/python/examples/genkey.py: Likewise.
@@ -2786,11 +4079,13 @@
 	* lang/python/pyme/__init__.py: Likewise.
 
 	python: Import GPGMEError.
+	+ commit 64e5fe767f45e9ccb0fb3fe919171c222132a54c
 	* pyme/core.py: Import GPGMEError.
 
 	Fixes c5d118b2.
 
 	python: Port more tests.
+	+ commit 9ceaec25918c6c5f2dfafe4e20181b83ce78f6ce
 	* lang/python/Makefile.am: Add bits from the c test suite.
 	* lang/python/support.py: New file.
 	* lang/python/t-decrypt.py: Likewise.
@@ -2799,6 +4094,7 @@
 2016-05-13  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Add keyLocateJob and test for it.
+	+ commit 52f2295d528029a36a3e0a89c777297762b3fc9b
 	* configure.ac (LIBQGPGME_LT_REVISION): Bump.
 	* lang/qt/src/protocol.h (locateKeysJob): Add Job.
 	* lang/qt/src/protocol_p.h (locateKeysJob): Implement.
@@ -2806,55 +4102,66 @@
 	* lang/qt/tests/t-keylocate.cpp: New.
 
 	Qt: Add missing copyright header in test.
+	+ commit 66ded1a5ce7236254f8541addecd4c3bc7b2878e
 	* lang/qt/tests/t-keylist.cpp: Add copyright header.
 
 2016-05-12  Justus Winter  <justus@gnupg.org>
 
 	python: Share generated methods between objects.
+	+ commit 11314f0db6e57597e3f56351a86fdb36a7a17dd7
 	* lang/python/pyme/util.py (GpgmeWrapper.__getattr__): Monkey-patch
 	the class.
 	* lang/python/tests/t-wrapper.py: Demonstrate the sharing.
 
 	python: Raise exceptions on write errors.
+	+ commit c5d118b2a76e9528df780d11da9566ff7c22e4f5
 	* lang/python/pyme/core.py (Data.write): Handle errors.
 	* lang/python/pyme/errors.py (GPGMEError.fromSyserror): New function.
 
 	python: Fix writing to data buffers.
+	+ commit f7094d8358e933f3ce074eade7a40b2a7d291180
 	* lang/python/gpgme.i: Add typemap for buffers.
 	* lang/python/pyme/core.py (Data.write): Fix function.
 	* lang/python/tests/Makefile.am: Add new test.
 	* lang/python/tests/t-data.py: New file.
 
 	python: Add a test suite.
+	+ commit e64bffe0307d14204b00a177a472cd4f99c07561
 	* configure.ac: Add new Makefile.
 	* lang/python/Makefile.am: Add subdirectory.
 	* lang/python/tests/Makefile.am: New file.
 	* lang/python/tests/t-wrapper.py: Likewise.
 
 	python: Cache generated wrapper functions.
+	+ commit ed0ce84fbd2904bf59ac66ae7422716db3624efa
 	* lang/python/util.py (GpgmeWrap.__getattr__): Cache generated wrapper
 	functions.
 
 	python: Fix function invocation.
+	+ commit e3d3d366bd1a1aea8a38ae5dcbf71ea3c784e920
 	* lang/python/pyme/core.py (Data.new_from_fd): Fix function
 	invocation.
 
 	python: Fix name of exception, make slot methods explicit.
+	+ commit af9371eb63664c92fb67e8e7e03cc984e7d38a7f
 	* lang/python/pyme/util.py (GpgmeWrapper._getctype): Fix exception,
 	add docstring.
 	(GpgmeWrapper._getnameprepend): New function.
 	(GpgmeWrapper._errorcheck): Likewise.
 
 	python: Handle interpreter shutdown.
+	+ commit ce5121ad53b0e17fbf9150b354c80da73f7fe190
 	* lang/python/pyme/core.py: Avoid races at interpreter shutdown.  This
 	silences the most annoying occurrences, however this problem also
 	affects the SWIG generated code, which might indicate that the real
 	problem is somewhere else.  If so, this change can be easily reverted.
 
 	python: Make test case more robust.
+	+ commit c89d3a71ad20ff02755539a44f254b1e59054c4a
 	* lang/python/examples/t-edit.py: Check if key is found.
 
 	python: Fix type translation.
+	+ commit d60deb8a127fb35c01acc729f33b014840af0e7b
 	* lang/python/gpgme.i: Adjust to Python3's string type being
 	'Unicode', not 'bytes'.  Fix type checking.
 	* lang/python/core.py (Data.write): Add docstring mentioning the
@@ -2866,15 +4173,18 @@
 2016-05-11  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Ensure gpgme.h is taken from current build.
+	+ commit b8de79160b2e05ac84d8feb61ff7ed1f7015a623
 	* lang/cpp/src/Makefile.am (AM_CPPFLAGS): Add gpgme.h location.
 
 2016-05-11  Justus Winter  <justus@gnupg.org>
 
 	python: Fix simple example.
+	+ commit bbeee5e1a060f2d1e37a08220eb552cf4673a058
 	* lang/python/examples/simple.py: Flush stdout, encode name as
 	UTF-8 before passing it to GPGME.
 
 	python: Integrate into the build system.
+	+ commit a29babd07cf9f9625d2b5aa2eb6b7bc9d1828359
 	* configure.ac: Make Python bindings configurable, add new Makefile.
 	* lang/python/Makefile.am: New file.
 	* lang/python/setup.py: Integrate into the build system.
@@ -2884,6 +4194,7 @@
 2016-05-10  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt / Cpp: Fix make dist.
+	+ commit c303292aca26c43b6efe98719edb3ff7b2d6665d
 	* lang/cpp/src/Makefile.am (EXTRA_DIST): Fix typo.
 	(private_gpgmepp_headers): New. Private headers.
 	(libgpgmepp_la_SOURCES): Add private headers.
@@ -2893,11 +4204,13 @@
 2016-05-10  Justus Winter  <justus@gnupg.org>
 
 	python: PEP8 fixes.
+	+ commit 11392a80d9a85bcd8718b105e6d58038e61beaac
 	Cherry picked from 0267c151.
 
 2016-05-10  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt: Make Protocol class public API.
+	+ commit 56c4d9ea9520c95612e525b2fa1359db6fa88f4a
 	* lang/qt/src/Makefile.am (qgpgme_headers): Add protocol.h
 	(private_qgpgme_headers): Add protocol_p.h
 	* lang/qt/src/protocol.h: New. From QGpgMEBackend.
@@ -2906,58 +4219,72 @@
 	lang/qt/src/qgpgmebackend.cpp (Protocol): Removed.
 
 	Qt: Make doxygen quieter.
+	+ commit 97225bb01cd2ffa1d84c7fedbc577275de4a4893
 	* lang/qt/doc/Doxyfile.in: Quiet and no undocumented warnings.
 
 	Qt: Only install public headers.
+	+ commit 740f92a7b83389ee9bde98b7bd25556793500b8b
 	* lang/qt/src/Makefile.am: Do not install all headers.
 
 	Qt: Add test for async keylisting.
+	+ commit 0e3195948ddaba3af07d2415bb496491076edc17
 	* src/lang/qt/tests/t-keylist.cpp(KeyListTest::testKeyListAsync): New.
 
 2016-05-10  Werner Koch  <wk@gnupg.org>
 
 	Allow cc to detect missing cases in a switch.
+	+ commit fc38c15136c87ce971a8381fa87399088dd5a3cc
 	* src/delete.c (delete_status_handler): Remove default case from a
 	switch so that cc can check the use of all enum values.
 
 2016-05-06  Andre Heinecke  <aheinecke@intevation.de>
 
 	Use common error message style for qt lang checks.
+	+ commit a579be82c84f0b9732ee3d52ff2142a3decf95d7
 	* configure.ac: Use common error highliting for qt lang options.
 
 	Qt: Fix license mentioned in README.
+	+ commit 11ff8d5964bf66f905818514f6a51fc881ea1a56
 	* lang/qt/README: License is GPLv2+ and not LGPL.
 
 	Add maybe mode for langs and default to it.
+	+ commit cd267791e9bd73505a2a1ea90c85df988e153c19
 	* configure.ac (languages): Warn and disable langs for which
 	requirements are not met.
 
 	Cpp: Handle PINENTRY_LAUNCHED status line.
+	+ commit 3fad1216770f446a89801d842aa8667356a5ec95
 	* lang/cpp/src/editinteractor.cpp (EditInteractor::needsNoResponse):
 	Add GPGME_STATUS_PINENTRY_LAUNCHED.
 
 2016-04-12  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp: Add support for pubkey_algo_name.
+	+ commit 5489532ad6ccf3a9b59405686b8a17352f1ecf06
 	* lang/cpp/src/key.cpp (Subkey::algoName): New.
 	* lang/cpp/src/key.h: Declare.
 
 	Cpp: Add support for gpgme_data_identify.
+	+ commit d949d711dc1d944a9d627d39a89af74943a5a8c1
 	* lang/cpp/src/data.cpp (Data::type): New.
 	* lang/cpp/src/data.h (Data::Type): New enum mapping.
 
 	Fix configuration without Qt language.
+	+ commit 6dba47c3a2c32d7c1e1d91a96030f99f606433ea
 	* configure.ac: Define HAVE_DOXYGEN also if qt should not be built.
 
 2016-04-11  Andre Heinecke  <aheinecke@intevation.de>
 
 	Qt/Cpp: Bump so version to 6.
+	+ commit 8e7074dbb8093cc342e330bcd6b172b4f769a0c6
 	* configure.ac (LIBGPGMEPP_LT_CURRENT, LIBQGPGME_LT_CURRENT): Bump.
 
 	Qt / Cpp: Mention coding style in READMES.
+	+ commit d2b55101195efe9702e855a48fc6e21839fb98cc
 	* src/lang/cpp/README, src/lang/qt/README: Add hacking note.
 
 	Qt: Add doc generation with doxygen.
+	+ commit a1e95f36ce1895cd9894f6d3ca76640c42c2f9fc
 	* configure.ac: Look for doxygen if qt is built.
 	 Configure new files.
 	* lang/qt/doc/Doxyfile.in: New.
@@ -2965,11 +4292,13 @@
 	* lang/qt/README: Update.
 
 	Qt: Fix unit test by adding initial.test dep.
+	+ commit d9f7a18ed88127e7f05d770d55118d1e928f3b3f
 	* lang/qt/tests/t-keylist.cpp: Verify that GNUPGHOME is set.
 	* lang/qt/tests/initial.test: New dummy test.
 	* lang/qt/tests/Makefile.am: Add dependency to initial.test
 
 	Qt: Remove remaining boost usage.
+	+ commit afd8fad6e275e2f74b2ad045dce05d826986e2ec
 	* lang/qt/src/dataprovider.h,
 	 lang/qt/src/decryptjob.h,
 	 lang/qt/src/decryptverifyjob.h,
@@ -3003,18 +4332,22 @@
 	 lang/qt/src/verifyopaquejob.h: Remove boost usage.
 
 	Qt: Remove predicates.h and stl_util.h.
+	+ commit e18256fc5f613da9406da60c3ef2f84f2be04ef0
 	* src/lang/qt/predicates.h, src/lang/qt/stl_util.h: Removed.
 
 	Qt: Remove usage of stl_util.h and predicates.h.
+	+ commit d293bd32293929eeb3f6ec35f916a4678fb51729
 	* src/lang/qt/qgpgmelistallkeysjob.cpp: Use comperators from
 	  gpgmepp instead of detail. Remove boost usage.
 
 	Cpp: Add string comparators for keys.
+	+ commit 1bb162a54ba480413c4da07f2578efe6860494c0
 	* lang/cpp/src/global.h (GPGMEPP_MAKE_STRCMP): New.
 	  (_gpgmepp_strcmp): NULL save wrapper around std::strcmp.
 	* lang/cpp/src/key.h: Add comparators for various attributes.
 
 	Cpp: Remove last usages of boost.
+	+ commit 691950e18cf08a3f9bbc2004501834cd47bea579
 	* lang/cpp/src/configuration.cpp: Use std::remove_pointer.
 	  (Configuration::operator<<): std::for_each.
 	* lang/cpp/src/context.cpp: Delete manually instead of scoped ptr.
@@ -3024,11 +4357,13 @@
 2016-04-04  Andre Heinecke  <aheinecke@intevation.de>
 
 	Add pthread in gpgmepp config.
+	+ commit cc68ff5f7210ac879fbdf719fcd5944f9ae5602b
 	* lang/cpp/src/GpgmeppConfig.cmake.in.in: Add pthread.
 
 2016-04-03  Andre Heinecke  <aheinecke@intevation.de>
 
 	Cpp / Qt: Reduce boost usage (memory and tuple)
+	+ commit f98898ab1a6952e0c3a5d235963a27eba2e19e46
 	* cpp/src/assuanresult.h,
 	 cpp/src/configuration.cpp,
 	 cpp/src/configuration.h,
@@ -3100,22 +4435,26 @@
 	 qt/src/verifyopaquejob.h: Reduce boost usage.
 
 	Cpp: Require c++ 11 if cpp binding requested.
+	+ commit c07aaef6eb8a9b5e623479f27d562fd1570bf4bb
 	* configure.ac: Call ax_cxx_compile_stdcxx
 	* m4/ax_cxx_compile_stdcxx.m4
 
 	Qt: Add static factor methods for protocol.
+	+ commit 0991485170ca4ef90fd566540522027d0fc59a72
 	* lang/qt/src/qgpgmebackend.cpp (QGpgME::openpgp, QGpgME::smime): New.
 	* lang/qt/src/qgpgmebackend.h: Declare.
 	* lang/qt/tests/t-keylist.cpp (KeyListTest::testSingleKeyListSync):
 	  Use new functions.
 
 	Qt: Add a unit test for qgpgme.
+	+ commit faf987dd62893955251378a2a715edd2892a540c
 	* configure.ac: Configure test Makefile.
 	* m4/qt.m4: Look up Qt5Test flags.
 	* lang/qt/tests/t-keylist.cpp: New. Simple keylist check.
 	* lang/qt/tests/Makefile.am: New. General test framework.
 
 	Qt: Add missing MOC includes.
+	+ commit b7b9e38399a572cb61a297db552026eac5b2a5e1
 	* qgpgmeadduseridjob.cpp,
 	 qgpgmechangeexpiryjob.cpp,
 	 qgpgmechangeownertrustjob.cpp,
@@ -3140,13 +4479,16 @@
 	 qgpgmeverifyopaquejob.cpp: Add missing MOC includes.
 
 	Qt: Declare pure virtuals as such.
+	+ commit 0cc9006dbc59d87c6bcda88b36d59dcb69ac35cb
 	* lang/qt/src/qgpgmebackend.h (Protocol): Make all functions
 	 pure virtual.
 
 	Qt: Don't declare showErrorDialog anymore.
+	+ commit 3e38cc6fc67c420dec3e9e8afd072b4c8a157c85
 	* cpp/qt/src/job.h: Remove showErrorDialog.
 
 	Qt: Only use GpgME based config class.
+	+ commit 7071b2a9c00b85d434d01b6166269ebf48b01b81
 	* lang/qt/src/qgpgmecryptoconfig.cpp,
 	 lang/qt/src/qgpgmecryptoconfig.h: Removed.
 	* lang/qt/src/qgpgmebackend.cpp: Return newcryptoconfig.
@@ -3154,19 +4496,23 @@
 2016-04-02  Andre Heinecke  <aheinecke@intevation.de>
 
 	Add additional include path in config files.
+	+ commit 63c115b067400e1b02c7d849c99f54dc9f394d68
 	* lang/cpp/src/GpgmeppConfig.cmake.in.in
 	 lang/qt/src/QGpgmeConfig.cmake.in.in: Include directory above headers.
 
 	Qt: Fix library name in nodist variable.
+	+ commit 576be46f34b42e896a5e3be65560a4b518a758be
 	* lang/qt/Makefile.am (nodist_qgpgme_SOURCES): Change to real name.
 
 	Add missing files to QGpgME.
+	+ commit a440050fc2c11e4867da9d4707616fa23ac52141
 	* lang/qt/src/gpgme_backend_debug.cpp,
 	 lang/qt/src/gpgme_backend_debug.h,
 	 lang/qt/src/predicates.h,
 	 lang/qt/src/stl_util.h: New.
 
 	Add QGpgME code from libkleo.
+	+ commit 226e51052ae73efa8d9f30729b28de68d35231af
 	* lang/qt/src/Makefile.am,
 	lang/qt/src/abstractimportjob.h,
 	lang/qt/src/adduseridjob.h,
@@ -3253,6 +4599,7 @@
 2016-03-08  Andre Heinecke  <aheinecke@intevation.de>
 
 	Add qgpgme as qt language binding.
+	+ commit 8347f3d5fc3e476aa767fbbaf09a1310a6154280
 	* configure.ac: Add version defines. Check for qt if neccessary.
 	* lang/README: Mention qt
 	* lang/cpp/src/GpgmeppConfig.cmake.in.in: Remove comment. Find qgpgme.
@@ -3269,6 +4616,7 @@
 	 lang/cpp/src/Makefile.am: Fix generated config file.
 
 	Remove obsolete w32-qt code.
+	+ commit 58ed9c17f00f420035ecc6973a6c6ed948757a9a
 	* configure.ac (w32-qt): Remove option and Qt checks.
 	* src/Makefile.am: Remove BUILD_W32_QT handling.
 	* src/kdpipeiodevice.cpp,
@@ -3279,21 +4627,26 @@
 2016-03-02  Andre Heinecke  <aheinecke@intevation.de>
 
 	Add version info for gpgmepp.
+	+ commit a06603d75e80aba58df58f9a41770c56b6a1f0b8
 	* lang/cpp/src/Makefile.am (libgpgmepp_la_LDFLAGS): Add version info.
 
 	Add cmake configuration files.
+	+ commit 77c3fb450c7adf36804a55d76ff49a06a71d22a0
 	* configure.ac: Add libgpgmepp version. Configure cmake files.
 	* lang/cpp/src/Makefile.am: Add targets for cmake files.
 	 (EXTRA_DIST): Add cmake files.
 
 	Fix export header and windows export macros.
+	+ commit 98e5b672422ca1e38ca38ff0357cee6cc936aee0
 	* lang/cpp/src/gpgme_export.h: Fix variable name. Add Windows ifdefs.
 
 	Add header installation.
+	+ commit c5291a88913ace8f2115021b69c7aeb59b4f79d4
 	* lang/cpp/src/Makefile.am: Add headers as deps and install them.
 	 (AM_CPPFLAGS): Add BUILDING_GPGMEPP to be used in export macros.
 
 	Add enable-languages build option.
+	+ commit a313b3e28cc42785365822519b25d6a87dfdf0c9
 	* acinclude.m4 (LIST_MEMBER): New macro.
 	* configure.ac (enable-languages): New option. Add info output.
 	* lang/Makefile.am: Only add enabled language subdirs.
@@ -3301,16 +4654,19 @@
 2016-02-22  Andre Heinecke  <aheinecke@intevation.de>
 
 	Add README for gpgmepp.
+	+ commit 7286fc7f3d51d475f82c7c9821d031290f5b0066
 	* lang/README: Note down cpp.
 	* cpp/README: Add README based on original repo version.
 
 	Add buildsystem for Gpgmepp.
+	+ commit f5fd787b5b45cb14d539b5c26f44066eb9ac0f75
 	* configure.ac: Configure Makefiles.
 	* lang/Makefile.am: Add cpp subdir
 	* lang/cpp/Makefile.am: New. Add src subdir.
 	* lang/cpp/src/Makefile.am: New. Basic buildsystem.
 
 	Remove feature check ifdefs.
+	+ commit 433bb8e84b2d1e50b5c5b9f7f2006b60cd7d7785
 	* lang/cpp/src/assuanresult.cpp,
 	 lang/cpp/src/callbacks.cpp,
 	 lang/cpp/src/configuration.cpp,
@@ -3340,6 +4696,7 @@
 	 lang/cpp/src/vfsmountresult.cpp: Remove feature checks.
 
 	Initial checkin of gpgmepp sources.
+	+ commit 0855a1296a1908016f011eb5e6552854ac53e63a
 	Based on git.kde.org/pim/gpgmepp rev. 0e3ebc02
 
 	* lang/cpp/src/assuanresult.cpp,
@@ -3415,41 +4772,49 @@
 2016-01-15  Werner Koch  <wk@gnupg.org>
 
 	Fix possible _SC_OPEN_MAX max problem on AIX.
+	+ commit e79199468ac54ce4fe919603ff7bada97267174f
 	* src/posix-io.c [HAVE_STDINT_H]: Include stdint.h.
 	(get_max_fds): Limit returned value for too high values.
 
 2015-12-09  Werner Koch  <wk@gnupg.org>
 
 	w32: Avoid conflict with Mingw-w64 version 4.0.4-1.
+	+ commit 83415dffaea53611dbce77b50d8ddfb2a50aed2e
 	* src/w32-util.c (mkstemp): Rename to my_mkstemp.  Change caller.
 
 2015-12-04  Daiki Ueno  <ueno@gnu.org>
 
 	Return on user cancellation of delete operation.
+	+ commit 67d7f7a9383763b01daf877c846bf3e32f647fa5
 	* src/delete.c (delete_status_handler): Return on ERROR status, if the
 	error location is set to "delete_key.secret" and the code is either
 	CANCELED or FULLY_CANCELED, which indicates a situation that the user
 	selected "No" on the confirmation dialog.
 
 	doc: Fix minor errors.
+	+ commit 3b6e9a3d0afcdd3c2f1de19f15924c3404c7140a
 	* doc/gpgme.texi: Fix errors and typos in the cancellation and
 	gpgme_import_result_t documentation.
 
 2015-10-29  Ben Kibbey  <bjk@luxsci.net>
 
 	Make use of user passphrase handler during passwd.
+	+ commit dfa79f9300b837b0f7f2ea44afa589bfcda1dbd9
 	* src/passwd.c (passwd_start): set engine passphrase command handler.
 
 2015-10-28  Werner Koch  <wk@gnupg.org>
 
 	w32: Add extra diagnostic about possible missing gpgme-w32spawn.exe.
+	+ commit bb2d11c1eebd4bcfb0f2cfce728026a7420dca47
 	* src/w32-io.c (_gpgme_io_spawn): Add a new diagnostic.
 
 	w32: Improve locating gpgconf on 64 bit systems.
+	+ commit a82e9b182f62966207cad0972be6fa284329a5a1
 	* src/w32-util.c (find_program_at_standard_place): Fallback to
 	CSIDL_PROGRAM_FILESX86.
 
 	w32: Add new global flag "w32-inst-dir".
+	+ commit bb600aa8fd2f9575ee7afc64c978e3e7523b1173
 	* src/gpgme.c (gpgme_set_global_flag): Add flag "w32-inst-dir";
 	* src/posix-util.c (_gpgme_set_override_inst_dir): New stub.
 	* src/w32-util.c (override_inst_dir): New var.
@@ -3459,6 +4824,7 @@
 2015-10-16  NIIBE Yutaka  <gniibe@fsij.org>
 
 	cleanup: Fix type mismatch around gpgme_error_t.
+	+ commit 0d9d0a6b5b0c6f474a079bbaef11078c5df5f3b5
 	* src/data-compat.c (gpgme_error_to_errno): Use gpg_err_code
 	to get error code from gpgme_error_t.
 	* src/gpgme.c (gpgme_new): Don't use gpgme_error.
@@ -3466,6 +4832,7 @@
 2015-08-31  Werner Koch  <wk@gnupg.org>
 
 	gpgme-tool: Switch to argparse.c for option parsing.
+	+ commit f0ccce855bd99fca7cfbbcafe3544e3113fedc67
 	* src/argparse.c, src/argparse.h: New. Taken from current gnupg.
 	* src/Makefile.am (gpgme_tool_SOURCES): New.
 	* src/gpgme-tool.c: Remove all argp.h stuff.
@@ -3475,6 +4842,7 @@
 2015-08-30  Werner Koch  <wk@gnupg.org>
 
 	Add gpgme_pubkey_algo_string.
+	+ commit c4b6b35bfa98e478f1d13f4ce3e664771f2604c2
 	* src/gpgme.h.in (GPGME_PK_EDDSA): New.
 	(gpgme_pubkey_algo_string): New.
 	* src/conversion.c (_gpgme_map_pk_algo): Add new algo.
@@ -3484,9 +4852,11 @@
 2015-08-26  Werner Koch  <wk@gnupg.org>
 
 	Release 1.6.0.
+	+ commit 107bff70edb611309f627058dd4777a5da084b1a
 	* configure.ac: Set LT version to C25/A14/R0.
 
 	Make use of GPGRT macros is available.
+	+ commit c4f4b5c0a6fc172f7ceedc1a0021169e7f31b941
 	* src/gpgme.h.in (_GPGME_INLINE): Define using GPGRT_INLINE if
 	possible.  Fix problem with -Wundef by adding an extra "defined()".
 	(_GPGME_GCC_VERSION): Define using GPGRT_ macro if possible.
@@ -3494,15 +4864,18 @@
 2015-08-25  Werner Koch  <wk@gnupg.org>
 
 	Avoid -Wundef warnings if gpgme.h is used by g++.
+	+ commit 3f53d3d5d9e73a053b1e89073ef8f7cf01bfc8e6
 	* src/gpgme.h.in (_GPGME_INLINE): Move definition into the
 	extern-C-scope.
 
 	Add configure option --enable-build-timestamp.
+	+ commit ff91e699f7c14ea6cbc27b487cb40e9f6bd58901
 	* configure.ac (BUILD_TIMESTAMP): Set to "<none>" by default.
 
 2015-08-25  Daiki Ueno  <ueno@gnu.org>
 
 	Relax ttyname_r error checks.
+	+ commit 028a0ef3336c5180797fb247448683195376c007
 	* src/engine-assuan.c (llass_new): Don't treat ttyname_r error as
 	fatal.
 	* src/engine-g13.c (g13_new): Likewise.
@@ -3513,9 +4886,11 @@
 2015-08-25  Werner Koch  <wk@gnupg.org>
 
 	Cleanup layout of gpgme.h.
+	+ commit 97f1f3e883808743da5ee144abab25de062f34ac
 	* src/gpgme.h.in: Reorder prototypes.  Chnage some comments.
 
 	Improve error return by checking the FAILURE status.
+	+ commit 8ddc5801ade02297924447df5745c8877a96e5e3
 	* src/gpgme.h.in (GPGME_STATUS_FAILURE): New.
 	* src/status-table.c (FAILURE): New.
 	* src/op-support.c (_gpgme_parse_failure): New.
@@ -3536,27 +4911,33 @@
 	(_gpgme_verify_status_handler): Parse that code and act upon it on EOF.
 
 	tests: Allow using run-sign to test loopback pinentry problems.
+	+ commit 491fcd91b84564232d5d061942baa50b99e166c0
 	* tests/run-sign.c: Add options --status and --loopback.
 
 2015-08-24  Werner Koch  <wk@gnupg.org>
 
 	Call status_cb for an ERROR status seen in the passphrase handler.
+	+ commit ad46f4f655e653580343c15f1b0b365b7d307d1b
 	* src/passphrase.c (_gpgme_passphrase_status_handler): Call status_cb.
 
 	w32: Look for gpgconf in the new GnuPG 2.1 install dir.
+	+ commit a7dbab23ea4976d106d649aa515ffb2968a085ed
 	* src/w32-util.c (_gpgme_get_gpgconf_path): Try another location of
 	gpgconf.exe.
 
 	w32: Expect gpgme-w32spawn.exe only in the gpgme installation dir.
+	+ commit 06d6fd8ca01354c8f7cfc847c4ac1b868268cbaa
 	* src/w32-util.c (find_program_at_standard_place): Remove.
 	(_gpgme_get_gpg_path): Make the search order more explicit.
 	(_gpgme_get_gpgconf_path): Ditto.
 	(_gpgme_get_w32spawn_path): Search only in the inst_dir.
 
 	w32: Print the installation directory in debug mode.
+	+ commit df098d6a437109c57516db75addf3764a6dfda81
 	* src/debug.c (debug_init) [W32]: Show libgpgme installation dir.
 
 	Add an export secret key feature.
+	+ commit 2b632bbb78eee2b94c122f66d171a7c80e9c4fb0
 	* src/gpgme.h.in (GPGME_EXPORT_MODE_SECRET): New.
 	(GPGME_EXPORT_MODE_RAW): New.
 	(GPGME_EXPORT_MODE_PKCS12): New.
@@ -3571,17 +4952,20 @@
 2015-08-16  Ben Kibbey  <bjk@luxsci.net>
 
 	Parse INQUIRE_MAXLEN in the passphrase callback.
+	+ commit ccbaccbf2e0ba582d181b9ee4d8543d7c1248b2c
 	* src/passphrase.c (_gpgme_passphrase_status_handler): Parse
 	GPGME_STATUS_INQUIRE_MAXLEN.
 	* src/passphrase.c (_gpgme_passphrase_command_handler): Send the
 	INQUIRE_MAXLEN status message.
 
 	Fix gpgme_{get,set}_status_cb to match documentation.
+	+ commit 70b3e5964ea0592bd09d1877d720b2c63f501970
 	* doc/gpgme.texi: Minor fixes.
 	* src/gpgme.c (gpgme_get_status_cb): Set return variables to NULL and
 	check for a valid ctx pointer.
 
 	Parse the INQUIRE_MAXLEN status message.
+	+ commit 6dd24c3c6133ec54f75abd056191a8027fe01de0
 	* src/gpgme.h.in: (gpgme_status_code_t): Add INQUIRE_MAXLEN.
 	* src/status-table.c (status_table_s): Ditto.
 	* src/genkey.c (genkey_status_handler): Parse INQUIRE_MAXLEN.
@@ -3593,6 +4977,7 @@
 	gpgme_status_cb_t.
 
 	Add gpgme_set/get_status_cb().
+	+ commit 4fadcf06ec8b0ebfb05c7622dbc3b73fd3c1bad9
 	* src/gpgme.h.in (gpgme_set_status_cb): New.
 	(gpgme_get_status_cb): New.
 	(gpgme_status_cb_t): New.
@@ -3605,26 +4990,31 @@
 	* doc/gpgme.texi: Document these new functions.
 
 	Make use of user passphrase handler during genkey.
+	+ commit 2b6ae3dadf4432f7a72fd119144b835f7b1adcc4
 	* src/genkey.c (genkey_start): set engine passphrase command handler.
 
 2015-08-12  Ben Kibbey  <bjk@luxsci.net>
 
 	Also check the return code in gpg_sign().
+	+ commit e07d38f5f9f3b94e403f1265ff7fd3d7009dd557
 	* src/engine-gpg.c (gpg_sign): Check return value from start().
 
 2015-08-11  Ben Kibbey  <bjk@luxsci.net>
 
 	Check the return value when starting gpg.
+	+ commit 8f28e3caf95d7bc99e9271bfc2b44080166af31f
 	* src/engine-gpg.c (gpg_decrypt, gpg_delete, gpg_passwd): Check return
 	value of start().
 
 2015-08-02  Ben McGinnes  <ben@adversary.org>
 
 	More GTK2 removal.
+	+ commit a7fbd5293ed0ba2c179837a4a2b859376d30e35e
 	* Missed a couple of files, these 2 go for the same reason as the
 	  previous 3.
 
 	Removed GUI examples.
+	+ commit 1cd0aef0afb196094d90673002d4c210a04911c9
 	* GUI examples written with pygtk, which has not been ported to Python
 	  3 and won't be as it is for GTK2 and GNOME is moving to GTK3.
 	* New GUI examples may be required in future using any of several GUI
@@ -3633,6 +5023,7 @@
 2015-07-31  Andre Heinecke  <aheinecke@intevation.de>
 
 	Add offline mode support for CMS keylisting.
+	+ commit 08086dd6901740e155e4361212b4e9cff8a47296
 	* doc/gpgme.texi: Document offline mode.
 	* src/context.h (gpgme_context): Add offline.
 	* src/engine-backend.h (keylist, keylist_ext): Add engine_flags.
@@ -3653,12 +5044,14 @@
 2015-07-23  Peter Wu  <peter@lekensteyn.nl>
 
 	build: ignore scissor line for the commit-msg hook.
+	+ commit 157c8be183153ff588f98874a3205aa483d0fd23
 	* build-aux/git-hooks/commit-msg: Stop processing more lines when the
 	  scissor line is encountered.
 
 2015-07-23  Werner Koch  <wk@gnupg.org>
 
 	Add option --lib-version to gpgme-tool.
+	+ commit c23f8897105ce2bb6e62d9c44ca0779fcc08a919
 	* src/gpgme-tool.c (options, parse_options):  Add --lib-version
 	(CMD_LIBVERSION): New.
 	(main): Implement.
@@ -3666,20 +5059,27 @@
 2015-06-08  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.5.
+	+ commit 052a9e3c5671d1ab69551f7b0abd0bbf859d4aba
+
 
 	Fix regression with gpgsm 2.0 due to "OPTION with-secret".
+	+ commit ddbd54ef881bd2c3481d62b89bef7241667b64ee
 	* src/engine-gpgsm.c (gpgsm_assuan_simple_command): Do not terminate
 	on a status lines.
 
 	tests: Add option --secret to run-keylist.
+	+ commit 7addffc0826e7f36afcc7f66268e9ee2a37e2042
+
 
 	Fix compiler warnings about unused value in TRACE macros.
+	+ commit 8b9f84828cd04a7dab37e219123edc1905da8e6b
 	* src/debug.h: Change macros to not have a literal 0 as last
 	expression of the comma operator.
 	* src/debug.c (_gpgme_debug_frame_end): Return 0.
 	(_gpgme_debug): Return 0.
 
 	Fix test suite for GnuPG 2.1 which uses pubring.kbx.
+	+ commit a5b040cc57c65b3d105666b90c7eb59ee6ff3882
 	* tests/gpgsm/final.test: New.
 	* tests/gpgsm/initial.test: New.
 	* tests/gpg/start-stop-agent: Move to ../.
@@ -3697,17 +5097,20 @@
 2015-06-05  Matthew Barnes  <mbarnes@redhat.com>
 
 	Set GPGME_SIGSUM_KEY_REVOKED also for gpg.
+	+ commit 87d713ff41454bd08a345c63605f6fc7ac854dd4
 	* src/verify.c (calc_sig_summary): Handle GPG_ERR_CERT_REVOKED.
 
 2015-06-05  Werner Koch  <wk@gnupg.org>
 
 	Fix segv for userids with a backslash.
+	+ commit 0d28a696163677d6b34a802b6beddecd805d0fc7
 	* src/engine-gpg.c (gpg_keylist_preprocess): Increment SRC for a
 	backslash.
 
 2015-05-16  Ben McGinnes  <ben@adversary.org>
 
 	Python 3 port of PyME.
+	+ commit 90405ac84b78ba7e5458ea09986749594a01195a
 	* Port of PyME 0.9.0 for Python 2 to Python 3 along with most of the
 	  example scripts.
 	* Intended to be developed in parallel with the original Python 2
@@ -3720,6 +5123,7 @@
 	  reference with git commit signatures.
 
 	Explaining why not all scripts work.
+	+ commit 29887c9b28c0db14bf75e227a8082d23a2c151d2
 	* Some of them cannot be properly tested on OS X, especially with GTK in
 	  the mix (it works on OS X, but is unlikely to be as easily accessible
 	  as Cocoa or Qt).
@@ -3727,16 +5131,21 @@
 	  false positives of error messages, at least on OS X.
 
 	Byte encoding.
+	+ commit c39cea7a07cec9ab34cd2026f47b6fba80fea3c8
 	* More string updates.
 	* verifydetails.py still fails, but as Bernhard is still contactable, it
 	  might be worth him checking on it instead.
 
 	No change, note added to explain why.
+	+ commit 0e6e6689ef1aea36c1cb3cb47e94f1f2ebbd97cb
+
 
 	Strings vs. Bytes.
+	+ commit 40290507bcdc63ab9023393d071167d455d70737
 	* CLI input must be byte encoded.
 
 	More byte changes and passphrase changes.
+	+ commit 325b0ca341ae3ac8c3232f557ea2c381b4843969
 	* exportimport works, but will still segfault for an as yet unknown
 	  reason.
 	* genkey produces a traceback error, but does create the key as
@@ -3744,23 +5153,28 @@
 	* matched passphrase in signverify.
 
 	More bytes good.
+	+ commit ba3c9f2617955dc828309a4800e4f5b3f1c3a949
 	* Another string to byte change.
 
 	Updated encrypt-to-all.
+	+ commit 1c87ecb86ae364b18f69bca726021271fefaa1c1
 	* Changed plaintext string to byte literal.
 	* Nested key selection in a try/except statement in case of
 	  UnicodeEncodeError instances.
 	* Tested successfully on over 9,000 keys.
 
 	Passphrase update.
+	+ commit 24c738f5bb5c253a17962c62867d6c847250b41e
 	* Changed example passphrase to something that meets the current minimum
 	  requirements.
 
 	example email.
+	+ commit 8345bf6f43c4f671124eaa1b713a7f5ac5780cbd
 	* changed joe@foo.bar to joe@example.org as it is only a matter of time
 	  before ICANN actually creates bar as a gTLD, if they haven't already.
 
 	Updated string and key data.
+	+ commit 4fc123981514c7087114e08ee8ca63de1a1db59f
 	* Text changed to byte literals.
 	* Changed key type to RSA/RSA.
 	* Changed expiry to the future (2020).
@@ -3768,12 +5182,14 @@
 2015-05-08  Ben McGinnes  <ben@adversary.org>
 
 	String type.
+	+ commit 90079786c5cde4dd8ceb2e0fcda7605b08ccd021
 	* the plain text string must be bytes and not unicode.
 	* Expect most of the example code to have similar issues at present.
 
 2015-05-05  Ben McGinnes  <ben@adversary.org>
 
 	Python 3 port of PyME.
+	+ commit ebd8734ad705afa4edc409787a00d4968d25e018
 	* The entirety of the Python 3 port of PyME up to commit
 	  2145348ec54c6027f2ea20f695de0277e2871405
 	* The old commit log has been saved as
@@ -3787,8 +5203,11 @@
 2015-04-13  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.4.
+	+ commit d2712d9f6f086911184453219a096c61f6829d3b
+
 
 	w32: Use -static-libgcc to avoid linking to libgcc_s_sjlj-1.dll.
+	+ commit 524dacfbb6bb131f05a4ecab3d7bcd91c1b43d33
 	* src/Makefile.am (extra_ltoptions): New.
 	(libgpgme_la_LDFLAGS): Use it.
 	(libgpgme_pthread_la_LDFLAGS): Ditto.
@@ -3797,26 +5216,32 @@
 2015-03-16  Werner Koch  <wk@gnupg.org>
 
 	Fix potential crash in trace macro.
+	+ commit 8cfcdfe5564f87362e5ec1bfdca5c14aed9c45f0
 	* src/signers.c (gpgme_signers_add): Avoid deref of a NULL KEY in the
 	trace macro.
 	* src/engine-spawn.c (engspawn_release): Remove always true condition.
 	* src/engine-gpg.c (gpg_release): Ditto.
 
 	Fix one byte too short malloc.
+	+ commit 119f27032b822ace8c012b96f9e41bcf23251a54
 	* src/engine-spawn.c (add_data): Fix malloc
 
 2015-01-30  Werner Koch  <wk@gnupg.org>
 
 	Switch to automake 1.14 and update  build-aux files.
+	+ commit 428ea7696585bc24d127b903840554ca659069b6
+
 
 2014-12-11  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.3.
+	+ commit 37d927a9706fff6d8ef8d45073984ea2f92afb31
 	* configure.ac: Set LT version to C24/A13/R2.
 
 2014-12-08  Werner Koch  <wk@gnupg.org>
 
 	Return an error for some export key operations.
+	+ commit 05258d427513a933f01d4df13aca834d797f91e7
 	* src/context.h (OPDATA_EXPORT): New.
 	* src/export.c (op_data_t): New.
 	(release_op_data): New.
@@ -3829,26 +5254,31 @@
 2014-11-21  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.2.
+	+ commit c62ce32b9c01ee9ceb1d69e7344fb79a9162d232
 	* configure.ac: Set LT version to C24/A13/R1.
 
 	Update the previous commit.
+	+ commit 81ce87111f5a3f966188629abb07a4d0702e6db0
 	* src/sign.c (gpgme_op_sign_result): Reformat and take care of failed
 	malloc.
 
 2014-11-21  Ben Kibbey  <bjk@luxsci.net>
 
 	Fix returning new signatures when there are none.
+	+ commit 5942b0c7e0593b82b4c4a142c214d7a2649de104
 	* src/sign.c (gpgme_op_sign_result): Test that invalid and valid
 	signatures add up to gpgme_signers_count().
 
 2014-11-06  Werner Koch  <wk@gnupg.org>
 
 	Improve the debug output a bit.
+	+ commit 8031341283f4fcb1f226aa6f66bc5a6042586815
 	* src/debug.h (TRACE_ERR): Include the line number in the output.
 
 2014-10-02  Werner Koch  <wk@gnupg.org>
 
 	build: Implement SYSROOT feature.
+	+ commit 4027a0a89724df3aeef8a964c529548d724b6a5a
 	* configure.ac: Document SYSROOT.
 	* m4/gpg-error.m4: Update from libgpg-error master.
 	* src/gpgme.m4: Implement SYSROOT stuff.
@@ -3856,53 +5286,64 @@
 2014-09-24  Werner Koch  <wk@gnupg.org>
 
 	tests: Delay some test file extraction until "make check".
+	+ commit 2e8ecc24cf74f918c303c315da3bb18636a5e288
 	* tests/gpg/Makefile.am (all-local): Change to check-local.
 	* tests/gpgsm/Makefile.am (all-local): Ditto.
 
 2014-09-24  Daniel Kahn Gillmor  <dkg@fifthhorseman.net>
 
 	Clean up gpgme's tests/gpg when gpg2.1 is available.
+	+ commit 36997e0f746ce2d38de997055141542583cc0f52
 	* tests/gpg/Makefile.am: Clean up .gpg-v21-migrated
 
 2014-08-12  Werner Koch  <wk@gnupg.org>
 
 	gpgme-tool: Print fingerprint and keyid with keyservers.
+	+ commit 4160ef90a1b1b778c735f31f98a6966ba3b3ea90
 	* src/gpgme-tool.c (cmd_keylist): Print keyid.  Print FPR only if
 	available.
 
 	Handle modern keyserver output which may emit the fingerprint.
+	+ commit 3450bff52baef2c14118958cf79ead46940d58f0
 	* src/engine-gpg.c (read_colon_line): Split preprocessed lines.
 	(gpg_keylist_preprocess): Limit keyid field and print fingerprint.
 
 	gpgme-tool: Install gpgme-tool.
+	+ commit 488e44cdb531035fa8813b95b212f9728abc7e62
 	* src/Makefile.am (bin_PROGRAMS): New.  Add gpgme-tools.
 	(noinst_PROGRAMS): Remove.
 
 	gpgme-tool: Fix segv for external key listing.
+	+ commit e5ab11607281b9838da2728268a8f9f0daa2b04d
 	* src/gpgme-tool.c (result_xml_escape): Allow for DATA being NULL.
 
 2014-07-30  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.1.
+	+ commit 16835c3b5d1cea18512b2c93e884d8ca513a2ee7
 	* configure.ac: Change LT version to C24/A13/R0.
 
 	Fix possible realloc overflow for gpgsm and uiserver engines.
+	+ commit 2cbd76f7911fc215845e89b50d6af5ff4a83dd77
 	* src/engine-gpgsm.c (status_handler):
 	* src/engine-uiserver.c (status_handler):
 
 2014-06-26  Werner Koch  <wk@gnupg.org>
 
 	w32: Get IOSPAWN flag back in sync with spawn helper.
+	+ commit 68116fa5f67238a60bb8be375cc959262fa021d3
 	* src/gpgme-w32spawn.c: Include priv-io.h.
 
 2014-06-10  Werner Koch  <wk@gnupg.org>
 
 	Add new reason codes to the INV_RECP status code.
+	+ commit 86260b47c9e306e325103d1af767842357647e60
 	* src/op-support.c (_gpgme_parse_inv_recp): Add codes 13 and 14.
 
 2014-06-04  Werner Koch  <wk@gnupg.org>
 
 	Add new keylist mode GPGME_KEYLIST_MODE_WITH_SECRET.
+	+ commit 4dc9af24156b4fd52c7b76e7522b9b7a64e5386a
 	* src/gpgme.h.in (GPGME_KEYLIST_MODE_WITH_SECRET): New.
 	* src/engine-gpg.c (gpg_keylist_build_options): Handle new mode.
 	* src/engine-gpgsm.c (gpgsm_keylist, gpgsm_keylist_ext): Ditto.
@@ -3915,16 +5356,19 @@
 2014-05-21  Werner Koch  <wk@gnupg.org>
 
 	Release 1.5.0.
+	+ commit 0eca21113c1d1ab2aea58e1ea21075f472f99c23
 	* configure.ac: Change LT version to C22/A11/R0.
 
 2014-05-13  Werner Koch  <wk@gnupg.org>
 
 	Add 6 new GPGME_STATUS_ codes.
+	+ commit de6caeed6d6432101c673c35717f152d5facf823
 	* src/status-table.c: Also add missing DECRYPTION_INFO entry.
 
 2014-05-08  Werner Koch  <wk@gnupg.org>
 
 	Add field CURVE to the key info.
+	+ commit 88f15336ec0eadde68ff2618349efb9006b8e801
 	* src/gpgme.h.in (struct _gpgme_subkey): Add field CURVE.
 	* src/key.c (gpgme_key_unref): Free CURVE.
 	* src/keylist.c (keylist_colon_handler): Set CURVE.
@@ -3933,11 +5377,13 @@
 	engine info after freeing.
 
 	Fix a memory access and a double slash bug.
+	+ commit de4a1ea684e1591975feb801e7651309e1ee2c49
 	* src/engine-spawn.c (engspawn_start): Allocate space for list
 	terminator.
 	* src/posix-util.c (walk_path): Fix trailing slash detection.
 
 	Map public key algos returned by gpg to gpgme values.
+	+ commit d5fb92cdaed21eea2f1a921e4f11df72635a8462
 	* src/conversion.c (_gpgme_map_pk_algo): New.
 	* src/decrypt.c (parse_enc_to): Add arg PROTOCOL and map pubkey algo.
 	(_gpgme_decrypt_status_handler): Map pubkey algo.
@@ -3953,6 +5399,7 @@
 	(gpgme_hash_algo_name): Add GPGME_MD_SHA224.
 
 	Add GPGME_ENCRYPT_NO_COMPRESS flag.
+	+ commit 991cde9e79fec70aad093ded383c5574d30f9388
 	* src/gpgme.h.in (GPGME_ENCRYPT_NO_COMPRESS): New.
 	* src/engine-gpg.c (gpg_encrypt, gpg_encrypt_sign): Implement it.
 	* src/gpgme-tool.c (_cmd_sign_encrypt): Add option --no-compress.
@@ -3960,16 +5407,19 @@
 2014-04-16  Werner Koch  <wk@gnupg.org>
 
 	w32: Fix another memleak on error.
+	+ commit 62711e5614e44e65a7c7bb7d21493d09d3081271
 	* src/w32-io.c (create_reader): free CTX.
 
 2014-04-15  Werner Koch  <wk@gnupg.org>
 
 	w32: Fix memleak in an error code paths.
+	+ commit 85a07ca7e3dffdefc8ae74beebb59e47a6e6bd1b
 	* src/w32-io.c (create_writer): Free CTX in cased of bad FD.
 	* src/w32-util.c (_gpgme_mkstemp): Free TMPNAME in case of a failed
 	mkstemp.
 
 	Fix possible zombie processes.
+	+ commit 2bb26185e3b9a048033c559517d6ba7d2eb47066
 	* src/posix-io.c (_gpgme_io_waitpid): Protect waitpid agains EINTR.
 	(_gpgme_io_dup): Likewise.
 	(_gpgme_io_connect): Likewise.
@@ -3977,12 +5427,14 @@
 2014-04-10  Werner Koch  <wk@gnupg.org>
 
 	Actually implement flags for gpgme_op_spawn.
+	+ commit d3bd8fff863f62b6d0e228aea754efbbde861e9a
 	* src/spawn.c (gpgme_op_spawn_start, gpgme_op_spawn): Pass FLAGS dow
 	to spawn_start and add FLAGS args along the call path.
 	* src/engine-spawn.c (engspawn_start): Hack to automagically provide
 	argv[0].
 
 	Add GPGME_PROTOCOL_SPAWN and gpgme_op_spawn.
+	+ commit 4f2d652e60700e03809307a10015ff9003ac3579
 	* src/gpgme.h.in (GPGME_PROTOCOL_SPAWN): New.
 	(GPGME_SPAWN_DETACHED, GPGME_SPAWN_ALLOW_SET_FG): New.
 	* src/gpgme.c (gpgme_set_protocol): Add new protocol.
@@ -4000,10 +5452,12 @@
 	(gt_spawn, cmd_spawn): New.
 
 	Add gpgme_get_dirinfo.
+	+ commit 77931a9a1468b0cfbaafd4153867d90764a6d258
 	* src/dirinfo.c (gpgme_get_dirinfo): New.
 	* tests/t-engine-info.c (main): Print results from that function.
 
 	Make use of internal iospawn flags more flexible.
+	+ commit 443f6b76a964b77e2e61c03592a83ffa0a6da4b1
 	* src/priv-io.h (IOSPAWN_FLAG_DETACHED): New. Renumber the others.
 	* src/w32-io.c (_gpgme_io_spawn): Use DETACHED_PROCESS process only if
 	IOSPAWN_FLAG_DETACHED is given.
@@ -4016,12 +5470,14 @@
 	* src/version.c (_gpgme_get_program_version): Ditto.
 
 	Make sure a spawned process has all standard fds connected.
+	+ commit 617d3be629229cbebfdc2d26a4e854bc4fe38a68
 	* src/posix-io.c (_gpgme_io_spawn): dup /dev/null also to unsued
 	stdout.
 
 2014-03-13  Werner Koch  <wk@gnupg.org>
 
 	Add configure option --enable-fixed-path.
+	+ commit 766355b5d4f63261c428531fdbdafb8b67de9369
 	* configure.ac: Add option --enable-fixed-path.
 	(FIXED_SEARCH_PATH): New ac_define.
 	* src/posix-util.c (walk_path): Make use of the option.  Remove
@@ -4030,15 +5486,18 @@
 2014-03-11  Werner Koch  <wk@gnupg.org>
 
 	Avoid pointer arithmetic on void pointer.
+	+ commit dd9c8c56719db093b8daa23aa40b2be71bbd1526
 	* src/gpgme.c (gpgme_io_writen): Use new var buffer.
 
 	Change implementation return type to match the definition.
+	+ commit 75a6255935f450d56f3637cbb2b6c8161ace57ab
 	* src/gpgme.c (gpgme_get_sub_protocol): Change return type to
 	gpgme_protocol_t.
 
 2014-03-05  Daiki Ueno  <ueno@gnu.org>
 
 	doc: Fix documentation of struct data types.
+	+ commit 40938feb3f3393b0cdc6ec61ca2e77ff0b82c69a
 	* gpgme.texi (Key Management): Document is_cardkey and card_number
 	members of gpgme_subkey_t.
 	(Decrypt): Remove description of the non-existent wrong_key_usage
@@ -4051,6 +5510,7 @@
 2014-02-21  Werner Koch  <wk@gnupg.org>
 
 	Always pass correct name to argv[0].  Ignore GPG_AGENT_INFO for gpg2.
+	+ commit 651d9e1c6bc1cab248024c3850ef64698247588f
 	* src/dirinfo.c (WANT_GPG_ONE_MODE): New.
 	(struct dirinfo): Add field "gpg_one_mode".
 	(get_gpgconf_item): Set that field and return it if requested.
@@ -4067,11 +5527,13 @@
 2014-02-12  Werner Koch  <wk@gnupg.org>
 
 	Fix type inconsistency between gpgme.h and gpgme.c.
+	+ commit f916ab753b7d17210cd455666870038949f72851
 	* src/gpgme.c (gpgme_set_pinentry_mode): Fix type of MODE.
 
 2014-01-10  Werner Koch  <wk@gnupg.org>
 
 	Use the generic autogen.sh script.
+	+ commit 1a504aab384947c1a6e949affd14bc696297fc8d
 	* autogen.rc: New.
 	* Makefile.am (EXTRA_DIST): Add it.
 	* autogen.sh: Update from GnuPG.
@@ -4081,20 +5543,24 @@
 2014-01-07  Werner Koch  <wk@gnupg.org>
 
 	Make gpgconf engine work again - fixes 02ba35c1.
+	+ commit ab6e718327451e418782990c5a0a4e72588e3f0b
 	* src/gpgconf.c: Remove ENABLE_GPGCONF and move prototypes to ...
 	* src/engine-backend.h: ... here.
 
 	Make gpgme_new return a proper error if no engines are installed.
+	+ commit 121efcc5618374a1b4450b1d6a18bb3c35edb1fd
 	* src/engine.c (gpgme_get_engine_info): Improve error handling.
 	(_gpgme_engine_info_copy): Ditto.
 	* src/gpgme.c (gpgme_new): Return error GPG_ERR_NO_ENGINE.
 
 	Print the full PATH in the log if gpg was not found.
+	+ commit d63058b852b83515e7715103c04a684ecf59838a
 	* src/posix-util.c (walk_path): Keep a copy of PATH.
 
 2014-01-06  Werner Koch  <wk@gnupg.org>
 
 	Add global flags disable-gpgconf, gpgconf-name, and gpg-name.
+	+ commit 6564e5e78e8c6e5a120675a5699b5b75248cfbc7
 	* src/gpgme.c (gpgme_set_global_flag): Add names "disable-gpgconf",
 	"gpgconf-name", and "gpg-name".
 	* src/dirinfo.c (_gpgme_dirinfo_disable_gpgconf): New.
@@ -4117,6 +5583,7 @@
 2013-12-27  Werner Koch  <wk@gnupg.org>
 
 	Locate engine names only at runtime and prefer GnuPG-2.
+	+ commit 02ba35c1b6a2cbb3361b2f2ad507c53564b2be0b
 	* configure.ac (NEED_GPG_VERSION, NEED_GPGSM_VERSION)
 	(NEED_G13_VERSION, NEED_GPGCONF_VERSION): Remove vars and all related
 	checks.  Do not check for any engine version.
@@ -4151,23 +5618,28 @@
 2013-08-19  Werner Koch  <wk@gnupg.org>
 
 	Document API change for GPGME_EVENT_DONE from 2009.
+	+ commit b0aaa3f9aef36634b5c391812362f016114f02ba
 	* doc/gpgme.texi (I/O Callback Interface): Fix description for the
 	event arg.
 
 	Fix possible segv in the gpgme_op_card_edit.
+	+ commit 372bd439834c69d502668007c8c683233d676bd5
 	* src/edit.c (gpgme_op_edit_start, gpgme_op_card_edit_start): Do not
 	deref a NULL KEY in TRACE_BEG.
 
 	tests: Fix NULL ptr deref in gpgsm/t-verify.
+	+ commit eae9c32bd9c80ca4a4ecf794808211808f2ebbdd
 	* tests/gpgsm/t-verify.c (check_result): Do not dereference a sig or
 	sig->fpr if NULL.
 
 2013-08-12  Werner Koch  <wk@gnupg.org>
 
 	Release 1.4.3.
+	+ commit d788c35e19df9eade8eb0b880ca1dc47ae7928ad
 	* configure.ac: Change LT version to C22/A11/R0.
 
 	Make test suite workable with GnuPG 2.1.
+	+ commit 3ca7e96e384d5872c71ceb3b2e2a05b0c1b7e1a0
 	* tests/gpg/start-stop-agent: New.
 	* tests/gpg/initial.test: New.
 	* tests/gpg/final.test: New.
@@ -4186,12 +5658,14 @@
 	* tests/gpg/A0747D5F9425E6664F4FFBEED20FBCA79FDED2BD: New.
 
 	Improve detection of default gpg by configure.
+	+ commit 069ac580373923f5635b7172ecff79eb189f6944
 	* configure.ac: Move test for gpgconf before test for gpg.
 	(GPG, GPGSM, G13): Use gpgconf instead of AC_PATH_PROG if possible.
 
 2013-08-09  Werner Koch  <wk@gnupg.org>
 
 	Add function gpgme_data_identify.
+	+ commit 8579091c4f6a36e6bb06fcfbd147a776166fd3ea
 	* src/gpgme.h.in (gpgme_data_type_t): New.
 	(gpgme_data_identify): New prototype.
 	* src/data-identify.c: New.
@@ -4206,6 +5680,7 @@
 2013-08-02  Werner Koch  <wk@gnupg.org>
 
 	Prefer GnuPG-2 engines over GnuPG-1.
+	+ commit a4c80126ae4754c8478c69a8a24a6ffd975485fc
 	* src/util.h: Move some prototypes to ...
 	* src/sys-util.h: New.
 	* src/Makefile.am (main_sources): Add sys-util.h.
@@ -4232,6 +5707,7 @@
 	(_gpgme_get_uiserver_socket_path): Remove.
 
 	w32: Try to locate gpg in the gpgme installation dir.
+	+ commit 3881ea4e83d1533ef497b7332398fc1850e29205
 	* src/w32-util.c (my_hmodule): New.
 	(wchar_to_utf8): New.
 	(DllMain): New.
@@ -4246,10 +5722,13 @@
 2013-07-31  Werner Koch  <wk@gnupg.org>
 
 	doc: Add --binary option for the OUTPUT command of an uiserver.
+	+ commit 393a9471f2f3ac0a5b14f3534a5bfc7ffe948567
+
 
 2013-06-18  Werner Koch  <wk@gnupg.org>
 
 	Add function gpgme_signers_count.
+	+ commit f2eeccbdfaf855a81abb92abe5ab4c702712bac7
 	* src/signers.c (gpgme_signers_count): New.
 	* src/libgpgme.vers, src/gpgme.def: Add as external symbol.
 	* src/gpgme.h.in: Add prototype.
@@ -4257,17 +5736,21 @@
 2013-05-28  Werner Koch  <wk@gnupg.org>
 
 	Release 1.4.2.
+	+ commit 009e26a989f8a251563303f155c51fe012af52a4
 	* configure.ac: Set LT version to C21/A10/R0.
 
 	Add convenience macro GPGME_PROTOCOL_OPENPGP.
+	+ commit 2e8feb6016dede400053f76fc3a418e1dd567bef
 	* src/gpgme.h.in (GPGME_PROTOCOL_OPENPGP): New.
 
 2013-05-23  Werner Koch  <wk@gnupg.org>
 
 	w32: Fix installing of .def file.
+	+ commit c29dad2315406bed75b9547103650bef642e6aa7
 	* src/Makefile.am (install-def-file): Create libdir first.
 
 	Fix libtool 2.4.2 to correctly detect .def files.
+	+ commit d739d4d8cf9c873b0f3bb7836aaf3d0ba31a7b7f
 	* build-aux/ltmain.sh (sed_uncomment_deffile): New.
 	(orig_export_symbols): Uncomment def file before testing for EXPORTS.
 	* m4/libtool.m4: Do the same for the generated code.
@@ -4275,6 +5758,7 @@
 2013-05-22  Werner Koch  <wk@gnupg.org>
 
 	Support --no-encrypt-to also with gpgme_op_encrypt_sign.
+	+ commit d4371ed30da2e8b3d9f440613af299a952bde2b1
 	* src/engine-gpg.c (gpg_encrypt_sign): Support the
 	GPGME_ENCRYPT_NO_ENCRYPT_TO flag.
 
@@ -4282,6 +5766,7 @@
 	    Kyle L. Huff  <g10bts@curetheitch.com>
 
 	Allow symmetric encryption with gpgme_op_encrypt_sign.
+	+ commit 567e6481d767af60390d649897b897a8b0e7e9a5
 	* src/encrypt-sign.c (encrypt_sym_status_handler): New.
 	(encrypt_sign_start): Handle recp == NULL case.
 	* src/engine-gpg.c (gpg_encrypt_sign): Implement symmetric encryption.
@@ -4290,21 +5775,25 @@
 2013-05-22  Werner Koch  <wk@gnupg.org>
 
 	gpgme-tool: Allow for symmetric encryption.
+	+ commit 0c1de7abd57b677998792e6cd5df5ddfb6e451b7
 	* src/gpgme-tool.c (gt_sign_encrypt): Pass NULL for recp if no
 	recipients are given.
 
 	tests: Print auditlog in plain text format.
+	+ commit 18254f88f82da7542a986dca60917fb48d5bccd3
 	* tests/gpgsm/t-verify.c (show_auditlog): Use plain text format.
 
 2013-05-18  Werner Koch  <wk@gnupg.org>
 
 	Improve C++ compatibility of previous patch.
+	+ commit e99356306d7bda61802530ebeb07d9ba73c4dec0
 	* src/gpgme.h.in: Move gpgme_sssize_t and gpgme_off_t typedefs into
 	the extern "C" scope.
 
 2013-05-16  Werner Koch  <wk@gnupg.org>
 
 	Make definition of off_t robust against misbehaving w32 toolchains.
+	+ commit 6d0d8e7ba0bb989c251545fa8af35b97d1a703ba
 	* configure.ac (NEED__FILE_OFFSET_BITS): Change to define gpgme_off_t
 	and gpgme_ssize_t.
 	(API__OFF_T, API__SSIZE_T): New ac_subst.
@@ -4319,6 +5808,7 @@
 2013-05-11  Werner Koch  <wk@gnupg.org>
 
 	w32: Change the way the I/O threads are cleaned up.
+	+ commit 9e7df9aa6d81f0abbabb03a2346d80eb5d375f81
 	* src/w32-io.c (reader_context_s, create_reader)
 	(writer_context_s, create_writer): Rename STOPPED to CLOSE_EV.
 	(reader, writer): Remove setting of STOPPED.  Wait for CLOSE_EV and
@@ -4330,46 +5820,56 @@
 2013-05-08  Werner Koch  <wk@gnupg.org>
 
 	Fix hang in socket closing.
+	+ commit 9f330be8210d2498fe93d4166b6f6c02fca76475
 	* src/w32-io.c (destroy_reader): Call shutdown.
 	(reader): Do not print an error in the shutdown case.
 
 	Improve debug output of the I/O reader and writer.
+	+ commit 2118f497010a9a41c29d062a7605ff2e136f8f4e
 	* src/w32-io.c (reader, writer): Also print file_sock.
 
 2013-05-06  Werner Koch  <wk@gnupg.org>
 
 	Simplify a debug code function.
+	+ commit a7e5f1096f02af7bfb678b0bea8da6ccfc28cc79
 	* src/debug.c (_gpgme_debug): Remove static space string.
 
 2013-05-01  Werner Koch  <wk@gnupg.org>
 
 	Release 1.4.1.
+	+ commit 5075c0da7c464af2a45cd36db134ed7e88f155af
 	* configure.ac: Bump LT version to C20/A9/R1.
 
 	Disable fd-passing for Apple.
+	+ commit ef5b4ae37d13142e89a051908dc080cda3d24baa
 	* configure.ac: Disable fd-passing by default for Apple.
 
 2013-04-30  Werner Koch  <wk@gnupg.org>
 
 	Allow reading of long gpgconf output lines.
+	+ commit f623a6b94c527795d0b6f7e66a3966e5d9e1c454
 	* src/engine-gpgconf.c (gpgconf_read): Rewrite to allow for line
 	lengths up to 64k.
 
 2013-04-29  Werner Koch  <wk@gnupg.org>
 
 	Fix for i686-w64-mingw32.
+	+ commit 867b950b9306904a0ff522d0ef4a43789393cfc4
 	* configure.ac (NEED__FILE_OFFSET_BITS): Do not define under Windows.
 
 2013-02-26  Werner Koch  <wk@gnupg.org>
 
 	Release 1.4.0.
+	+ commit ef5cd38123dfbef7843f374ee697b0b5e8730c46
 	* configure.ac: Bump LT version to C20/A9/R0.
 
 	Enable FD passing and thus building of the UI-server.
+	+ commit 5090f6f246bfad2eb80f3cc222963f73996d8028
 	* configure.ac: Make --enable-fd-passing the default.
 	* src/engine-uiserver.c (_gpgme_engine_ops_uiserver): Syntax fix.
 
 	w32: Hacks for building with 32 bit mingw64.
+	+ commit cdae524b282ef0ea67c3880b3e0f852c84c351ce
 	* configure.ac (INSERT__TYPEDEFS_FOR_GPGME_H): Add hacks for 32 bit
 	mingw64.
 	* src/util.h [W32]: Include winsock2.h before windows to make mingw64
@@ -4377,10 +5877,12 @@
 	* src/w32-util.c (_WIN32_IE): Need to use 5.1 for mingw64.
 
 	Improve missing libgpg-error reporting in configure.
+	+ commit 787b5f14b933e5cee2624f79a23a60947f8134c8
 	* configure.ac (NEED_GPG_ERROR_VERSION): New.  Improve reporting for
 	missing libgpg-error.
 
 	Change the various version numbers to the new scheme.
+	+ commit d8b46c919f45666af0d541e00dcedf57e6c4b66f
 	* configure.ac: Rename my_foo variables to mym4_foo variables to make
 	clear that they are processed by m4.
 	(VERSION_NUMBER): New ac_subst.
@@ -4395,10 +5897,12 @@
 	* tests/t-version.c (main): Add option --verbose.
 
 	Update GnuPG related m4 files.
+	+ commit 863c0f2a3eaf2a5d46c5518e5ac3486cc1a49bd3
 	* m4/gpg-error.m4: Update from libgpg-error.
 	* m4/libassuan.m4: Update from libassuan.
 
 	Update helper scripts.
+	+ commit fdcd5736e610cd64e47da73dcafe8bc4a6a67666
 	* configure.ac: Use AC_CONFIG_AUX_DIR.  Remove args from
 	AM_INIT_AUTOMAKE.  Replace AM_CONFIG_HEADER by AC_CONFIG_HEADER.
 	* compile, config.guess, config.sub, depcomp, install-sh, ltmain.sh
@@ -4412,6 +5916,7 @@
 2013-02-25  Werner Koch  <wk@gnupg.org>
 
 	Remove included gitlog-to-changelog.
+	+ commit 967e043ac42330ee692f23d05ce3a0dd457f2119
 	* build-aux/gitlog-to-changelog: Remove.
 	* configure.ac (GITLOG_TO_CHANGELOG): Default to just
 	gitlog-to-changelog.
@@ -4419,6 +5924,7 @@
 2013-02-12  Werner Koch  <wk@gnupg.org>
 
 	Add macro GPGME_VERSION_NUMBER.
+	+ commit f48f75b1e812d33b76e439412efffa8277ab9abe
 	* src/gpgme.h.in (GPGME_VERSION_NUMBER): New.
 	* configure.ac (my_version_major, my_version_minor)
 	(my_version_micro): New m4 macros.
@@ -4426,11 +5932,13 @@
 	(VERSION_NUMBER): New ac_subst.
 
 	Add public function gpgme_get_pinentry_mode.
+	+ commit 4f381554411ef019d79492f1751543f145604bcf
 	* src/gpgme.c (gpgme_get_pinentry_mode): New.
 
 2013-02-07  Werner Koch  <wk@gnupg.org>
 
 	gpgme_tool: Support GPG's new pinentry-mode.
+	+ commit 02a2cf0ccb4d01700adf6d18316d7705d519a048
 	* src/gpgme-tool.c (log_error): Do not always print the error source.
 	(gt_set_pinentry_mode): New.
 	(server_passphrase_cb): New.
@@ -4441,6 +5949,7 @@
 	(parse_options, main): Implement that option.
 
 	Add public function gpgme_set_pinentry_mode.
+	+ commit 61a0d92b679f248505f1bf16386bc41a5bf2ba1d
 	* src/gpgme.c (gpgme_set_pinentry_mode): New.
 	* src/gpgme.h.in (gpgme_pinentry_t): New.
 	(gpgme_set_pinentry_mode): New.
@@ -4453,61 +5962,73 @@
 	(_gpgme_engine_ops_gpg): Register gpg_set_pinentry_mode.
 
 	Add public function gpgme_io_writen.
+	+ commit 29eced50687dd8a39dafe704102ae09ea8e8533a
 	* src/gpgme.c (gpgme_io_read): New.
 
 2012-11-16  Werner Koch  <wk@gnupg.org>
 
 	Improve parsing of the GIT revision number.
+	+ commit 322552a88db47896881e55c00ca301137cd160c6
 	* configure.ac (git_revision): Use git rev-parse.
 
 	Fix non-portable use of chmod in autogen.sh.
+	+ commit cd6de92f42cb6e5b85bc376d5544496cb4d6a88a
 	* autogen.sh: Remove option -c from chmod.
 
 2012-11-15  Werner Koch  <wk@gnupg.org>
 
 	Make _gpgme_encode_percent_string work for memory buffers.
+	+ commit 1a17acd8e9b7c0ef924f98bfb1502fe12e83c363
 	* src/conversion.c (D_gpgme_encode_percent_string): Remove stray
 	semicolon.  Reported by Xi Wang.
 
 2012-10-24  Werner Koch  <wk@gnupg.org>
 
 	Make local variables configure hack more robust.
+	+ commit c97d067f27899d890a99036fcbed9263f4f68875
 	* configure.ac (emacs_local_vars_begin): Use extra m4 quoting so that
 	newer Emscasen won't take it up as Local Variables for this file.
 
 	Fix ttyname problem on Android.
+	+ commit 12a0c93433a0b1d7e8019fc35a63476db39327fa
 	* configure.ac: Define macro and conditional HAVE_ANDROID_SYSTEM.
 	* m4/gnupg-ttyname.m4: Force use of replacement on Android.
 	* src/ttyname_r.c: Ditto.
 
 	tests: Adhere to the docs and call gpgme_check_version.
+	+ commit cc59b75b21516198b39a56950afbcec140d8ba48
 	* tests/t-engine-info.c: Call gpgme_check_version.
 
 2012-10-19  Werner Koch  <wk@gnupg.org>
 
 	Trace the use of GPG_ERR_INV_ENGINE.
+	+ commit bd24feaa86f8154e550107990392ac9ac05e60d4
 	* src/debug.h: Include "gpgme.h"
 	(_gpgme_trace_gpgme_error): New.
 	(trace_gpg_error): New macro.  Use it in all files where we return
 	GPG_ERR_INV_ENGINE; also "include debug.h" as needed.
 
 	Avoid warning about initialized but not used variable.
+	+ commit 14a8fd4eec126cad282a85c5aa336a6b55229b52
 	* src/engine-gpgsm.c (gpgsm_set_fd): Do not set DIR if not needed.
 
 2012-10-11  Werner Koch  <wk@gnupg.org>
 
 	gpgme-tool: Use membuf functions to build up strings.
+	+ commit e11e7fc5586613525035c3358e15ae24accb96ea
 	* src/gpgme-tool.c (clear_membuf, init_membuf, put_membuf)
 	(put_membuf_str, get_membuf, peek_membuf): Add membuf functions.
 	Take from GnuPG master's common/membuf.[ch] and patch for our use.
 	(result_xml_escape): Rewrite using new functions.
 
 	gpgme-tool: Change license from LPGLv2+ to GPLv3+
+	+ commit aa30b47aa010bf46876f2335e288f8bd8718e396
 	* src/gpgme-tool.c: Change license notice.
 
 2012-10-11  W. Trevor King  <wking@tremily.us>
 
 	gpgme-tool: escape special characters in output XML data (<, >, and &).
+	+ commit 3f1329e1c9b99b1632cc4c4eec2e4399676fd93d
 
 	src/gpgme-tool.c (result_xml_escape_replacement, result_xml_escape):
 	New.
@@ -4515,12 +6036,14 @@
 	(result_add_error): Use unescaped < and >.
 
 	gpgme-tool: Fix chain_id -> chain-id in KEYLIST XML.
+	+ commit c28ebca9f2e21344d68e9fdcec60553f225c2e54
 
 	src/gpgme-tool.c (cmd_keylist): Use <chain-id> instead of <chain_id>.
 
 2012-09-28  W. Trevor King  <wking@tremily.us>
 
 	gpgme-tool: Return more detailed XML from KEYLIST.
+	+ commit 3d69b51f7f083193db28f364da4590c33b5e44e6
 	src/gpgme-tool.c (cmd_keylist): Convert output from a list of
 	to more detailed XML.
 	(xml_preamble1, xml_preamble2, xml_end): Make global.
@@ -4531,11 +6054,13 @@
 	value returned by gpgme_get_protocol_name directly.
 
 	gpgme-tool: Initialize input_fd and output_fd.
+	+ commit dda3702a9024a08da7bb949e15b63a47d23d59f5
 	* src/gpgme-tool.c (gpgme_server): Initialize input_fd and output_fd.
 
 2012-09-26  Werner Koch  <wk@gnupg.org>
 
 	gpgme-tool: Fix handling of file descriptors.
+	+ commit 193eb62538b9413e0dfbd04c075f871d5aa9130b
 	* src/gpgme-tool.c (server_reset_fds): Use close/CloseHandle instead
 	of the assuan close functions.
 	(_cmd_decrypt_verify, _cmd_sign_encrypt, cmd_verify, cmd_import)
@@ -4545,11 +6070,13 @@
 2012-09-25  Werner Koch  <wk@gnupg.org>
 
 	Document contribution rules.
+	+ commit db33945ab3b8c173a3fc2dd1a0d22d7fc15d8730
 	* doc/HACKING (License policy): New.
 	* doc/DCO: New.
 	* AUTHORS: Change maintainer address.
 
 	Add gpgme_set_global_flag to help debugging.
+	+ commit c62b79a1d6e576d94e08cb81c2f5dbcb42ecf8cf
 	* src/gpgme.c (gpgme_set_global_flag): New.
 	* src/gpgme.h.in (gpgme_set_global_flag): New.
 	* src/gpgme.def, src/libgpgme.vers: Add new public function.
@@ -4560,55 +6087,69 @@
 2012-07-28  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
 
 	Add two recent contributors.
+	+ commit 83e74202cd7c4c975d149c49e2507fdb0e60ef32
+
 
 	Fix sign error in position calculation for mem_seek.
+	+ commit 8384ccbd1a51447dccbd608fc5df3c24cb8999b1
 	* data-mem.c (mem_seek): Fix sign error in position calculation.
 
 	Allow null context on gpgme_set_locale.
+	+ commit 434735f71e6969248651ac01c6bd6f6789a6305d
 	* gpgme.c (gpgme_set_locale): Allow CTX to be a null pointer.
 
 2012-07-13  Werner Koch  <wk@gnupg.org>
 
 	Do not include the removed file status-table.h.
+	+ commit e7aeaebb01395b170c91f290bf3ff5021023420f
 	* src/engine-uiserver.c: Remove status-table.h which is not anymore
 	built.  Fixes bug#1412.
 
 	Make handling of new conf values more robust (bug#1413).
+	+ commit 9f081da7356288a96e8ea4d81a74ff706c00b0cd
 	* src/engine-gpgconf.c (arg_to_data): Allow for NULL as value.string.
 
 2012-05-02  Werner Koch  <wk@gnupg.org>
 
 	Release 1.3.2.
+	+ commit 9c8608f702ec0f44ae55cd7f33bd8df0a2d48508
 	* configure.ac: Bump LT version to C19/A8/R1.
 
 	* configure.ac (GITLOG_TO_CHANGELOG): Define.
 	* Makefile.am (gen-ChangeLog): Use it.
 
 	Remove unused pth stuff from gpgme-config.
+	+ commit 295dd3f238fa656493d34e8a718958d62226b56c
 	* src/gpgme-config.in: Remove unused pth stuff.
 
 	Update signature summary for the case of missing X.509 keys.
+	+ commit d6402b888fd00b883bbfc00c91a2aa9706e4377e
 	* src/verify.c (gpgme_op_verify_result): Update summary field.
 
 2012-04-30  Werner Koch  <wk@gnupg.org>
 
 	Fix timestamp parsing for y2038 hack.
+	+ commit 1a21574b48ee91eedbf95251ee600648b377d1e7
 	* src/conversion.c (_gpgme_parse_timestamp): Set ENDP before year 2038
 	check.
 
 2012-04-20  W. Trevor King  <wking@drexel.edu>
 
 	.gitignore: flesh out rules and add subdirectory-.gitignores.
+	+ commit 4cb408d33efe80e7d102049dea244d22907d8395
+
 
 2012-04-13  W. Trevor King  <wking@drexel.edu>
 
 	status-table.c: include string.h for strcmp.
+	+ commit 62bbe58280737d73badbe518f140e40480205176
 	* status-table.c: include string.h to avoid `warning: implicit
 	declaration of function 'strcmp'`.
 
 2012-04-03  W. Trevor King  <wking@drexel.edu>
 
 	gpgme-tool: add help messages for a number of commands.
+	+ commit c318e69d8fa5f9e92d4aac3dd44fae5adcaade72
 	* src/gpgme-tool.c (hlp_engine, hlp_sub_protocol, hlp_armor, hlp_textmode,
 	hlp_include_certs, hlp_keylist_mode, hlp_input, hlp_output, hlp_message,
 	hlp_recipient, hlp_signer, hlp_signers_clear, hlp_decrypt, hlp_decrypt_verify,
@@ -4618,22 +6159,27 @@
 	(doc): Mention Assuan.
 
 	uiserver.texi: fix decryption -> encryption typo in PREP_ENCRYPT discussion.
+	+ commit bb62104adf78e8416b3c56b8b2621edd723b56cd
 	* doc/uiserver.texi (PREP_ENCRYPT): Fix documentation.
 
 	Update Werner Koch's distribution signing key in the README.
+	+ commit 6ec9e21dd1ea2f8509700bce018aef6ad7e9a927
 	* README: Update signing key.
 
 2012-03-12  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
 
 	Do not rely on glibc name of syscall.
+	+ commit ff0a640a18e7b7457e6c2edfdc8307bf44628b60
 	* src/ath.c (ath_self): Use __NR_gettid, not SYS_gettid.
 
 	Update config.guess and config.sub to latest version.
+	+ commit ced1ad01aed32d1e4c5000f3b901db018ef7bf1e
 	* config.guess, config.sub: Update to latest version.
 
 2012-02-14  Marcus Brinkmann  <marcus.brinkmann@ruhr-uni-bochum.de>
 
 	Rework status table to be less dynamically generated.
+	+ commit 885243e05467e79e2375b3febe7904053ab45dfc
 	* src/Makefile.am (EXTRA_DIST): Remove mkstatus.
 	(BUILT_SOURCE, MOSTLYCLEANFILES): Remove.
 	(main_sources): Remove status-table.h, extra-stati.h.
@@ -4660,6 +6206,7 @@
 2012-02-08  Marcus Brinkmann  <mb@g10code.com>
 
 	Use gpgme interface for error handling to avoid linking with gpg-error.
+	+ commit dae3073aaa8b7feb1c844fdaf711f79141b9cc65
 	* tests/t-data.c, tests/run-export.c, tests/run-keylist.c,
 	tests/run-support.h, tests/run-verify.c, tests/gpg/t-decrypt-verify.c,
 	tests/gpg/t-edit.c, tests/gpg/t-eventloop.c, tests/gpg/t-keylist-sig.c,
@@ -4670,17 +6217,21 @@
 	tests/opassuan/t-command.c: Use gpgme interface for gpg-error functions.
 
 	Link the thread test to pthread.
+	+ commit 0052a72f89c6830818e354358fdd84702d3494c8
 	* tests/gpg/Makefile.am (t_thread1_LDADD): Add -lpthread.
 
 	Link gpgme-tool directly to libassuan, as it uses its interface.
+	+ commit 3f03897cbd223d4a75eb62c3b7bdfeb800661641
 	* src/Makefile.am (gpgme_tool_LDADD): Add @LIBASSUAN_LIBS@.
 
 2012-01-19  Werner Koch  <wk@gnupg.org>
 
 	Support the mingw-w64 toolchain.
+	+ commit 24a10a4af948ebb1c767b69a92fa5bbe933a417c
 	* autogen.sh (build-w32): Add i686-w64-mingw32 to the toolprefix.
 
 	Fix Solaris problems with ttyname_r.
+	+ commit 2f304957f5122a5d9da643dc9951ee67ece06eaf
 	* m4/gnupg-ttyname.m4: New.  Based on ttyname_r from gnulib.
 	* src/ttyname_r.c (_gpgme_ttyname_r): Rename from ttyname_r.
 	Implement hacks required for Solaris and possible other non-fully
@@ -4689,9 +6240,11 @@
 	REPLACE_TTYNAME_R and put it into the gpgme name space.
 
 	Try to make configure.ac a bit smaller.
+	+ commit c96778297f5477448a676fcf0c61044bdbccc86d
 	* configure.ac: Move header checks.
 
 	For W32 use a build number instead of abbreviated commit id.
+	+ commit 574b087e84f5652cf9d8eba8aa16b8d6bb988035
 	We would need to use a shortened commit id so that it fits into an 16
 	bit Windows variable.  Further it is a random number and not something
 	increasing.  Thus a build number made up from the day of the year and
@@ -4701,18 +6254,22 @@
 	* src/versioninfo.rc.in: Ditto.
 
 	Adjust configure.ac for modern autoconf.
+	+ commit a0149630ce6d3e17a7475e20e8b2e31ed5ba57fd
 	* configure.ac: Minor cleanups.
 
 	Update to libtool 2.4.2.
+	+ commit 4cfddadcd0a569f0b204dccea3c975ce0bdfb232
 	* ltmain.sh, m4/libtool.m4, m4/ltoptions.m4, m4/ltversion.m4,
 	* m4/lt~obsolete.m4: Update.
 
 	Add ttyname_r check macro from gnulib.
+	+ commit 3ef528b63679df912551d5d21fc36e465cf50c40
 	* m4/gnupg-ttyname.m4: New. Taken from current gnulib.
 
 2011-12-02  Werner Koch  <wk@gnupg.org>
 
 	Generate the ChangeLog from commit logs.
+	+ commit a4c4ee1aaea4359432bdf60dd572f549ef8dee83
 	* build-aux/gitlog-to-changelog: New script.  Taken from gnulib.
 	* build-aux/git-log-fix: New file.
 	* build-aux/git-log-footer: New file.

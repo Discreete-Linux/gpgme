@@ -28,7 +28,7 @@ min_automake_version="1.14"
 # commit and push so that the git magic is able to work.  See below
 # for the LT versions.
 m4_define(mym4_version_major, [1])
-m4_define(mym4_version_minor, [8])
+m4_define(mym4_version_minor, [9])
 m4_define(mym4_version_micro, [0])
 
 # Below is m4 magic to extract and compute the revision number, the
@@ -55,19 +55,19 @@ AC_INIT([gpgme],[mym4_full_version],[http://bugs.gnupg.org])
 #   (Interfaces added:			AGE++)
 #   (Interfaces removed/changed:	AGE=0)
 #
-LIBGPGME_LT_CURRENT=28
-LIBGPGME_LT_AGE=17
+LIBGPGME_LT_CURRENT=29
+LIBGPGME_LT_AGE=18
 LIBGPGME_LT_REVISION=0
 
 # If there is an ABI break in gpgmepp or qgpgme also bump the
 # version in IMPORTED_LOCATION in the GpgmeppConfig-w32.cmake.in.in
 
-LIBGPGMEPP_LT_CURRENT=9
-LIBGPGMEPP_LT_AGE=3
+LIBGPGMEPP_LT_CURRENT=10
+LIBGPGMEPP_LT_AGE=4
 LIBGPGMEPP_LT_REVISION=0
 
-LIBQGPGME_LT_CURRENT=8
-LIBQGPGME_LT_AGE=1
+LIBQGPGME_LT_CURRENT=9
+LIBQGPGME_LT_AGE=2
 LIBQGPGME_LT_REVISION=0
 
 # If the API is changed in an incompatible way: increment the next counter.
@@ -167,6 +167,8 @@ case "${host}" in
 	have_ld_version_script=yes
         ;;
     *-apple-darwin*)
+        AC_DEFINE(_DARWIN_C_SOURCE, 900000L,
+                  Expose all libc features (__DARWIN_C_FULL).)
         AC_DEFINE(_XOPEN_SOURCE, 500, Activate POSIX interface on MacOS X)
         ;;
 esac
@@ -182,6 +184,7 @@ have_dosish_system=no
 have_android_system=no
 have_w32_system=no
 have_w64_system=no
+have_macos_system=no
 build_w32_glib=no
 build_w32_qt=no
 available_languages="cl cpp python python2 python3 qt"
@@ -195,6 +198,9 @@ case "${host}" in
 	;;
     *-linux-androideabi)
         have_android_system=yes
+        ;;
+    *-apple-darwin*)
+        have_macos_system=yes
         ;;
 esac
 case "${host}" in
@@ -252,6 +258,12 @@ if test "$have_android_system" = yes; then
    AC_DEFINE(HAVE_ANDROID_SYSTEM,1, [Defined if we build for an Android system])
 fi
 AM_CONDITIONAL(HAVE_ANDROID_SYSTEM, test "$have_android_system" = yes)
+
+if test "$have_macos_system" = yes; then
+   AC_DEFINE(HAVE_MACOS_SYSTEM,1,
+             [Defined if we build for an MacOS system])
+fi
+AM_CONDITIONAL(HAVE_MACOS_SYSTEM, test "$have_macos_system" = yes)
 
 AM_CONDITIONAL(BUILD_W32_GLIB, test "$build_w32_glib" = yes)
 
@@ -406,12 +418,13 @@ if test "$found_py" = "1" -o "$found_py2" = "1" -o "$found_py3" = "1"; then
 	unset am_cv_python_pyexecdir
 
 	if test "$found_py" = "1" -o "$found_py2" = "1"; then
-	    AM_PATH_PYTHON([2.7])
-	    AX_PYTHON_DEVEL
-	    if test "$PYTHON_VERSION"; then
-		PYTHONS="$(echo $PYTHONS $PYTHON)"
-		PYTHON_VERSIONS="$(echo $PYTHON_VERSIONS $PYTHON_VERSION)"
-	    fi
+	    AM_PATH_PYTHON([2.7], [
+		AX_PYTHON_DEVEL
+		if test "$PYTHON_VERSION"; then
+			PYTHONS="$(echo $PYTHONS $PYTHON)"
+			PYTHON_VERSIONS="$(echo $PYTHON_VERSIONS $PYTHON_VERSION)"
+		fi
+	    ], :)
 	fi
 
 	if test "$found_py" = "1" -o "$found_py3" = "1"; then
@@ -429,17 +442,26 @@ if test "$found_py" = "1" -o "$found_py2" = "1" -o "$found_py3" = "1"; then
 	    unset am_cv_python_platform
 	    unset am_cv_python_pythondir
 	    unset am_cv_python_pyexecdir
-	    AM_PATH_PYTHON([3.4])
-	    AX_PYTHON_DEVEL
-	    if test "$PYTHON_VERSION"; then
-		PYTHONS="$(echo $PYTHONS $PYTHON)"
-		PYTHON_VERSIONS="$(echo $PYTHON_VERSIONS $PYTHON_VERSION)"
-	    fi
+	    AM_PATH_PYTHON([3.4], [
+		AX_PYTHON_DEVEL
+		if test "$PYTHON_VERSION"; then
+			PYTHONS="$(echo $PYTHONS $PYTHON)"
+			PYTHON_VERSIONS="$(echo $PYTHON_VERSIONS $PYTHON_VERSION)"
+		fi
+	    ], :)
 	fi
 
+	# Recover some values lost in the second attempt to find Python.
+	PYTHON="$(echo $PYTHONS | cut -d ' ' -f 1)"
+	PYTHON_VERSION="$(echo $PYTHON_VERSIONS | cut -d ' ' -f 1)"
+
+	# Remove duplicates.
+	PYTHONS="$(echo $PYTHONS | tr '[[:space:]]' '\n' | sort | uniq | tr '\n' ' ' | sed -e 's/ $//')"
+	PYTHON_VERSIONS="$(echo $PYTHON_VERSIONS | tr '[[:space:]]' '\n' | sort | uniq | tr '\n' ' ' | sed -e 's/ $//')"
+
 	if test "$PYTHON_VERSIONS"; then
-	   enabled_languages_v=$(echo $enabled_languages | sed "s/python\([[23]]\)\?/python ($PYTHON_VERSIONS)/")
-	   enabled_languages=$(echo $enabled_languages | sed "s/python\([[23]]\)\?/python/")
+	   enabled_languages_v=$(echo $enabled_languages | sed -Ee "s/python[[23]]?/python ($PYTHON_VERSIONS)/")
+	   enabled_languages=$(echo $enabled_languages | sed -Ee "s/python[[23]]?/python/")
 	else
             if test "$explicit_languages" = "1"; then
                 AC_MSG_ERROR([[
@@ -622,11 +644,6 @@ AC_MSG_NOTICE([checking for libraries])
 
 AC_FUNC_FSEEKO
 
-AC_REPLACE_FUNCS(vasprintf)
-if test "$ac_cv_func_vasprintf" != yes; then
-  GNUPG_CHECK_VA_COPY
-fi
-
 # Try to find a thread-safe version of ttyname().
 gnupg_REPLACE_TTYNAME_R
 if test "$ac_cv_func_ttyname_r" != yes; then
@@ -688,23 +705,8 @@ fi
 # Other checks
 #
 
-# Check for funopen
-AC_CHECK_FUNCS(funopen)
-if test $ac_cv_func_funopen != yes; then
-    # No funopen but we can implement that in terms of fopencookie.
-    AC_CHECK_FUNCS(fopencookie)
-    if test $ac_cv_func_fopencookie = yes; then
-        AC_REPLACE_FUNCS(funopen)
-    else
-        AC_MSG_WARN([
-***
-*** No implementation of fopencookie or funopen available
-***])
-    fi
-fi
-
 # Check for getgid etc
-AC_CHECK_FUNCS(getgid getegid)
+AC_CHECK_FUNCS(getgid getegid closefrom)
 
 
 # Replacement functions.
@@ -732,18 +734,7 @@ AC_CHECK_MEMBER(struct cmsghdr.cmsg_len,
 #include <unistd.h>
        ])
 
-
-dnl There seems to be a problem with Apple and decriptor passing.
-dnl Until we found a solution we change the default to no.
-dnl See bug 1483.
-case "${host}" in
-    *-apple-darwin*)
-      use_descriptor_passing=no
-      ;;
-    *)
-      use_descriptor_passing=yes
-      ;;
-esac
+use_descriptor_passing=yes
 AC_ARG_ENABLE(fd-passing,
   AC_HELP_STRING([--disable-fd-passing], [do not use FD passing]),
   use_descriptor_passing=$enableval)
@@ -798,7 +789,7 @@ AH_BOTTOM([
 #define GPG_ERR_ENABLE_ERRNO_MACROS 1
 
 #define CRIGHTBLURB "Copyright (C) 2000 Werner Koch\n" \
-                    "Copyright (C) 2001--2016 g10 Code GmbH\n"
+                    "Copyright (C) 2001--2017 g10 Code GmbH\n"
 ])
 
 

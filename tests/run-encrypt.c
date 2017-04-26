@@ -88,6 +88,8 @@ show_usage (int ex)
          "  --uiserver       use the UI server\n"
          "  --loopback       use a loopback pinentry\n"
          "  --key NAME       encrypt to key NAME\n"
+         "  --throw-keyids   use this option\n"
+         "  --wrap           assume input is valid OpenPGP message\n"
          "  --symmetric      encrypt symmetric (OpenPGP only)\n"
          , stderr);
   exit (ex);
@@ -168,6 +170,16 @@ main (int argc, char **argv)
           if (keycount == DIM (keyargs))
             show_usage (1);
           keyargs[keycount++] = *argv;
+          argc--; argv++;
+        }
+      else if (!strcmp (*argv, "--throw-keyids"))
+        {
+          flags |= GPGME_ENCRYPT_THROW_KEYIDS;
+          argc--; argv++;
+        }
+      else if (!strcmp (*argv, "--wrap"))
+        {
+          flags |= GPGME_ENCRYPT_WRAP;
           argc--; argv++;
         }
       else if (!strcmp (*argv, "--loopback"))

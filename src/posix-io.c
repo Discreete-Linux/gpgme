@@ -287,37 +287,43 @@ get_max_fds (void)
   int rc;
 
   /* Under Linux we can figure out the highest used file descriptor by
-   * reading /proc/self/fd.  This is in the common cases much fast than
-   * for example doing 4096 close calls where almost all of them will
-   * fail.  */
-#ifdef __linux__
-  {
-    DIR *dir = NULL;
-    struct dirent *dir_entry;
-    const char *s;
-    int x;
+   * reading /proc/self/fd.  This is in the common cases much faster
+   * than for example doing 4096 close calls where almost all of them
+   * will fail.
+   *
+   * Unfortunately we can't call opendir between fork and exec in a
+   * multi-threaded process because opendir uses malloc and thus a
+   * mutex which may deadlock with a malloc in another thread.  Thus
+   * the code is not used until we can have a opendir variant which
+   * does not use malloc.  */
+/* #ifdef __linux__ */
+/*   { */
+/*     DIR *dir = NULL; */
+/*     struct dirent *dir_entry; */
+/*     const char *s; */
+/*     int x; */
 
-    dir = opendir ("/proc/self/fd");
-    if (dir)
-      {
-        while ((dir_entry = readdir (dir)))
-          {
-            s = dir_entry->d_name;
-            if ( *s < '0' || *s > '9')
-              continue;
-            x = atoi (s);
-            if (x > fds)
-              fds = x;
-          }
-        closedir (dir);
-      }
-    if (fds != -1)
-      {
-        fds++;
-        source = "/proc";
-      }
-    }
-#endif /* __linux__ */
+/*     dir = opendir ("/proc/self/fd"); */
+/*     if (dir) */
+/*       { */
+/*         while ((dir_entry = readdir (dir))) */
+/*           { */
+/*             s = dir_entry->d_name; */
+/*             if ( *s < '0' || *s > '9') */
+/*               continue; */
+/*             x = atoi (s); */
+/*             if (x > fds) */
+/*               fds = x; */
+/*           } */
+/*         closedir (dir); */
+/*       } */
+/*     if (fds != -1) */
+/*       { */
+/*         fds++; */
+/*         source = "/proc"; */
+/*       } */
+/*     } */
+/* #endif /\* __linux__ *\/ */
 
 #ifdef RLIMIT_NOFILE
   if (fds == -1)
@@ -453,10 +459,9 @@ _gpgme_io_spawn (const char *path, char *const argv[], unsigned int flags,
       /* Intermediate child to prevent zombie processes.  */
       if ((pid = fork ()) == 0)
 	{
-	  int max_fds = get_max_fds ();
-	  int fd;
-
 	  /* Child.  */
+          int max_fds = -1;
+          int fd;
 	  int seen_stdin = 0;
 	  int seen_stdout = 0;
 	  int seen_stderr = 0;
@@ -464,15 +469,40 @@ _gpgme_io_spawn (const char *path, char *const argv[], unsigned int flags,
 	  if (atfork)
 	    atfork (atforkvalue, 0);
 
-	  /* First close all fds which will not be inherited.  */
-	  for (fd = 0; fd < max_fds; fd++)
-	    {
-	      for (i = 0; fd_list[i].fd != -1; i++)
-		if (fd_list[i].fd == fd)
-		  break;
-	      if (fd_list[i].fd == -1)
-		close (fd);
-	    }
+          /* First close all fds which will not be inherited.  If we
+           * have closefrom(2) we first figure out the highest fd we
+           * do not want to close, then call closefrom, and on success
+           * use the regular code to close all fds up to the start
+           * point of closefrom.  Note that Solaris' closefrom does
+           * not return errors.  */
+#ifdef HAVE_CLOSEFROM
+          {
+            fd = -1;
+            for (i = 0; fd_list[i].fd != -1; i++)
+              if (fd_list[i].fd > fd)
+                fd = fd_list[i].fd;
+            fd++;
+#ifdef __sun
+            closefrom (fd);
+            max_fds = fd;
+#else /*!__sun */
+            while ((i = closefrom (fd)) && errno == EINTR)
+              ;
+            if (!i || errno == EBADF)
+              max_fds = fd;
+#endif /*!__sun*/
+          }
+#endif /*HAVE_CLOSEFROM*/
+          if (max_fds == -1)
+            max_fds = get_max_fds ();
+          for (fd = 0; fd < max_fds; fd++)
+            {
+              for (i = 0; fd_list[i].fd != -1; i++)
+                if (fd_list[i].fd == fd)
+                  break;
+              if (fd_list[i].fd == -1)
+                close (fd);
+            }
 
 	  /* And now dup and close those to be duplicated.  */
 	  for (i = 0; fd_list[i].fd != -1; i++)

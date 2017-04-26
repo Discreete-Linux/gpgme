@@ -234,6 +234,11 @@ bool Key::isQualified() const
     return key && key->is_qualified;
 }
 
+bool Key::isDeVs() const
+{
+    return key && key->subkeys && key->subkeys->is_de_vs;
+}
+
 const char *Key::issuerSerial() const
 {
     return key ? key->issuer_serial : 0 ;
@@ -341,7 +346,12 @@ void Key::update()
                         KeyListMode::Validate |
                         KeyListMode::WithTofu);
     Error err;
-    auto newKey = ctx->key(primaryFingerprint(), err, hasSecret());
+    auto newKey = ctx->key(primaryFingerprint(), err, true);
+    // Not secret so we get the information from the pubring.
+    if (newKey.isNull())
+      {
+        newKey = ctx->key(primaryFingerprint(), err, false);
+      }
     delete ctx;
     if (err) {
         return;
@@ -464,6 +474,11 @@ bool Subkey::isQualified() const
     return subkey && subkey->is_qualified;
 }
 
+bool Subkey::isDeVs() const
+{
+    return subkey && subkey->is_de_vs;
+}
+
 bool Subkey::isCardKey() const
 {
     return subkey && subkey->is_cardkey;
@@ -471,7 +486,12 @@ bool Subkey::isCardKey() const
 
 const char *Subkey::cardSerialNumber() const
 {
-    return subkey ? subkey->card_number : 0 ;
+    return subkey ? subkey->card_number : nullptr;
+}
+
+const char *Subkey::keyGrip() const
+{
+    return subkey ? subkey->keygrip : nullptr;
 }
 
 bool Subkey::isSecret() const
@@ -894,7 +914,39 @@ std::string UserID::addrSpecFromString(const char *userid)
 
 std::string UserID::addrSpec() const
 {
-    return addrSpecFromString(email());
+    if (!uid || !uid->address) {
+        return std::string();
+    }
+
+    return uid->address;
+}
+
+Error UserID::revoke()
+{
+    if (isNull()) {
+        return Error::fromCode(GPG_ERR_GENERAL);
+    }
+    auto ctx = Context::createForProtocol(parent().protocol());
+    if (!ctx) {
+        return Error::fromCode(GPG_ERR_INV_ENGINE);
+    }
+    Error ret = ctx->revUid(key, id());
+    delete ctx;
+    return ret;
+}
+
+Error Key::addUid(const char *uid)
+{
+    if (isNull()) {
+        return Error::fromCode(GPG_ERR_GENERAL);
+    }
+    auto ctx = Context::createForProtocol(protocol());
+    if (!ctx) {
+        return Error::fromCode(GPG_ERR_INV_ENGINE);
+    }
+    Error ret = ctx->addUid(key, uid);
+    delete ctx;
+    return ret;
 }
 
 std::ostream &operator<<(std::ostream &os, const UserID &uid)
@@ -903,6 +955,7 @@ std::ostream &operator<<(std::ostream &os, const UserID &uid)
     if (!uid.isNull()) {
         os << "\n name:      " << protect(uid.name())
            << "\n email:     " << protect(uid.email())
+           << "\n mbox:      " << uid.addrSpec()
            << "\n comment:   " << protect(uid.comment())
            << "\n validity:  " << uid.validityAsString()
            << "\n revoked:   " << uid.isRevoked()

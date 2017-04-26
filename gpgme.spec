@@ -1,7 +1,7 @@
 # This is a template.  The dist target uses it to create the real file.
 Summary: GPGME - GnuPG Made Easy
 Name: gpgme
-Version: 1.8.0
+Version: 1.9.0
 Release: 1
 URL: https://gnupg.org/gpgme.html
 Source: ftp://ftp.gnupg.org/gcrypt/alpha/gpgme/%{name}-%{version}.tar.gz

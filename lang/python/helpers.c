@@ -293,8 +293,10 @@ _gpg_obj2gpgme_data_t(PyObject *input, int argnum, gpgme_data_t *wrapper,
     return _gpg_obj2gpgme_t(data, "gpgme_data_t", argnum);
 
   return PyErr_Format(PyExc_TypeError,
-                      "arg %d: expected gpg.Data, file, or an object "
-                      "implementing the buffer protocol, got %s",
+                      "arg %d: expected gpg.Data, file, "
+                      "bytes (not string!), or an object "
+                      "implementing the buffer protocol. Got: %s. "
+                      "If you provided a string, try to encode() it.",
                       argnum, data->ob_type->tp_name);
 }
 
@@ -375,7 +377,21 @@ static gpgme_error_t pyPassphraseCb(void *hook,
     goto leave;
   }
 
-  PyTuple_SetItem(args, 1, PyBytes_FromString(passphrase_info));
+  if (passphrase_info == NULL)
+    {
+      Py_INCREF(Py_None);
+      PyTuple_SetItem(args, 1, Py_None);
+    }
+  else
+    PyTuple_SetItem(args, 1, PyUnicode_DecodeUTF8(passphrase_info,
+                                                  strlen (passphrase_info),
+                                                  "strict"));
+  if (PyErr_Occurred()) {
+    Py_DECREF(args);
+    err_status = gpg_error(GPG_ERR_GENERAL);
+    goto leave;
+  }
+
   PyTuple_SetItem(args, 2, PyBool_FromLong((long)prev_was_bad));
   if (dataarg) {
     Py_INCREF(dataarg);		/* Because GetItem doesn't give a ref but SetItem taketh away */
