@@ -90,6 +90,8 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_op_createsubkey@GPGME_1.1 1.7.0
  gpgme_op_createsubkey_start@GPGME_1.1 1.7.0
  gpgme_op_decrypt@GPGME_1.0 1.1.2
+ gpgme_op_decrypt_ext@GPGME_1.1 1.9.0-1
+ gpgme_op_decrypt_ext_start@GPGME_1.1 1.9.0-1
  gpgme_op_decrypt_result@GPGME_1.0 1.1.2
  gpgme_op_decrypt_start@GPGME_1.0 1.1.2
  gpgme_op_decrypt_verify@GPGME_1.0 1.1.2
@@ -124,6 +126,7 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_op_interact_start@GPGME_1.1 1.7.0
  gpgme_op_keylist_end@GPGME_1.0 1.1.2
  gpgme_op_keylist_ext_start@GPGME_1.0 1.1.2
+ gpgme_op_keylist_from_data_start@GPGME_1.0 1.9.0-1
  gpgme_op_keylist_next@GPGME_1.0 1.1.2
  gpgme_op_keylist_result@GPGME_1.0 1.1.2
  gpgme_op_keylist_start@GPGME_1.0 1.1.2
@@ -135,6 +138,8 @@ libgpgme.so.11 libgpgme11 #MINVER#
  gpgme_op_query_swdb_result@GPGME_1.1 1.8.0
  gpgme_op_revuid@GPGME_1.1 1.7.0
  gpgme_op_revuid_start@GPGME_1.1 1.7.0
+ gpgme_op_set_uid_flag@GPGME_1.1 1.9.0-1
+ gpgme_op_set_uid_flag_start@GPGME_1.1 1.9.0-1
  gpgme_op_sign@GPGME_1.0 1.1.2
  gpgme_op_sign_result@GPGME_1.0 1.1.2
  gpgme_op_sign_start@GPGME_1.0 1.1.2
