@@ -449,7 +449,6 @@ struct engine_ops _gpgme_engine_ops_spawn =
     NULL,		/* set_locale */
     NULL,		/* set_protocol */
     NULL,		/* decrypt */
-    NULL,		/* decrypt_verify */
     NULL,		/* delete */
     NULL,		/* edit */
     NULL,		/* encrypt */
@@ -460,6 +459,7 @@ struct engine_ops _gpgme_engine_ops_spawn =
     NULL,		/* import */
     NULL,		/* keylist */
     NULL,		/* keylist_ext */
+    NULL,               /* keylist_data */
     NULL,               /* keysign */
     NULL,               /* tofu_policy */
     NULL,		/* sign */

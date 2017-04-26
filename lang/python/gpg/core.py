@@ -1,4 +1,4 @@
-# Copyright (C) 2016 g10 Code GmbH
+# Copyright (C) 2016-2017 g10 Code GmbH
 # Copyright (C) 2004,2008 Igor Belyi <belyi@users.sourceforge.net>
 # Copyright (C) 2002 John Goerzen <jgoerzen@complete.org>
 #
@@ -176,7 +176,7 @@ class Context(GpgmeWrapper):
     def __init__(self, armor=False, textmode=False, offline=False,
                  signers=[], pinentry_mode=constants.PINENTRY_MODE_DEFAULT,
                  protocol=constants.PROTOCOL_OpenPGP,
-                 wrapped=None):
+                 wrapped=None, home_dir=None):
         """Construct a context object
 
         Keyword arguments:
@@ -186,6 +186,7 @@ class Context(GpgmeWrapper):
         signers		-- list of keys used for signing (default [])
         pinentry_mode	-- pinentry mode (default PINENTRY_MODE_DEFAULT)
         protocol	-- protocol to use (default PROTOCOL_OpenPGP)
+        home_dir        -- state directory (default is the engine default)
 
         """
         if wrapped:
@@ -203,6 +204,15 @@ class Context(GpgmeWrapper):
         self.signers = signers
         self.pinentry_mode = pinentry_mode
         self.protocol = protocol
+        self.home_dir = home_dir
+
+    def __repr__(self):
+        return (
+            "Context(armor={0.armor}, "
+            "textmode={0.textmode}, offline={0.offline}, "
+            "signers={0.signers}, pinentry_mode={0.pinentry_mode}, "
+            "protocol={0.protocol}, home_dir={0.home_dir}"
+            ")").format(self)
 
     def encrypt(self, plaintext, recipients=[], sign=True, sink=None,
                 passphrase=None, always_trust=False, add_encrypt_to=False,
@@ -473,12 +483,17 @@ class Context(GpgmeWrapper):
             plainbytes = data.read()
         return plainbytes, result
 
-    def keylist(self, pattern=None, secret=False):
+    def keylist(self, pattern=None, secret=False,
+                mode=constants.keylist.mode.LOCAL,
+                source=None):
         """List keys
 
         Keyword arguments:
         pattern	-- return keys matching pattern (default: all keys)
-        secret	-- return only secret keys
+        secret	-- return only secret keys (default: False)
+        mode    -- keylist mode (default: list local keys)
+        source  -- read keys from source instead from the keyring
+                       (all other options are ignored in this case)
 
         Returns:
                 -- an iterator returning key objects
@@ -486,7 +501,249 @@ class Context(GpgmeWrapper):
         Raises:
         GPGMEError	-- as signaled by the underlying library
         """
-        return self.op_keylist_all(pattern, secret)
+        if not source:
+            self.set_keylist_mode(mode)
+            self.op_keylist_start(pattern, secret)
+        else:
+            # Automatic wrapping of SOURCE is not possible here,
+            # because the object must not be deallocated until the
+            # iteration over the results ends.
+            if not isinstance(source, Data):
+                source = Data(file=source)
+            self.op_keylist_from_data_start(source, 0)
+
+        key = self.op_keylist_next()
+        while key:
+            yield key
+            key = self.op_keylist_next()
+        self.op_keylist_end()
+
+    def create_key(self, userid, algorithm=None, expires_in=0, expires=True,
+                   sign=False, encrypt=False, certify=False, authenticate=False,
+                   passphrase=None, force=False):
+        """Create a primary key
+
+        Create a primary key for the user id USERID.
+
+        ALGORITHM may be used to specify the public key encryption
+        algorithm for the new key.  By default, a reasonable default
+        is chosen.  You may use "future-default" to select an
+        algorithm that will be the default in a future implementation
+        of the engine.  ALGORITHM may be a string like "rsa", or
+        "rsa2048" to explicitly request an algorithm and a key size.
+
+        EXPIRES_IN specifies the expiration time of the key in number
+        of seconds since the keys creation.  By default, a reasonable
+        expiration time is chosen.  If you want to create a key that
+        does not expire, use the keyword argument EXPIRES.
+
+        SIGN, ENCRYPT, CERTIFY, and AUTHENTICATE can be used to
+        request the capabilities of the new key.  If you don't request
+        any, a reasonable set of capabilities is selected, and in case
+        of OpenPGP, a subkey with a reasonable set of capabilities is
+        created.
+
+        If PASSPHRASE is None (the default), then the key will not be
+        protected with a passphrase.  If PASSPHRASE is a string, it
+        will be used to protect the key.  If PASSPHRASE is True, the
+        passphrase must be supplied using a passphrase callback or
+        out-of-band with a pinentry.
+
+        Keyword arguments:
+        algorithm    -- public key algorithm, see above (default: reasonable)
+        expires_in   -- expiration time in seconds (default: reasonable)
+        expires      -- whether or not the key should expire (default: True)
+        sign         -- request the signing capability (see above)
+        encrypt      -- request the encryption capability (see above)
+        certify      -- request the certification capability (see above)
+        authenticate -- request the authentication capability (see above)
+        passphrase   -- protect the key with a passphrase (default: no passphrase)
+        force        -- force key creation even if a key with the same userid exists
+                                                          (default: False)
+
+        Returns:
+                     -- an object describing the result of the key creation
+
+        Raises:
+        GPGMEError   -- as signaled by the underlying library
+
+        """
+        if util.is_a_string(passphrase):
+            old_pinentry_mode = self.pinentry_mode
+            old_passphrase_cb = getattr(self, '_passphrase_cb', None)
+            self.pinentry_mode = constants.PINENTRY_MODE_LOOPBACK
+            def passphrase_cb(hint, desc, prev_bad, hook=None):
+                return passphrase
+            self.set_passphrase_cb(passphrase_cb)
+
+        try:
+            self.op_createkey(userid, algorithm,
+                              0, # reserved
+                              expires_in,
+                              None, # extrakey
+                              ((constants.create.SIGN if sign else 0)
+                               | (constants.create.ENCR if encrypt else 0)
+                               | (constants.create.CERT if certify else 0)
+                               | (constants.create.AUTH if authenticate else 0)
+                               | (constants.create.NOPASSWD if passphrase == None else 0)
+                               | (0 if expires else constants.create.NOEXPIRE)
+                               | (constants.create.FORCE if force else 0)))
+        finally:
+            if util.is_a_string(passphrase):
+                self.pinentry_mode = old_pinentry_mode
+                if old_passphrase_cb:
+                    self.set_passphrase_cb(*old_passphrase_cb[1:])
+
+        return self.op_genkey_result()
+
+    def create_subkey(self, key, algorithm=None, expires_in=0, expires=True,
+                      sign=False, encrypt=False, authenticate=False, passphrase=None):
+        """Create a subkey
+
+        Create a subkey for the given KEY.  As subkeys are a concept
+        of OpenPGP, calling this is only valid for the OpenPGP
+        protocol.
+
+        ALGORITHM may be used to specify the public key encryption
+        algorithm for the new subkey.  By default, a reasonable
+        default is chosen.  You may use "future-default" to select an
+        algorithm that will be the default in a future implementation
+        of the engine.  ALGORITHM may be a string like "rsa", or
+        "rsa2048" to explicitly request an algorithm and a key size.
+
+        EXPIRES_IN specifies the expiration time of the subkey in
+        number of seconds since the subkeys creation.  By default, a
+        reasonable expiration time is chosen.  If you want to create a
+        subkey that does not expire, use the keyword argument EXPIRES.
+
+        SIGN, ENCRYPT, and AUTHENTICATE can be used to request the
+        capabilities of the new subkey.  If you don't request any, an
+        encryption subkey is generated.
+
+        If PASSPHRASE is None (the default), then the subkey will not
+        be protected with a passphrase.  If PASSPHRASE is a string, it
+        will be used to protect the subkey.  If PASSPHRASE is True,
+        the passphrase must be supplied using a passphrase callback or
+        out-of-band with a pinentry.
+
+        Keyword arguments:
+        algorithm    -- public key algorithm, see above (default: reasonable)
+        expires_in   -- expiration time in seconds (default: reasonable)
+        expires      -- whether or not the subkey should expire (default: True)
+        sign         -- request the signing capability (see above)
+        encrypt      -- request the encryption capability (see above)
+        authenticate -- request the authentication capability (see above)
+        passphrase   -- protect the subkey with a passphrase (default: no passphrase)
+
+        Returns:
+                     -- an object describing the result of the subkey creation
+
+        Raises:
+        GPGMEError   -- as signaled by the underlying library
+
+        """
+        if util.is_a_string(passphrase):
+            old_pinentry_mode = self.pinentry_mode
+            old_passphrase_cb = getattr(self, '_passphrase_cb', None)
+            self.pinentry_mode = constants.PINENTRY_MODE_LOOPBACK
+            def passphrase_cb(hint, desc, prev_bad, hook=None):
+                return passphrase
+            self.set_passphrase_cb(passphrase_cb)
+
+        try:
+            self.op_createsubkey(key, algorithm,
+                                 0, # reserved
+                                 expires_in,
+                                 ((constants.create.SIGN if sign else 0)
+                                  | (constants.create.ENCR if encrypt else 0)
+                                  | (constants.create.AUTH if authenticate else 0)
+                                  | (constants.create.NOPASSWD
+                                     if passphrase == None else 0)
+                                  | (0 if expires else constants.create.NOEXPIRE)))
+        finally:
+            if util.is_a_string(passphrase):
+                self.pinentry_mode = old_pinentry_mode
+                if old_passphrase_cb:
+                    self.set_passphrase_cb(*old_passphrase_cb[1:])
+
+        return self.op_genkey_result()
+
+    def key_add_uid(self, key, uid):
+        """Add a UID
+
+        Add the uid UID to the given KEY.  Calling this function is
+        only valid for the OpenPGP protocol.
+
+        Raises:
+        GPGMEError   -- as signaled by the underlying library
+
+        """
+        self.op_adduid(key, uid, 0)
+
+    def key_revoke_uid(self, key, uid):
+        """Revoke a UID
+
+        Revoke the uid UID from the given KEY.  Calling this function
+        is only valid for the OpenPGP protocol.
+
+        Raises:
+        GPGMEError   -- as signaled by the underlying library
+
+        """
+        self.op_revuid(key, uid, 0)
+
+    def key_sign(self, key, uids=None, expires_in=False, local=False):
+        """Sign a key
+
+        Sign a key with the current set of signing keys.  Calling this
+        function is only valid for the OpenPGP protocol.
+
+        If UIDS is None (the default), then all UIDs are signed.  If
+        it is a string, then only the matching UID is signed.  If it
+        is a list of strings, then all matching UIDs are signed.  Note
+        that a case-sensitive exact string comparison is done.
+
+        EXPIRES_IN specifies the expiration time of the signature in
+        seconds.  If EXPIRES_IN is False, the signature does not
+        expire.
+
+        Keyword arguments:
+        uids         -- user ids to sign, see above (default: sign all)
+        expires_in   -- validity period of the signature in seconds
+                                               (default: do not expire)
+        local        -- create a local, non-exportable signature
+                                               (default: False)
+
+        Raises:
+        GPGMEError   -- as signaled by the underlying library
+
+        """
+        flags = 0
+        if uids == None or util.is_a_string(uids):
+            pass#through unchanged
+        else:
+            flags |= constants.keysign.LFSEP
+            uids = "\n".join(uids)
+
+        if not expires_in:
+            flags |= constants.keysign.NOEXPIRE
+
+        if local:
+            flags |= constants.keysign.LOCAL
+
+        self.op_keysign(key, uids, expires_in, flags)
+
+    def key_tofu_policy(self, key, policy):
+        """Set a keys' TOFU policy
+
+        Set the TOFU policy associated with KEY to POLICY.  Calling
+        this function is only valid for the OpenPGP protocol.
+
+        Raises:
+        GPGMEError   -- as signaled by the underlying library
+
+        """
+        self.op_tofu_policy(key, policy)
 
     def assuan_transact(self, command,
                         data_cb=None, inquire_cb=None, status_cb=None):
@@ -512,7 +769,7 @@ class Context(GpgmeWrapper):
 
         """
 
-        if isinstance(command, (str, bytes)):
+        if util.is_a_string(command) or isinstance(command, bytes):
             cmd = command
         else:
             cmd = " ".join(util.percent_escape(f) for f in command)
@@ -602,27 +859,40 @@ class Context(GpgmeWrapper):
         errorcheck(gpgme.gpgme_engine_check_version(value))
         self.set_protocol(value)
 
+    @property
+    def home_dir(self):
+        """Engine's home directory"""
+        return self.engine_info.home_dir
+    @home_dir.setter
+    def home_dir(self, value):
+        self.set_engine_info(self.protocol, home_dir=value)
+
     _ctype = 'gpgme_ctx_t'
     _cprefix = 'gpgme_'
 
     def _errorcheck(self, name):
         """This function should list all functions returning gpgme_error_t"""
+        # The list of functions is created using:
+        #
+        # $ grep '^gpgme_error_t ' obj/lang/python/python3.5-gpg/gpgme.h \
+        #   | grep -v _op_ | awk "/\(gpgme_ctx/ { printf (\"'%s',\\n\", \$2) } "
         return ((name.startswith('gpgme_op_')
                  and not name.endswith('_result'))
                 or name in {
+                    'gpgme_new',
                     'gpgme_set_ctx_flag',
                     'gpgme_set_protocol',
                     'gpgme_set_sub_protocol',
                     'gpgme_set_keylist_mode',
                     'gpgme_set_pinentry_mode',
                     'gpgme_set_locale',
-                    'gpgme_set_engine_info',
+                    'gpgme_ctx_set_engine_info',
                     'gpgme_signers_add',
-                    'gpgme_get_sig_key',
                     'gpgme_sig_notation_add',
+                    'gpgme_set_sender',
                     'gpgme_cancel',
                     'gpgme_cancel_async',
-                    'gpgme_cancel_get_key',
+                    'gpgme_get_key',
                 })
 
     _boolean_properties = {'armor', 'textmode', 'offline'}
@@ -829,8 +1099,7 @@ class Context(GpgmeWrapper):
         home_dir	-- configuration directory (unchanged if None)
 
         """
-        errorcheck(gpgme.gpgme_ctx_set_engine_info(
-            self.wrapped, proto, file_name, home_dir))
+        self.ctx_set_engine_info(proto, file_name, home_dir)
 
     def wait(self, hang):
         """Wait for asynchronous call to finish. Wait forever if hang is True.
@@ -884,11 +1153,19 @@ class Data(GpgmeWrapper):
 
     def _errorcheck(self, name):
         """This function should list all functions returning gpgme_error_t"""
+        # This list is compiled using
+        #
+        # $ grep -v '^gpgme_error_t ' obj/lang/python/python3.5-gpg/gpgme.h \
+        #   | awk "/\(gpgme_data_t/ { printf (\"'%s',\\n\", \$2) } " | sed "s/'\\*/'/"
         return name not in {
+            'gpgme_data_read',
+            'gpgme_data_write',
+            'gpgme_data_seek',
+            'gpgme_data_release',
             'gpgme_data_release_and_get_mem',
             'gpgme_data_get_encoding',
-            'gpgme_data_seek',
             'gpgme_data_get_file_name',
+            'gpgme_data_identify',
         }
 
     def __init__(self, string=None, file=None, offset=None,
@@ -1097,14 +1374,63 @@ class Data(GpgmeWrapper):
                 chunks.append(result)
             return b''.join(chunks)
 
+def pubkey_algo_string(subkey):
+    """Return short algorithm string
+
+    Return a public key algorithm string (e.g. "rsa2048") for a given
+    SUBKEY.
+
+    Returns:
+    algo      - a string
+
+    """
+    return gpgme.gpgme_pubkey_algo_string(subkey)
+
 def pubkey_algo_name(algo):
+    """Return name of public key algorithm
+
+    Return the name of the public key algorithm for a given numeric
+    algorithm id ALGO (cf. RFC4880).
+
+    Returns:
+    algo      - a string
+
+    """
     return gpgme.gpgme_pubkey_algo_name(algo)
 
 def hash_algo_name(algo):
+    """Return name of hash algorithm
+
+    Return the name of the hash algorithm for a given numeric
+    algorithm id ALGO (cf. RFC4880).
+
+    Returns:
+    algo      - a string
+
+    """
     return gpgme.gpgme_hash_algo_name(algo)
 
 def get_protocol_name(proto):
+    """Get protocol description
+
+    Get the string describing protocol PROTO.
+
+    Returns:
+    proto     - a string
+
+    """
     return gpgme.gpgme_get_protocol_name(proto)
+
+def addrspec_from_uid(uid):
+    """Return the address spec
+
+    Return the addr-spec (cf. RFC2822 section 4.3) from a user id UID.
+
+    Returns:
+    addr_spec - a string
+
+    """
+    return gpgme.gpgme_addrspec_from_uid(uid)
 
 def check_version(version=None):
     return gpgme.gpgme_check_version(version)

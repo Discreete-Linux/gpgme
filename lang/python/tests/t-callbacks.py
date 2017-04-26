@@ -24,7 +24,7 @@ import os
 import gpg
 import support
 
-support.init_gpgme(gpg.constants.protocol.OpenPGP)
+support.assert_gpg_version()
 
 c = gpg.Context()
 c.set_pinentry_mode(gpg.constants.PINENTRY_MODE_LOOPBACK)

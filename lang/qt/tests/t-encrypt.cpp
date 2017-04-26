@@ -39,6 +39,8 @@
 #include <QBuffer>
 #include "keylistjob.h"
 #include "encryptjob.h"
+#include "signencryptjob.h"
+#include "signingresult.h"
 #include "qgpgmeencryptjob.h"
 #include "encryptionresult.h"
 #include "decryptionresult.h"
@@ -46,6 +48,7 @@
 #include "qgpgmebackend.h"
 #include "keylistresult.h"
 #include "engineinfo.h"
+#include "verifyopaquejob.h"
 #include "t-support.h"
 
 #define PROGRESS_TEST_SIZE 1 * 1024 * 1024
@@ -85,18 +88,18 @@ private Q_SLOTS:
         std::vector<Key> keys;
         auto keylistresult = listjob->exec(QStringList() << QStringLiteral("alfa@example.net"),
                                           false, keys);
-        Q_ASSERT(!keylistresult.error());
-        Q_ASSERT(keys.size() == 1);
+        QVERIFY(!keylistresult.error());
+        QVERIFY(keys.size() == 1);
         delete listjob;
 
         auto job = openpgp()->encryptJob(/*ASCII Armor */true, /* Textmode */ true);
-        Q_ASSERT(job);
+        QVERIFY(job);
         QByteArray cipherText;
         auto result = job->exec(keys, QStringLiteral("Hello World").toUtf8(), Context::AlwaysTrust, cipherText);
         delete job;
-        Q_ASSERT(!result.error());
+        QVERIFY(!result.error());
         const auto cipherString = QString::fromUtf8(cipherText);
-        Q_ASSERT(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
+        QVERIFY(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
 
         /* Now decrypt */
         if (!decryptSupported()) {
@@ -109,8 +112,8 @@ private Q_SLOTS:
         auto decJob = new QGpgMEDecryptJob(ctx);
         QByteArray plainText;
         auto decResult = decJob->exec(cipherText, plainText);
-        Q_ASSERT(!result.error());
-        Q_ASSERT(QString::fromUtf8(plainText) == QStringLiteral("Hello World"));
+        QVERIFY(!decResult.error());
+        QVERIFY(QString::fromUtf8(plainText) == QStringLiteral("Hello World"));
         delete decJob;
     }
 
@@ -125,12 +128,12 @@ private Q_SLOTS:
         std::vector<Key> keys;
         auto keylistresult = listjob->exec(QStringList() << QStringLiteral("alfa@example.net"),
                                           false, keys);
-        Q_ASSERT(!keylistresult.error());
-        Q_ASSERT(keys.size() == 1);
+        QVERIFY(!keylistresult.error());
+        QVERIFY(keys.size() == 1);
         delete listjob;
 
         auto job = openpgp()->encryptJob(/*ASCII Armor */false, /* Textmode */ false);
-        Q_ASSERT(job);
+        QVERIFY(job);
         QByteArray plainBa;
         plainBa.fill('X', PROGRESS_TEST_SIZE);
         QByteArray cipherText;
@@ -140,21 +143,21 @@ private Q_SLOTS:
         connect(job, &Job::progress, this, [this, &initSeen, &finishSeen] (const QString&, int current, int total) {
                 // We only check for progress 0 and max progress as the other progress
                 // lines depend on the system speed and are as such unreliable to test.
-                Q_ASSERT(total == PROGRESS_TEST_SIZE);
+                QVERIFY(total == PROGRESS_TEST_SIZE);
                 if (current == 0) {
                     initSeen = true;
                 }
                 if (current == total) {
                     finishSeen = true;
                 }
-                Q_ASSERT(current >= 0 && current <= total);
+                QVERIFY(current >= 0 && current <= total);
             });
         connect(job, &EncryptJob::result, this, [this, &initSeen, &finishSeen] (const GpgME::EncryptionResult &,
                                                                                 const QByteArray &,
                                                                                 const QString,
                                                                                 const GpgME::Error) {
-                Q_ASSERT(initSeen);
-                Q_ASSERT(finishSeen);
+                QVERIFY(initSeen);
+                QVERIFY(finishSeen);
                 Q_EMIT asyncDone();
             });
 
@@ -165,7 +168,7 @@ private Q_SLOTS:
 
         job->start(keys, inptr, outptr, Context::AlwaysTrust);
         QSignalSpy spy (this, SIGNAL(asyncDone()));
-        Q_ASSERT(spy.wait());
+        QVERIFY(spy.wait(QSIGNALSPY_TIMEOUT));
     }
 
     void testSymmetricEncryptDecrypt()
@@ -183,9 +186,9 @@ private Q_SLOTS:
         QByteArray cipherText;
         auto result = job->exec(std::vector<Key>(), QStringLiteral("Hello symmetric World").toUtf8(), Context::AlwaysTrust, cipherText);
         delete job;
-        Q_ASSERT(!result.error());
+        QVERIFY(!result.error());
         const auto cipherString = QString::fromUtf8(cipherText);
-        Q_ASSERT(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
+        QVERIFY(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
 
         killAgent(mDir.path());
 
@@ -195,9 +198,73 @@ private Q_SLOTS:
         auto decJob = new QGpgMEDecryptJob(ctx2);
         QByteArray plainText;
         auto decResult = decJob->exec(cipherText, plainText);
-        Q_ASSERT(!result.error());
-        Q_ASSERT(QString::fromUtf8(plainText) == QStringLiteral("Hello symmetric World"));
+        QVERIFY(!result.error());
+        QVERIFY(QString::fromUtf8(plainText) == QStringLiteral("Hello symmetric World"));
         delete decJob;
+    }
+
+private:
+    /* This apparently does not work under ASAN currently. TODO fix and reeanble */
+    void testEncryptDecryptNowrap()
+    {
+        /* Now decrypt */
+        if (!decryptSupported()) {
+            return;
+        }
+        auto listjob = openpgp()->keyListJob(false, false, false);
+        std::vector<Key> keys;
+        auto keylistresult = listjob->exec(QStringList() << QStringLiteral("alfa@example.net"),
+                                          false, keys);
+        QVERIFY(!keylistresult.error());
+        QVERIFY(keys.size() == 1);
+        delete listjob;
+
+        auto job = openpgp()->signEncryptJob(/*ASCII Armor */true, /* Textmode */ true);
+
+        auto encSignCtx = Job::context(job);
+        TestPassphraseProvider provider1;
+        encSignCtx->setPassphraseProvider(&provider1);
+        encSignCtx->setPinentryMode(Context::PinentryLoopback);
+
+        QVERIFY(job);
+        QByteArray cipherText;
+        auto result = job->exec(keys, keys, QStringLiteral("Hello World").toUtf8(), Context::AlwaysTrust, cipherText);
+        delete job;
+        QVERIFY(!result.first.error());
+        QVERIFY(!result.second.error());
+        const auto cipherString = QString::fromUtf8(cipherText);
+        QVERIFY(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
+
+        /* Now decrypt */
+        if (!decryptSupported()) {
+            return;
+        }
+        auto ctx = Context::createForProtocol(OpenPGP);
+        TestPassphraseProvider provider;
+        ctx->setPassphraseProvider(&provider);
+        ctx->setPinentryMode(Context::PinentryLoopback);
+        ctx->setDecryptionFlags(Context::DecryptUnwrap);
+
+        auto decJob = new QGpgMEDecryptJob(ctx);
+        QByteArray plainText;
+        auto decResult = decJob->exec(cipherText, plainText);
+
+        QVERIFY(!decResult.error());
+
+        delete decJob;
+
+        // Now verify the unwrapeped data.
+        auto verifyJob = openpgp()->verifyOpaqueJob(true);
+        QByteArray verified;
+
+        auto verResult = verifyJob->exec(plainText, verified);
+        QVERIFY(!verResult.error());
+        delete verifyJob;
+
+        QVERIFY(verResult.numSignatures() == 1);
+        auto sig = verResult.signatures()[0];
+
+        QVERIFY(verified == QStringLiteral("Hello World"));
     }
 
 private:
@@ -212,8 +279,8 @@ private:
         std::vector<Key> keys;
         auto keylistresult = listjob->exec(QStringList() << QStringLiteral("alfa@example.net"),
                                           false, keys);
-        Q_ASSERT(!keylistresult.error());
-        Q_ASSERT(keys.size() == 1);
+        QVERIFY(!keylistresult.error());
+        QVERIFY(keys.size() == 1);
         delete listjob;
 
         auto ctx = Context::createForProtocol(OpenPGP);
@@ -229,10 +296,10 @@ private:
                                 cipherText);
         printf("After exec\n");
         delete job;
-        Q_ASSERT(!result.error());
+        QVERIFY(!result.error());
         printf("Cipher:\n%s\n", cipherText.constData());
         const auto cipherString = QString::fromUtf8(cipherText);
-        Q_ASSERT(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
+        QVERIFY(cipherString.startsWith("-----BEGIN PGP MESSAGE-----"));
 
         killAgent(mDir.path());
 
@@ -240,7 +307,7 @@ private:
         QTemporaryDir tmp;
         qputenv("GNUPGHOME", tmp.path().toUtf8());
         QFile agentConf(tmp.path() + QStringLiteral("/gpg-agent.conf"));
-        Q_ASSERT(agentConf.open(QIODevice::WriteOnly));
+        QVERIFY(agentConf.open(QIODevice::WriteOnly));
         agentConf.write("allow-loopback-pinentry");
         agentConf.close();
 
@@ -251,9 +318,9 @@ private:
         auto decJob = new QGpgMEDecryptJob(ctx2);
         QByteArray plainText;
         auto decResult = decJob->exec(cipherText, plainText);
-        Q_ASSERT(!decResult.error());
+        QVERIFY(!decResult.error());
         qDebug() << "Plain: " << plainText;
-        Q_ASSERT(QString::fromUtf8(plainText) == QStringLiteral("Hello symmetric World"));
+        QVERIFY(QString::fromUtf8(plainText) == QStringLiteral("Hello symmetric World"));
         delete decJob;
 
         killAgent(tmp.path());
@@ -267,12 +334,12 @@ public Q_SLOT:
         QGpgMETest::initTestCase();
         const QString gpgHome = qgetenv("GNUPGHOME");
         qputenv("GNUPGHOME", mDir.path().toUtf8());
-        Q_ASSERT(mDir.isValid());
+        QVERIFY(mDir.isValid());
         QFile agentConf(mDir.path() + QStringLiteral("/gpg-agent.conf"));
-        Q_ASSERT(agentConf.open(QIODevice::WriteOnly));
+        QVERIFY(agentConf.open(QIODevice::WriteOnly));
         agentConf.write("allow-loopback-pinentry");
         agentConf.close();
-        Q_ASSERT(copyKeyrings(gpgHome, mDir.path()));
+        QVERIFY(copyKeyrings(gpgHome, mDir.path()));
     }
 
 private:

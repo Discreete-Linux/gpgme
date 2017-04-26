@@ -111,8 +111,10 @@
 }
 
 /* Release returned buffers as necessary.  */
-%typemap(newfree) char * "free($1);";
+%typemap(newfree) char * "gpgme_free($1);";
 %newobject gpgme_data_release_and_get_mem;
+%newobject gpgme_pubkey_algo_string;
+%newobject gpgme_addrspec_from_uid;
 
 %typemap(arginit) gpgme_key_t [] {
   $1 = NULL;
@@ -135,7 +137,12 @@
 
       /* Following code is from swig's python.swg.  */
       if ((SWIG_ConvertPtr(pypointer,(void **) &$1[i], $*1_descriptor,SWIG_POINTER_EXCEPTION | $disown )) == -1) {
-	Py_DECREF(pypointer);
+        Py_DECREF(pypointer);
+	PyErr_Format(PyExc_TypeError,
+                     "arg %d: list must contain only gpgme_key_ts, got %s "
+                     "at position %d",
+                     $argnum, pypointer->ob_type->tp_name, i);
+        free($1);
 	return NULL;
       }
       Py_DECREF(pypointer);
@@ -287,7 +294,7 @@
 			gpgme_data_t sig, gpgme_data_t signed_text,
 			gpgme_data_t plaintext, gpgme_data_t keydata,
 			gpgme_data_t pubkey, gpgme_data_t seckey,
-			gpgme_data_t out};
+			gpgme_data_t out, gpgme_data_t data};
 
 /* SWIG has problems interpreting ssize_t, off_t or gpgme_error_t in
    gpgme.h.  */
@@ -424,69 +431,24 @@
 
 
 /* Wrap the fragile result objects into robust Python ones.  */
-%typemap(out) gpgme_encrypt_result_t {
+%define wrapresult(cls, name)
+%typemap(out) cls {
   PyObject *fragile;
   fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
                                %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "EncryptResult");
+  $result = _gpg_wrap_result(fragile, name);
   Py_DECREF(fragile);
 }
+%enddef
 
-%typemap(out) gpgme_decrypt_result_t {
-  PyObject *fragile;
-  fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
-                               %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "DecryptResult");
-  Py_DECREF(fragile);
-}
-
-%typemap(out) gpgme_sign_result_t {
-  PyObject *fragile;
-  fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
-                               %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "SignResult");
-  Py_DECREF(fragile);
-}
-
-%typemap(out) gpgme_verify_result_t {
-  PyObject *fragile;
-  fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
-                               %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "VerifyResult");
-  Py_DECREF(fragile);
-}
-
-%typemap(out) gpgme_import_result_t {
-  PyObject *fragile;
-  fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
-                               %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "ImportResult");
-  Py_DECREF(fragile);
-}
-
-%typemap(out) gpgme_genkey_result_t {
-  PyObject *fragile;
-  fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
-                               %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "GenkeyResult");
-  Py_DECREF(fragile);
-}
-
-%typemap(out) gpgme_keylist_result_t {
-  PyObject *fragile;
-  fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
-                               %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "KeylistResult");
-  Py_DECREF(fragile);
-}
-
-%typemap(out) gpgme_vfs_mount_result_t {
-  PyObject *fragile;
-  fragile = SWIG_NewPointerObj(SWIG_as_voidptr($1), $1_descriptor,
-                               %newpointer_flags);
-  $result = _gpg_wrap_result(fragile, "VFSMountResult");
-  Py_DECREF(fragile);
-}
+wrapresult(gpgme_encrypt_result_t, "EncryptResult")
+wrapresult(gpgme_decrypt_result_t, "DecryptResult")
+wrapresult(gpgme_sign_result_t, "SignResult")
+wrapresult(gpgme_verify_result_t, "VerifyResult")
+wrapresult(gpgme_import_result_t, "ImportResult")
+wrapresult(gpgme_genkey_result_t, "GenkeyResult")
+wrapresult(gpgme_keylist_result_t, "KeylistResult")
+wrapresult(gpgme_vfs_mount_result_t, "VFSMountResult")
 
 %typemap(out) gpgme_engine_info_t {
   int i;
@@ -586,6 +548,15 @@
     }
 }
 
+
+/* With SWIG, you can define default arguments for parameters.
+ * While it's legal in C++ it is not in C, so we cannot change the
+ * already existing gpgme.h. We need, however, to declare the function
+ * *before* SWIG loads it from gpgme.h. Hence, we define it here.     */
+gpgme_error_t gpgme_op_keylist_start (gpgme_ctx_t ctx,
+                      const char *pattern="",
+                      int secret_only=0);
+
 /* Include the unmodified <gpgme.h> for cc, and the cleaned-up local
    version for SWIG.  We do, however, want to hide certain fields on
    some structs, which we provide prior to including the version for
@@ -656,7 +627,17 @@ FILE *fdopen(int fildes, const char *mode);
 PyObject *
 _gpg_wrap_gpgme_data_t(gpgme_data_t data)
 {
-  return SWIG_Python_NewPointerObj(NULL, data, SWIGTYPE_p_gpgme_data, 0);
+  /*
+   * If SWIG is invoked without -builtin, the macro SWIG_NewPointerObj
+   * expects a variable named "self".
+   *
+   * XXX: It is not quite clear why passing NULL as self is okay, but
+   * it works with -builtin, and it seems to work just fine without
+   * it too.
+   */
+  PyObject* self = NULL;
+  (void) self;
+  return SWIG_NewPointerObj(data, SWIGTYPE_p_gpgme_data, 0);
 }
 
 gpgme_ctx_t
@@ -675,3 +656,38 @@ _gpg_unwrap_gpgme_ctx_t(PyObject *wrapped)
 /* ... but only the public definitions here.  They will be exposed to
    the Python world, so let's be careful.  */
 %include "helpers.h"
+
+
+%define genericrepr(cls)
+%pythoncode %{
+    def __repr__(self):
+        names = [name for name in dir(self)
+            if not name.startswith("_") and name != "this"]
+        props = ", ".join(("{}={!r}".format(name, getattr(self, name))
+            for name in names)
+        )
+        return "cls({})".format(props)
+%}
+
+%enddef
+
+%extend _gpgme_key {
+  genericrepr(Key)
+};
+
+
+%extend _gpgme_subkey {
+  genericrepr(SubKey)
+};
+
+%extend _gpgme_key_sig {
+  genericrepr(KeySig)
+};
+
+%extend _gpgme_user_id {
+  genericrepr(UID)
+};
+
+%extend _gpgme_tofu_info {
+  genericrepr(TofuInfo)
+};

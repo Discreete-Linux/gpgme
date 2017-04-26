@@ -37,6 +37,8 @@
 
 #include "dn.h"
 
+#include <gpg-error.h>
+
 static const struct {
     const char *name;
     const char *oid;
@@ -165,7 +167,7 @@ parse_dn_part(DnPair *array, const unsigned char *string)
     for (unsigned int i = 0; i < numOidMaps; ++i)
         if (!strcasecmp((char *)p, oidmap[i].oid)) {
             free(p);
-            p = strdup(oidmap[i].name);
+            gpgrt_asprintf(&p, oidmap[i].name);
             break;
         }
     array->key = p;

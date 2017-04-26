@@ -1,6 +1,6 @@
 /* gpgme.h - Public interface to GnuPG Made Easy.                   -*- c -*-
  * Copyright (C) 2000 Werner Koch (dd9jn)
- * Copyright (C) 2001-2016 g10 Code GmbH
+ * Copyright (C) 2001-2017 g10 Code GmbH
  *
  * This file is part of GPGME.
  *
@@ -294,24 +294,6 @@ typedef enum
 gpgme_hash_algo_t;
 
 
-/* The possible signature stati.  Deprecated, use error value in sig
-   status.  */
-typedef enum
-  {
-    GPGME_SIG_STAT_NONE  = 0,
-    GPGME_SIG_STAT_GOOD  = 1,
-    GPGME_SIG_STAT_BAD   = 2,
-    GPGME_SIG_STAT_NOKEY = 3,
-    GPGME_SIG_STAT_NOSIG = 4,
-    GPGME_SIG_STAT_ERROR = 5,
-    GPGME_SIG_STAT_DIFF  = 6,
-    GPGME_SIG_STAT_GOOD_EXP = 7,
-    GPGME_SIG_STAT_GOOD_EXPKEY = 8
-  }
-_gpgme_sig_stat_t;
-typedef _gpgme_sig_stat_t gpgme_sig_stat_t _GPGME_DEPRECATED(0,4);
-
-
 /* The available signature modes.  */
 typedef enum
   {
@@ -320,47 +302,6 @@ typedef enum
     GPGME_SIG_MODE_CLEAR  = 2
   }
 gpgme_sig_mode_t;
-
-
-/* The available key and signature attributes.  Deprecated, use the
-   individual result structures instead.  */
-typedef enum
-  {
-    GPGME_ATTR_KEYID        = 1,
-    GPGME_ATTR_FPR          = 2,
-    GPGME_ATTR_ALGO         = 3,
-    GPGME_ATTR_LEN          = 4,
-    GPGME_ATTR_CREATED      = 5,
-    GPGME_ATTR_EXPIRE       = 6,
-    GPGME_ATTR_OTRUST       = 7,
-    GPGME_ATTR_USERID       = 8,
-    GPGME_ATTR_NAME         = 9,
-    GPGME_ATTR_EMAIL        = 10,
-    GPGME_ATTR_COMMENT      = 11,
-    GPGME_ATTR_VALIDITY     = 12,
-    GPGME_ATTR_LEVEL        = 13,
-    GPGME_ATTR_TYPE         = 14,
-    GPGME_ATTR_IS_SECRET    = 15,
-    GPGME_ATTR_KEY_REVOKED  = 16,
-    GPGME_ATTR_KEY_INVALID  = 17,
-    GPGME_ATTR_UID_REVOKED  = 18,
-    GPGME_ATTR_UID_INVALID  = 19,
-    GPGME_ATTR_KEY_CAPS     = 20,
-    GPGME_ATTR_CAN_ENCRYPT  = 21,
-    GPGME_ATTR_CAN_SIGN     = 22,
-    GPGME_ATTR_CAN_CERTIFY  = 23,
-    GPGME_ATTR_KEY_EXPIRED  = 24,
-    GPGME_ATTR_KEY_DISABLED = 25,
-    GPGME_ATTR_SERIAL       = 26,
-    GPGME_ATTR_ISSUER       = 27,
-    GPGME_ATTR_CHAINID      = 28,
-    GPGME_ATTR_SIG_STATUS   = 29,
-    GPGME_ATTR_ERRTOK       = 30,
-    GPGME_ATTR_SIG_SUMMARY  = 31,
-    GPGME_ATTR_SIG_CLASS    = 32
-  }
-_gpgme_attr_t;
-typedef _gpgme_attr_t gpgme_attr_t _GPGME_DEPRECATED(0,4);
 
 
 /* The available validities for a trust item or key.  */
@@ -447,128 +388,15 @@ typedef unsigned int gpgme_export_mode_t;
 #define GPGME_AUDITLOG_WITH_HELP 128
 
 
-/* The possible stati for gpgme_op_edit.  The use of that function and
- * these status codes are deprecated in favor of gpgme_op_interact. */
-typedef enum
-  {
-    GPGME_STATUS_EOF = 0,
-    /* mkstatus processing starts here */
-    GPGME_STATUS_ENTER = 1,
-    GPGME_STATUS_LEAVE = 2,
-    GPGME_STATUS_ABORT = 3,
-
-    GPGME_STATUS_GOODSIG = 4,
-    GPGME_STATUS_BADSIG = 5,
-    GPGME_STATUS_ERRSIG = 6,
-
-    GPGME_STATUS_BADARMOR = 7,
-
-    GPGME_STATUS_RSA_OR_IDEA = 8,      /* (legacy) */
-    GPGME_STATUS_KEYEXPIRED = 9,
-    GPGME_STATUS_KEYREVOKED = 10,
-
-    GPGME_STATUS_TRUST_UNDEFINED = 11,
-    GPGME_STATUS_TRUST_NEVER = 12,
-    GPGME_STATUS_TRUST_MARGINAL = 13,
-    GPGME_STATUS_TRUST_FULLY = 14,
-    GPGME_STATUS_TRUST_ULTIMATE = 15,
-
-    GPGME_STATUS_SHM_INFO = 16,        /* (legacy) */
-    GPGME_STATUS_SHM_GET = 17,         /* (legacy) */
-    GPGME_STATUS_SHM_GET_BOOL = 18,    /* (legacy) */
-    GPGME_STATUS_SHM_GET_HIDDEN = 19,  /* (legacy) */
-
-    GPGME_STATUS_NEED_PASSPHRASE = 20,
-    GPGME_STATUS_VALIDSIG = 21,
-    GPGME_STATUS_SIG_ID = 22,
-    GPGME_STATUS_ENC_TO = 23,
-    GPGME_STATUS_NODATA = 24,
-    GPGME_STATUS_BAD_PASSPHRASE = 25,
-    GPGME_STATUS_NO_PUBKEY = 26,
-    GPGME_STATUS_NO_SECKEY = 27,
-    GPGME_STATUS_NEED_PASSPHRASE_SYM = 28,
-    GPGME_STATUS_DECRYPTION_FAILED = 29,
-    GPGME_STATUS_DECRYPTION_OKAY = 30,
-    GPGME_STATUS_MISSING_PASSPHRASE = 31,
-    GPGME_STATUS_GOOD_PASSPHRASE = 32,
-    GPGME_STATUS_GOODMDC = 33,
-    GPGME_STATUS_BADMDC = 34,
-    GPGME_STATUS_ERRMDC = 35,
-    GPGME_STATUS_IMPORTED = 36,
-    GPGME_STATUS_IMPORT_OK = 37,
-    GPGME_STATUS_IMPORT_PROBLEM = 38,
-    GPGME_STATUS_IMPORT_RES = 39,
-    GPGME_STATUS_FILE_START = 40,
-    GPGME_STATUS_FILE_DONE = 41,
-    GPGME_STATUS_FILE_ERROR = 42,
-
-    GPGME_STATUS_BEGIN_DECRYPTION = 43,
-    GPGME_STATUS_END_DECRYPTION = 44,
-    GPGME_STATUS_BEGIN_ENCRYPTION = 45,
-    GPGME_STATUS_END_ENCRYPTION = 46,
-
-    GPGME_STATUS_DELETE_PROBLEM = 47,
-    GPGME_STATUS_GET_BOOL = 48,
-    GPGME_STATUS_GET_LINE = 49,
-    GPGME_STATUS_GET_HIDDEN = 50,
-    GPGME_STATUS_GOT_IT = 51,
-    GPGME_STATUS_PROGRESS = 52,
-    GPGME_STATUS_SIG_CREATED = 53,
-    GPGME_STATUS_SESSION_KEY = 54,
-    GPGME_STATUS_NOTATION_NAME = 55,
-    GPGME_STATUS_NOTATION_DATA = 56,
-    GPGME_STATUS_POLICY_URL = 57,
-    GPGME_STATUS_BEGIN_STREAM = 58,    /* (legacy) */
-    GPGME_STATUS_END_STREAM = 59,      /* (legacy) */
-    GPGME_STATUS_KEY_CREATED = 60,
-    GPGME_STATUS_USERID_HINT = 61,
-    GPGME_STATUS_UNEXPECTED = 62,
-    GPGME_STATUS_INV_RECP = 63,
-    GPGME_STATUS_NO_RECP = 64,
-    GPGME_STATUS_ALREADY_SIGNED = 65,
-    GPGME_STATUS_SIGEXPIRED = 66,      /* (legacy) */
-    GPGME_STATUS_EXPSIG = 67,
-    GPGME_STATUS_EXPKEYSIG = 68,
-    GPGME_STATUS_TRUNCATED = 69,
-    GPGME_STATUS_ERROR = 70,
-    GPGME_STATUS_NEWSIG = 71,
-    GPGME_STATUS_REVKEYSIG = 72,
-    GPGME_STATUS_SIG_SUBPACKET = 73,
-    GPGME_STATUS_NEED_PASSPHRASE_PIN = 74,
-    GPGME_STATUS_SC_OP_FAILURE = 75,
-    GPGME_STATUS_SC_OP_SUCCESS = 76,
-    GPGME_STATUS_CARDCTRL = 77,
-    GPGME_STATUS_BACKUP_KEY_CREATED = 78,
-    GPGME_STATUS_PKA_TRUST_BAD = 79,
-    GPGME_STATUS_PKA_TRUST_GOOD = 80,
-    GPGME_STATUS_PLAINTEXT = 81,
-    GPGME_STATUS_INV_SGNR = 82,
-    GPGME_STATUS_NO_SGNR = 83,
-    GPGME_STATUS_SUCCESS = 84,
-    GPGME_STATUS_DECRYPTION_INFO = 85,
-    GPGME_STATUS_PLAINTEXT_LENGTH = 86,
-    GPGME_STATUS_MOUNTPOINT = 87,
-    GPGME_STATUS_PINENTRY_LAUNCHED = 88,
-    GPGME_STATUS_ATTRIBUTE = 89,
-    GPGME_STATUS_BEGIN_SIGNING = 90,
-    GPGME_STATUS_KEY_NOT_CREATED = 91,
-    GPGME_STATUS_INQUIRE_MAXLEN = 92,
-    GPGME_STATUS_FAILURE = 93,
-    GPGME_STATUS_KEY_CONSIDERED = 94,
-    GPGME_STATUS_TOFU_USER = 95,
-    GPGME_STATUS_TOFU_STATS = 96,
-    GPGME_STATUS_TOFU_STATS_LONG = 97,
-    GPGME_STATUS_NOTATION_FLAGS = 98
-  }
-gpgme_status_code_t;
-
-
 /* The available signature notation flags.  */
 #define GPGME_SIG_NOTATION_HUMAN_READABLE	1
 #define GPGME_SIG_NOTATION_CRITICAL		2
 
 typedef unsigned int gpgme_sig_notation_flags_t;
 
+/* An object to hold information about notation data.  This structure
+ * shall be considered read-only and an application must not allocate
+ * such a structure on its own.  */
 struct _gpgme_sig_notation
 {
   struct _gpgme_sig_notation *next;
@@ -606,7 +434,9 @@ typedef struct _gpgme_sig_notation *gpgme_sig_notation_t;
  * Public structures.
  */
 
-/* The engine information structure.  */
+/* The engine information structure.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_engine_info
 {
   struct _gpgme_engine_info *next;
@@ -629,7 +459,9 @@ struct _gpgme_engine_info
 typedef struct _gpgme_engine_info *gpgme_engine_info_t;
 
 
-/* An object with TOFU information.  */
+/* An object with TOFU information.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_tofu_info
 {
   struct _gpgme_tofu_info *next;
@@ -666,7 +498,9 @@ struct _gpgme_tofu_info
 typedef struct _gpgme_tofu_info *gpgme_tofu_info_t;
 
 
-/* A subkey from a key.  */
+/* A subkey from a key.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_subkey
 {
   struct _gpgme_subkey *next;
@@ -704,8 +538,11 @@ struct _gpgme_subkey
   /* True if the secret key is stored on a smart card.  */
   unsigned int is_cardkey : 1;
 
+  /* True if the key is compliant to the de-vs mode.  */
+  unsigned int is_de_vs : 1;
+
   /* Internal to GPGME, do not use.  */
-  unsigned int _unused : 21;
+  unsigned int _unused : 20;
 
   /* Public key algorithm supported by this subkey.  */
   gpgme_pubkey_algo_t pubkey_algo;
@@ -740,7 +577,9 @@ struct _gpgme_subkey
 typedef struct _gpgme_subkey *gpgme_subkey_t;
 
 
-/* A signature on a user ID.  */
+/* A signature on a user ID.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_key_sig
 {
   struct _gpgme_key_sig *next;
@@ -809,7 +648,9 @@ struct _gpgme_key_sig
 typedef struct _gpgme_key_sig *gpgme_key_sig_t;
 
 
-/* An user ID from a key.  */
+/* An user ID from a key.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_user_id
 {
   struct _gpgme_user_id *next;
@@ -821,7 +662,10 @@ struct _gpgme_user_id
   unsigned int invalid : 1;
 
   /* Internal to GPGME, do not use.  */
-  unsigned int _unused : 30;
+  unsigned int _unused : 25;
+
+  /* Origin of this user ID.  */
+  unsigned int origin : 5;
 
   /* The validity of the user ID.  */
   gpgme_validity_t validity;
@@ -852,11 +696,16 @@ struct _gpgme_user_id
 
   /* The malloced TOFU information or NULL.  */
   gpgme_tofu_info_t tofu;
+
+  /* Time of the last refresh of thsi user id.  0 if unknown.  */
+  unsigned long last_update;
 };
 typedef struct _gpgme_user_id *gpgme_user_id_t;
 
 
-/* A key from the keyring.  */
+/* A key from the keyring.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_key
 {
   /* Internal to GPGME, do not use.  */
@@ -893,7 +742,10 @@ struct _gpgme_key
   unsigned int is_qualified : 1;
 
   /* Internal to GPGME, do not use.  */
-  unsigned int _unused : 22;
+  unsigned int _unused : 17;
+
+  /* Origin of this key.  */
+  unsigned int origin : 5;
 
   /* This is the protocol supported by this key.  */
   gpgme_protocol_t protocol;
@@ -933,11 +785,16 @@ struct _gpgme_key
    * this is a copy of the FPR of the first subkey.  We need it here
    * to allow for an incomplete key object.  */
   char *fpr;
+
+  /* Time of the last refresh of the entire key.  0 if unknown.  */
+  unsigned long last_update;
 };
 typedef struct _gpgme_key *gpgme_key_t;
 
 
-/* An invalid key object.  */
+/* An invalid key object.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_invalid_key
 {
   struct _gpgme_invalid_key *next;
@@ -975,13 +832,6 @@ typedef gpgme_error_t (*gpgme_status_cb_t) (void *opaque, const char *keyword,
 typedef gpgme_error_t (*gpgme_interact_cb_t) (void *opaque,
                                               const char *keyword,
                                               const char *args, int fd);
-
-/* The callback type used by the deprecated functions gpgme_op_edit
- * and gpgme_op_card_edit.  */
-typedef gpgme_error_t (*gpgme_edit_cb_t) (void *opaque,
-					  gpgme_status_code_t status,
-					  const char *args, int fd);
-
 
 
 
@@ -1121,33 +971,6 @@ unsigned int gpgme_signers_count (const gpgme_ctx_t ctx);
 
 /* Return the SEQth signer's key in CTX.  */
 gpgme_key_t gpgme_signers_enum (const gpgme_ctx_t ctx, int seq);
-
-/* Retrieve the signature status of signature IDX in CTX after a
-   successful verify operation in R_STAT (if non-null).  The creation
-   time stamp of the signature is returned in R_CREATED (if non-null).
-   The function returns a string containing the fingerprint.
-   Deprecated, use verify result directly.  */
-const char *gpgme_get_sig_status (gpgme_ctx_t ctx, int idx,
-                                  _gpgme_sig_stat_t *r_stat,
-				  time_t *r_created) _GPGME_DEPRECATED(0,4);
-
-/* Retrieve certain attributes of a signature.  IDX is the index
-   number of the signature after a successful verify operation.  WHAT
-   is an attribute where GPGME_ATTR_EXPIRE is probably the most useful
-   one.  WHATIDX is to be passed as 0 for most attributes . */
-unsigned long gpgme_get_sig_ulong_attr (gpgme_ctx_t c, int idx,
-                                        _gpgme_attr_t what, int whatidx)
-     _GPGME_DEPRECATED(0,4);
-const char *gpgme_get_sig_string_attr (gpgme_ctx_t c, int idx,
-				       _gpgme_attr_t what, int whatidx)
-     _GPGME_DEPRECATED(0,4);
-
-
-/* Get the key used to create signature IDX in CTX and return it in
-   R_KEY.  */
-gpgme_error_t gpgme_get_sig_key (gpgme_ctx_t ctx, int idx, gpgme_key_t *r_key)
-     _GPGME_DEPRECATED(0,4);
-
 
 /* Clear all notation data from the context.  */
 void gpgme_sig_notation_clear (gpgme_ctx_t ctx);
@@ -1360,15 +1183,6 @@ gpg_error_t gpgme_data_set_flag (gpgme_data_t dh,
 gpgme_data_type_t gpgme_data_identify (gpgme_data_t dh, int reserved);
 
 
-/* Create a new data buffer which retrieves the data from the callback
-   function READ_CB.  Deprecated, please use gpgme_data_new_from_cbs
-   instead.  */
-gpgme_error_t gpgme_data_new_with_read_cb (gpgme_data_t *r_dh,
-					   int (*read_cb) (void*,char *,
-							   size_t,size_t*),
-					   void *read_cb_value)
-     _GPGME_DEPRECATED(0,4);
-
 /* Create a new data buffer filled with the content of file FNAME.
    COPY must be non-zero.  For delayed read, please use
    gpgme_data_new_from_fd or gpgme_data_new_from_stream instead.  */
@@ -1383,9 +1197,8 @@ gpgme_error_t gpgme_data_new_from_filepart (gpgme_data_t *r_dh,
 					    const char *fname, FILE *fp,
 					    @API__OFF_T@ offset, size_t length);
 
-/* Reset the read pointer in DH.  Deprecated, please use
-   gpgme_data_seek instead.  */
-gpgme_error_t gpgme_data_rewind (gpgme_data_t dh) _GPGME_DEPRECATED(0,4);
+/* Convenience function to do a gpgme_data_seek (dh, 0, SEEK_SET).  */
+gpgme_error_t gpgme_data_rewind (gpgme_data_t dh);
 
 
 
@@ -1409,46 +1222,15 @@ void gpgme_key_ref (gpgme_key_t key);
 void gpgme_key_unref (gpgme_key_t key);
 void gpgme_key_release (gpgme_key_t key);
 
-/* Return the value of the attribute WHAT of KEY, which has to be
-   representable by a string.  IDX specifies the sub key or user ID
-   for attributes related to sub keys or user IDs.  Deprecated, use
-   key structure directly instead. */
-const char *gpgme_key_get_string_attr (gpgme_key_t key, _gpgme_attr_t what,
-				       const void *reserved, int idx)
-     _GPGME_DEPRECATED(0,4);
-
-/* Return the value of the attribute WHAT of KEY, which has to be
-   representable by an unsigned integer.  IDX specifies the sub key or
-   user ID for attributes related to sub keys or user IDs.
-   Deprecated, use key structure directly instead.  */
-unsigned long gpgme_key_get_ulong_attr (gpgme_key_t key, _gpgme_attr_t what,
-					const void *reserved, int idx)
-     _GPGME_DEPRECATED(0,4);
-
-/* Return the value of the attribute WHAT of a signature on user ID
-   UID_IDX in KEY, which has to be representable by a string.  IDX
-   specifies the signature.  Deprecated, use key structure directly
-   instead.  */
-const char *gpgme_key_sig_get_string_attr (gpgme_key_t key, int uid_idx,
-					   _gpgme_attr_t what,
-					   const void *reserved, int idx)
-     _GPGME_DEPRECATED(0,4);
-
-/* Return the value of the attribute WHAT of a signature on user ID
-   UID_IDX in KEY, which has to be representable by an unsigned
-   integer string.  IDX specifies the signature.  Deprecated, use key
-   structure directly instead.  */
-unsigned long gpgme_key_sig_get_ulong_attr (gpgme_key_t key, int uid_idx,
-					    _gpgme_attr_t what,
-					    const void *reserved, int idx)
-     _GPGME_DEPRECATED(0,4);
-
 
 
 /*
  * Encryption.
  */
 
+/* An object to return results from an encryption operation.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_encrypt_result
 {
   /* The list of invalid recipients.  */
@@ -1467,7 +1249,9 @@ typedef enum
     GPGME_ENCRYPT_PREPARE = 4,
     GPGME_ENCRYPT_EXPECT_SIGN = 8,
     GPGME_ENCRYPT_NO_COMPRESS = 16,
-    GPGME_ENCRYPT_SYMMETRIC = 32
+    GPGME_ENCRYPT_SYMMETRIC = 32,
+    GPGME_ENCRYPT_THROW_KEYIDS = 64,
+    GPGME_ENCRYPT_WRAP = 128
   }
 gpgme_encrypt_flags_t;
 
@@ -1497,6 +1281,9 @@ gpgme_error_t gpgme_op_encrypt_sign (gpgme_ctx_t ctx, gpgme_key_t recp[],
  * Decryption.
  */
 
+/* An object to hold information about a recipient.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_recipient
 {
   struct _gpgme_recipient *next;
@@ -1515,6 +1302,9 @@ struct _gpgme_recipient
 };
 typedef struct _gpgme_recipient *gpgme_recipient_t;
 
+/* An object to return results from a decryption operation.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_decrypt_result
 {
   char *unsupported_algorithm;
@@ -1540,6 +1330,14 @@ typedef struct _gpgme_op_decrypt_result *gpgme_decrypt_result_t;
 /* Retrieve a pointer to the result of the decrypt operation.  */
 gpgme_decrypt_result_t gpgme_op_decrypt_result (gpgme_ctx_t ctx);
 
+/* The valid decryption flags.  */
+typedef enum
+  {
+    GPGME_DECRYPT_VERIFY = 1,
+    GPGME_DECRYPT_UNWRAP = 128
+  }
+gpgme_decrypt_flags_t;
+
 /* Decrypt ciphertext CIPHER within CTX and store the resulting
    plaintext in PLAIN.  */
 gpgme_error_t gpgme_op_decrypt_start (gpgme_ctx_t ctx, gpgme_data_t cipher,
@@ -1555,11 +1353,27 @@ gpgme_error_t gpgme_op_decrypt_verify_start (gpgme_ctx_t ctx,
 gpgme_error_t gpgme_op_decrypt_verify (gpgme_ctx_t ctx, gpgme_data_t cipher,
 				       gpgme_data_t plain);
 
+/* Decrypt ciphertext CIPHER within CTX and store the resulting
+ * plaintext in PLAIN.  With the flag GPGME_DECRYPT_VERIFY also do a
+ * signature verification pn the plaintext.  */
+gpgme_error_t gpgme_op_decrypt_ext_start (gpgme_ctx_t ctx,
+                                          gpgme_decrypt_flags_t flags,
+                                          gpgme_data_t cipher,
+                                          gpgme_data_t plain);
+gpgme_error_t gpgme_op_decrypt_ext (gpgme_ctx_t ctx,
+                                    gpgme_decrypt_flags_t flags,
+                                    gpgme_data_t cipher,
+                                    gpgme_data_t plain);
+
+
 
 /*
  * Signing.
  */
 
+/* An object with signatures data.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_new_signature
 {
   struct _gpgme_new_signature *next;
@@ -1595,6 +1409,10 @@ struct _gpgme_new_signature
 };
 typedef struct _gpgme_new_signature *gpgme_new_signature_t;
 
+
+/* An object to return results from a signing operation.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_sign_result
 {
   /* The list of invalid signers.  */
@@ -1638,6 +1456,9 @@ typedef enum
 gpgme_sigsum_t;
 
 
+/* An object to hold the verification status of a signature.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_signature
 {
   struct _gpgme_signature *next;
@@ -1690,6 +1511,9 @@ struct _gpgme_signature
 };
 typedef struct _gpgme_signature *gpgme_signature_t;
 
+/* An object to return the results of a verify operation.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_verify_result
 {
   gpgme_signature_t signatures;
@@ -1723,6 +1547,9 @@ gpgme_error_t gpgme_op_verify (gpgme_ctx_t ctx, gpgme_data_t sig,
 #define GPGME_IMPORT_SECRET    16  /* The key contained a secret key.  */
 
 
+/* An object to hold results for one imported key.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_import_status
 {
   struct _gpgme_import_status *next;
@@ -1741,7 +1568,9 @@ struct _gpgme_import_status
 };
 typedef struct _gpgme_import_status *gpgme_import_status_t;
 
-/* Import result object.  */
+/* Import result object.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_import_result
 {
   /* Number of considered keys.  */
@@ -1797,8 +1626,6 @@ gpgme_import_result_t gpgme_op_import_result (gpgme_ctx_t ctx);
 /* Import the key in KEYDATA into the keyring.  */
 gpgme_error_t gpgme_op_import_start (gpgme_ctx_t ctx, gpgme_data_t keydata);
 gpgme_error_t gpgme_op_import (gpgme_ctx_t ctx, gpgme_data_t keydata);
-gpgme_error_t gpgme_op_import_ext (gpgme_ctx_t ctx, gpgme_data_t keydata,
-				   int *nr) _GPGME_DEPRECATED(0,4);
 
 /* Import the keys from the array KEYS into the keyring.  */
 gpgme_error_t gpgme_op_import_keys_start (gpgme_ctx_t ctx, gpgme_key_t keys[]);
@@ -1848,7 +1675,11 @@ gpgme_error_t gpgme_op_export_keys (gpgme_ctx_t ctx,
 #define GPGME_CREATE_WANTPUB    (1 << 10) /* Return the public key.    */
 #define GPGME_CREATE_WANTSEC    (1 << 11) /* Return the secret key.    */
 #define GPGME_CREATE_FORCE      (1 << 12) /* Force creation.           */
+#define GPGME_CREATE_NOEXPIRE   (1 << 13) /* Create w/o expiration.    */
 
+/* An object to return result from a key generation.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_genkey_result
 {
   /* A primary key was generated.  */
@@ -1929,6 +1760,13 @@ gpgme_error_t gpgme_op_revuid       (gpgme_ctx_t ctx,
                                      gpgme_key_t key, const char *userid,
                                      unsigned int reserved);
 
+/* Set a flag on the USERID of KEY.  See the manual for supported flags.  */
+gpgme_error_t gpgme_op_set_uid_flag_start (gpgme_ctx_t ctx,
+                                           gpgme_key_t key, const char *userid,
+                                           const char *name, const char *value);
+gpgme_error_t gpgme_op_set_uid_flag       (gpgme_ctx_t ctx,
+                                           gpgme_key_t key, const char *userid,
+                                           const char *name, const char *value);
 
 
 /* Retrieve a pointer to the result of a genkey, createkey, or
@@ -1989,21 +1827,6 @@ gpgme_error_t gpgme_op_interact (gpgme_ctx_t ctx, gpgme_key_t key,
                                  void *fnc_value,
                                  gpgme_data_t out);
 
-gpgme_error_t gpgme_op_edit_start (gpgme_ctx_t ctx, gpgme_key_t key,
-				   gpgme_edit_cb_t fnc, void *fnc_value,
-				   gpgme_data_t out) _GPGME_DEPRECATED(1,7);
-gpgme_error_t gpgme_op_edit       (gpgme_ctx_t ctx, gpgme_key_t key,
-			           gpgme_edit_cb_t fnc, void *fnc_value,
-			           gpgme_data_t out) _GPGME_DEPRECATED(1,7);
-gpgme_error_t gpgme_op_card_edit_start (gpgme_ctx_t ctx, gpgme_key_t key,
-					gpgme_edit_cb_t fnc, void *fnc_value,
-					gpgme_data_t out)
-                                        _GPGME_DEPRECATED(1,7);
-gpgme_error_t gpgme_op_card_edit       (gpgme_ctx_t ctx, gpgme_key_t key,
-				        gpgme_edit_cb_t fnc, void *fnc_value,
-				        gpgme_data_t out)
-                                        _GPGME_DEPRECATED(1,7);
-
 
 /* Set the Tofu policy of KEY to POLCIY.  */
 gpgme_error_t gpgme_op_tofu_policy_start (gpgme_ctx_t ctx,
@@ -2020,6 +1843,9 @@ gpgme_error_t gpgme_op_tofu_policy       (gpgme_ctx_t ctx,
  * Key listing
  */
 
+/* An object to return results from a key listing operation.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_keylist_result
 {
   unsigned int truncated : 1;
@@ -2033,19 +1859,30 @@ typedef struct _gpgme_op_keylist_result *gpgme_keylist_result_t;
 gpgme_keylist_result_t gpgme_op_keylist_result (gpgme_ctx_t ctx);
 
 /* Start a keylist operation within CTX, searching for keys which
-   match PATTERN.  If SECRET_ONLY is true, only secret keys are
-   returned.  */
+ * match PATTERN.  If SECRET_ONLY is true, only secret keys are
+ * returned.  */
 gpgme_error_t gpgme_op_keylist_start (gpgme_ctx_t ctx, const char *pattern,
 				      int secret_only);
 gpgme_error_t gpgme_op_keylist_ext_start (gpgme_ctx_t ctx,
 					  const char *pattern[],
 					  int secret_only, int reserved);
 
+/* List the keys contained in DATA.  */
+gpgme_error_t gpgme_op_keylist_from_data_start (gpgme_ctx_t ctx,
+                                                gpgme_data_t data,
+                                                int reserved);
+
 /* Return the next key from the keylist in R_KEY.  */
 gpgme_error_t gpgme_op_keylist_next (gpgme_ctx_t ctx, gpgme_key_t *r_key);
 
 /* Terminate a pending keylist operation within CTX.  */
 gpgme_error_t gpgme_op_keylist_end (gpgme_ctx_t ctx);
+
+
+
+/*
+ * Protecting keys
+ */
 
 /* Change the passphrase for KEY.  FLAGS is reserved for future use
    and must be passed as 0.  */
@@ -2060,6 +1897,9 @@ gpgme_error_t gpgme_op_passwd (gpgme_ctx_t ctx, gpgme_key_t key,
  * Trust items and operations.
  */
 
+/* An object to hold data of a trust item.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_trust_item
 {
   /* Internal to GPGME, do not use.  */
@@ -2112,26 +1952,6 @@ void gpgme_trust_item_ref (gpgme_trust_item_t item);
 /* Release a reference to ITEM.  If this was the last one the trust
    item is destroyed.  */
 void gpgme_trust_item_unref (gpgme_trust_item_t item);
-
-/* Release the trust item ITEM.  Deprecated, use
-   gpgme_trust_item_unref.  */
-void gpgme_trust_item_release (gpgme_trust_item_t item) _GPGME_DEPRECATED(0,4);
-
-/* Return the value of the attribute WHAT of ITEM, which has to be
-   representable by a string.  Deprecated, use trust item structure
-   directly.  */
-const char *gpgme_trust_item_get_string_attr (gpgme_trust_item_t item,
-					      _gpgme_attr_t what,
-					      const void *reserved, int idx)
-     _GPGME_DEPRECATED(0,4);
-
-/* Return the value of the attribute WHAT of KEY, which has to be
-   representable by an integer.  IDX specifies a running index if the
-   attribute appears more than once in the key.  Deprecated, use trust
-   item structure directly.  */
-int gpgme_trust_item_get_int_attr (gpgme_trust_item_t item, _gpgme_attr_t what,
-				   const void *reserved, int idx)
-     _GPGME_DEPRECATED(0,4);
 
 
 
@@ -2209,35 +2029,14 @@ gpgme_error_t gpgme_op_assuan_transact_ext (gpgme_ctx_t ctx,
 					    void *stat_cb_value,
 					    gpgme_error_t *op_err);
 
-/* Compat.  */
-struct _gpgme_op_assuan_result
-{
-  /* Deprecated.  Use the second value in a DONE event or the
-     synchronous variant gpgme_op_assuan_transact_ext.  */
-  gpgme_error_t err _GPGME_DEPRECATED_OUTSIDE_GPGME(1,2);
-};
-typedef struct _gpgme_op_assuan_result *gpgme_assuan_result_t;
-
-
-/* Return the result of the last Assuan command. */
-gpgme_assuan_result_t gpgme_op_assuan_result (gpgme_ctx_t ctx)
-  _GPGME_DEPRECATED(1,2);
-
-gpgme_error_t
-gpgme_op_assuan_transact (gpgme_ctx_t ctx,
-			      const char *command,
-			      gpgme_assuan_data_cb_t data_cb,
-			      void *data_cb_value,
-			      gpgme_assuan_inquire_cb_t inq_cb,
-			      void *inq_cb_value,
-			      gpgme_assuan_status_cb_t status_cb,
-                          void *status_cb_value) _GPGME_DEPRECATED(1,2);
-
 
 /*
  * Crypto container support.
  */
 
+/* An object to return results from a VFS mount operation.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 struct _gpgme_op_vfs_mount_result
 {
   char *mount_dir;
@@ -2410,7 +2209,8 @@ void gpgme_conf_arg_release (gpgme_conf_arg_t arg, gpgme_conf_type_t type);
 /* Register a change for the value of OPT to ARG.  If RESET is 1 (do
    not use any values but 0 or 1), ARG is ignored and the option is
    not changed (reverting a previous change).  Otherwise, if ARG is
-   NULL, the option is cleared or reset to its default.  */
+   NULL, the option is cleared or reset to its default. The change
+   is done with gpgconf's --runtime option to immediately take effect. */
 gpgme_error_t gpgme_conf_opt_change (gpgme_conf_opt_t opt, int reset,
 				     gpgme_conf_arg_t arg);
 
@@ -2425,7 +2225,9 @@ gpgme_error_t gpgme_op_conf_load (gpgme_ctx_t ctx, gpgme_conf_comp_t *conf_p);
 gpgme_error_t gpgme_op_conf_save (gpgme_ctx_t ctx, gpgme_conf_comp_t comp);
 
 
-/* Information about software versions.  */
+/* Information about software versions.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
 typedef struct _gpgme_op_query_swdb_result
 {
   /* RFU */
@@ -2552,8 +2354,323 @@ char *gpgme_addrspec_from_uid (const char *uid);
 
 
 /*
- * Deprecated types.
+ * Deprecated types, constants and functions.
  */
+
+/* The possible stati for gpgme_op_edit.  The use of that function and
+ * these status codes are deprecated in favor of gpgme_op_interact. */
+typedef enum
+  {
+    GPGME_STATUS_EOF = 0,
+    /* mkstatus processing starts here */
+    GPGME_STATUS_ENTER = 1,
+    GPGME_STATUS_LEAVE = 2,
+    GPGME_STATUS_ABORT = 3,
+
+    GPGME_STATUS_GOODSIG = 4,
+    GPGME_STATUS_BADSIG = 5,
+    GPGME_STATUS_ERRSIG = 6,
+
+    GPGME_STATUS_BADARMOR = 7,
+
+    GPGME_STATUS_RSA_OR_IDEA = 8,      /* (legacy) */
+    GPGME_STATUS_KEYEXPIRED = 9,
+    GPGME_STATUS_KEYREVOKED = 10,
+
+    GPGME_STATUS_TRUST_UNDEFINED = 11,
+    GPGME_STATUS_TRUST_NEVER = 12,
+    GPGME_STATUS_TRUST_MARGINAL = 13,
+    GPGME_STATUS_TRUST_FULLY = 14,
+    GPGME_STATUS_TRUST_ULTIMATE = 15,
+
+    GPGME_STATUS_SHM_INFO = 16,        /* (legacy) */
+    GPGME_STATUS_SHM_GET = 17,         /* (legacy) */
+    GPGME_STATUS_SHM_GET_BOOL = 18,    /* (legacy) */
+    GPGME_STATUS_SHM_GET_HIDDEN = 19,  /* (legacy) */
+
+    GPGME_STATUS_NEED_PASSPHRASE = 20,
+    GPGME_STATUS_VALIDSIG = 21,
+    GPGME_STATUS_SIG_ID = 22,
+    GPGME_STATUS_ENC_TO = 23,
+    GPGME_STATUS_NODATA = 24,
+    GPGME_STATUS_BAD_PASSPHRASE = 25,
+    GPGME_STATUS_NO_PUBKEY = 26,
+    GPGME_STATUS_NO_SECKEY = 27,
+    GPGME_STATUS_NEED_PASSPHRASE_SYM = 28,
+    GPGME_STATUS_DECRYPTION_FAILED = 29,
+    GPGME_STATUS_DECRYPTION_OKAY = 30,
+    GPGME_STATUS_MISSING_PASSPHRASE = 31,
+    GPGME_STATUS_GOOD_PASSPHRASE = 32,
+    GPGME_STATUS_GOODMDC = 33,
+    GPGME_STATUS_BADMDC = 34,
+    GPGME_STATUS_ERRMDC = 35,
+    GPGME_STATUS_IMPORTED = 36,
+    GPGME_STATUS_IMPORT_OK = 37,
+    GPGME_STATUS_IMPORT_PROBLEM = 38,
+    GPGME_STATUS_IMPORT_RES = 39,
+    GPGME_STATUS_FILE_START = 40,
+    GPGME_STATUS_FILE_DONE = 41,
+    GPGME_STATUS_FILE_ERROR = 42,
+
+    GPGME_STATUS_BEGIN_DECRYPTION = 43,
+    GPGME_STATUS_END_DECRYPTION = 44,
+    GPGME_STATUS_BEGIN_ENCRYPTION = 45,
+    GPGME_STATUS_END_ENCRYPTION = 46,
+
+    GPGME_STATUS_DELETE_PROBLEM = 47,
+    GPGME_STATUS_GET_BOOL = 48,
+    GPGME_STATUS_GET_LINE = 49,
+    GPGME_STATUS_GET_HIDDEN = 50,
+    GPGME_STATUS_GOT_IT = 51,
+    GPGME_STATUS_PROGRESS = 52,
+    GPGME_STATUS_SIG_CREATED = 53,
+    GPGME_STATUS_SESSION_KEY = 54,
+    GPGME_STATUS_NOTATION_NAME = 55,
+    GPGME_STATUS_NOTATION_DATA = 56,
+    GPGME_STATUS_POLICY_URL = 57,
+    GPGME_STATUS_BEGIN_STREAM = 58,    /* (legacy) */
+    GPGME_STATUS_END_STREAM = 59,      /* (legacy) */
+    GPGME_STATUS_KEY_CREATED = 60,
+    GPGME_STATUS_USERID_HINT = 61,
+    GPGME_STATUS_UNEXPECTED = 62,
+    GPGME_STATUS_INV_RECP = 63,
+    GPGME_STATUS_NO_RECP = 64,
+    GPGME_STATUS_ALREADY_SIGNED = 65,
+    GPGME_STATUS_SIGEXPIRED = 66,      /* (legacy) */
+    GPGME_STATUS_EXPSIG = 67,
+    GPGME_STATUS_EXPKEYSIG = 68,
+    GPGME_STATUS_TRUNCATED = 69,
+    GPGME_STATUS_ERROR = 70,
+    GPGME_STATUS_NEWSIG = 71,
+    GPGME_STATUS_REVKEYSIG = 72,
+    GPGME_STATUS_SIG_SUBPACKET = 73,
+    GPGME_STATUS_NEED_PASSPHRASE_PIN = 74,
+    GPGME_STATUS_SC_OP_FAILURE = 75,
+    GPGME_STATUS_SC_OP_SUCCESS = 76,
+    GPGME_STATUS_CARDCTRL = 77,
+    GPGME_STATUS_BACKUP_KEY_CREATED = 78,
+    GPGME_STATUS_PKA_TRUST_BAD = 79,
+    GPGME_STATUS_PKA_TRUST_GOOD = 80,
+    GPGME_STATUS_PLAINTEXT = 81,
+    GPGME_STATUS_INV_SGNR = 82,
+    GPGME_STATUS_NO_SGNR = 83,
+    GPGME_STATUS_SUCCESS = 84,
+    GPGME_STATUS_DECRYPTION_INFO = 85,
+    GPGME_STATUS_PLAINTEXT_LENGTH = 86,
+    GPGME_STATUS_MOUNTPOINT = 87,
+    GPGME_STATUS_PINENTRY_LAUNCHED = 88,
+    GPGME_STATUS_ATTRIBUTE = 89,
+    GPGME_STATUS_BEGIN_SIGNING = 90,
+    GPGME_STATUS_KEY_NOT_CREATED = 91,
+    GPGME_STATUS_INQUIRE_MAXLEN = 92,
+    GPGME_STATUS_FAILURE = 93,
+    GPGME_STATUS_KEY_CONSIDERED = 94,
+    GPGME_STATUS_TOFU_USER = 95,
+    GPGME_STATUS_TOFU_STATS = 96,
+    GPGME_STATUS_TOFU_STATS_LONG = 97,
+    GPGME_STATUS_NOTATION_FLAGS = 98
+  }
+gpgme_status_code_t;
+
+/* The callback type used by the deprecated functions gpgme_op_edit
+ * and gpgme_op_card_edit.  */
+typedef gpgme_error_t (*gpgme_edit_cb_t) (void *opaque,
+					  gpgme_status_code_t status,
+					  const char *args, int fd);
+
+gpgme_error_t gpgme_op_edit_start (gpgme_ctx_t ctx, gpgme_key_t key,
+				   gpgme_edit_cb_t fnc, void *fnc_value,
+				   gpgme_data_t out) _GPGME_DEPRECATED(1,7);
+gpgme_error_t gpgme_op_edit       (gpgme_ctx_t ctx, gpgme_key_t key,
+			           gpgme_edit_cb_t fnc, void *fnc_value,
+			           gpgme_data_t out) _GPGME_DEPRECATED(1,7);
+gpgme_error_t gpgme_op_card_edit_start (gpgme_ctx_t ctx, gpgme_key_t key,
+					gpgme_edit_cb_t fnc, void *fnc_value,
+					gpgme_data_t out)
+                                        _GPGME_DEPRECATED(1,7);
+gpgme_error_t gpgme_op_card_edit       (gpgme_ctx_t ctx, gpgme_key_t key,
+				        gpgme_edit_cb_t fnc, void *fnc_value,
+				        gpgme_data_t out)
+                                        _GPGME_DEPRECATED(1,7);
+
+/* The possible signature stati.  Deprecated, use error value in sig
+   status.  */
+typedef enum
+  {
+    GPGME_SIG_STAT_NONE  = 0,
+    GPGME_SIG_STAT_GOOD  = 1,
+    GPGME_SIG_STAT_BAD   = 2,
+    GPGME_SIG_STAT_NOKEY = 3,
+    GPGME_SIG_STAT_NOSIG = 4,
+    GPGME_SIG_STAT_ERROR = 5,
+    GPGME_SIG_STAT_DIFF  = 6,
+    GPGME_SIG_STAT_GOOD_EXP = 7,
+    GPGME_SIG_STAT_GOOD_EXPKEY = 8
+  }
+_gpgme_sig_stat_t;
+typedef _gpgme_sig_stat_t gpgme_sig_stat_t _GPGME_DEPRECATED(0,4);
+
+/* The available key and signature attributes.  Deprecated, use the
+   individual result structures instead.  */
+typedef enum
+  {
+    GPGME_ATTR_KEYID        = 1,
+    GPGME_ATTR_FPR          = 2,
+    GPGME_ATTR_ALGO         = 3,
+    GPGME_ATTR_LEN          = 4,
+    GPGME_ATTR_CREATED      = 5,
+    GPGME_ATTR_EXPIRE       = 6,
+    GPGME_ATTR_OTRUST       = 7,
+    GPGME_ATTR_USERID       = 8,
+    GPGME_ATTR_NAME         = 9,
+    GPGME_ATTR_EMAIL        = 10,
+    GPGME_ATTR_COMMENT      = 11,
+    GPGME_ATTR_VALIDITY     = 12,
+    GPGME_ATTR_LEVEL        = 13,
+    GPGME_ATTR_TYPE         = 14,
+    GPGME_ATTR_IS_SECRET    = 15,
+    GPGME_ATTR_KEY_REVOKED  = 16,
+    GPGME_ATTR_KEY_INVALID  = 17,
+    GPGME_ATTR_UID_REVOKED  = 18,
+    GPGME_ATTR_UID_INVALID  = 19,
+    GPGME_ATTR_KEY_CAPS     = 20,
+    GPGME_ATTR_CAN_ENCRYPT  = 21,
+    GPGME_ATTR_CAN_SIGN     = 22,
+    GPGME_ATTR_CAN_CERTIFY  = 23,
+    GPGME_ATTR_KEY_EXPIRED  = 24,
+    GPGME_ATTR_KEY_DISABLED = 25,
+    GPGME_ATTR_SERIAL       = 26,
+    GPGME_ATTR_ISSUER       = 27,
+    GPGME_ATTR_CHAINID      = 28,
+    GPGME_ATTR_SIG_STATUS   = 29,
+    GPGME_ATTR_ERRTOK       = 30,
+    GPGME_ATTR_SIG_SUMMARY  = 31,
+    GPGME_ATTR_SIG_CLASS    = 32
+  }
+_gpgme_attr_t;
+typedef _gpgme_attr_t gpgme_attr_t _GPGME_DEPRECATED(0,4);
+
+/* Retrieve the signature status of signature IDX in CTX after a
+   successful verify operation in R_STAT (if non-null).  The creation
+   time stamp of the signature is returned in R_CREATED (if non-null).
+   The function returns a string containing the fingerprint.
+   Deprecated, use verify result directly.  */
+const char *gpgme_get_sig_status (gpgme_ctx_t ctx, int idx,
+                                  _gpgme_sig_stat_t *r_stat,
+				  time_t *r_created) _GPGME_DEPRECATED(0,4);
+
+/* Retrieve certain attributes of a signature.  IDX is the index
+   number of the signature after a successful verify operation.  WHAT
+   is an attribute where GPGME_ATTR_EXPIRE is probably the most useful
+   one.  WHATIDX is to be passed as 0 for most attributes . */
+unsigned long gpgme_get_sig_ulong_attr (gpgme_ctx_t c, int idx,
+                                        _gpgme_attr_t what, int whatidx)
+     _GPGME_DEPRECATED(0,4);
+const char *gpgme_get_sig_string_attr (gpgme_ctx_t c, int idx,
+				       _gpgme_attr_t what, int whatidx)
+     _GPGME_DEPRECATED(0,4);
+
+
+/* Get the key used to create signature IDX in CTX and return it in
+   R_KEY.  */
+gpgme_error_t gpgme_get_sig_key (gpgme_ctx_t ctx, int idx, gpgme_key_t *r_key)
+     _GPGME_DEPRECATED(0,4);
+
+/* Create a new data buffer which retrieves the data from the callback
+   function READ_CB.  Deprecated, please use gpgme_data_new_from_cbs
+   instead.  */
+gpgme_error_t gpgme_data_new_with_read_cb (gpgme_data_t *r_dh,
+					   int (*read_cb) (void*,char *,
+							   size_t,size_t*),
+					   void *read_cb_value)
+     _GPGME_DEPRECATED(0,4);
+
+/* Return the value of the attribute WHAT of KEY, which has to be
+   representable by a string.  IDX specifies the sub key or user ID
+   for attributes related to sub keys or user IDs.  Deprecated, use
+   key structure directly instead. */
+const char *gpgme_key_get_string_attr (gpgme_key_t key, _gpgme_attr_t what,
+				       const void *reserved, int idx)
+     _GPGME_DEPRECATED(0,4);
+
+/* Return the value of the attribute WHAT of KEY, which has to be
+   representable by an unsigned integer.  IDX specifies the sub key or
+   user ID for attributes related to sub keys or user IDs.
+   Deprecated, use key structure directly instead.  */
+unsigned long gpgme_key_get_ulong_attr (gpgme_key_t key, _gpgme_attr_t what,
+					const void *reserved, int idx)
+     _GPGME_DEPRECATED(0,4);
+
+/* Return the value of the attribute WHAT of a signature on user ID
+   UID_IDX in KEY, which has to be representable by a string.  IDX
+   specifies the signature.  Deprecated, use key structure directly
+   instead.  */
+const char *gpgme_key_sig_get_string_attr (gpgme_key_t key, int uid_idx,
+					   _gpgme_attr_t what,
+					   const void *reserved, int idx)
+     _GPGME_DEPRECATED(0,4);
+
+/* Return the value of the attribute WHAT of a signature on user ID
+   UID_IDX in KEY, which has to be representable by an unsigned
+   integer string.  IDX specifies the signature.  Deprecated, use key
+   structure directly instead.  */
+unsigned long gpgme_key_sig_get_ulong_attr (gpgme_key_t key, int uid_idx,
+					    _gpgme_attr_t what,
+					    const void *reserved, int idx)
+     _GPGME_DEPRECATED(0,4);
+
+
+gpgme_error_t gpgme_op_import_ext (gpgme_ctx_t ctx, gpgme_data_t keydata,
+				   int *nr) _GPGME_DEPRECATED(0,4);
+
+/* Release the trust item ITEM.  Deprecated, use
+   gpgme_trust_item_unref.  */
+void gpgme_trust_item_release (gpgme_trust_item_t item) _GPGME_DEPRECATED(0,4);
+
+/* Return the value of the attribute WHAT of ITEM, which has to be
+   representable by a string.  Deprecated, use trust item structure
+   directly.  */
+const char *gpgme_trust_item_get_string_attr (gpgme_trust_item_t item,
+					      _gpgme_attr_t what,
+					      const void *reserved, int idx)
+     _GPGME_DEPRECATED(0,4);
+
+/* Return the value of the attribute WHAT of KEY, which has to be
+   representable by an integer.  IDX specifies a running index if the
+   attribute appears more than once in the key.  Deprecated, use trust
+   item structure directly.  */
+int gpgme_trust_item_get_int_attr (gpgme_trust_item_t item, _gpgme_attr_t what,
+				   const void *reserved, int idx)
+     _GPGME_DEPRECATED(0,4);
+
+/* Compat.
+ * This structure shall be considered read-only and an application
+ * must not allocate such a structure on its own.  */
+struct _gpgme_op_assuan_result
+{
+  /* Deprecated.  Use the second value in a DONE event or the
+     synchronous variant gpgme_op_assuan_transact_ext.  */
+  gpgme_error_t err _GPGME_DEPRECATED_OUTSIDE_GPGME(1,2);
+};
+typedef struct _gpgme_op_assuan_result *gpgme_assuan_result_t;
+
+
+/* Return the result of the last Assuan command. */
+gpgme_assuan_result_t gpgme_op_assuan_result (gpgme_ctx_t ctx)
+  _GPGME_DEPRECATED(1,2);
+
+gpgme_error_t
+gpgme_op_assuan_transact (gpgme_ctx_t ctx,
+			      const char *command,
+			      gpgme_assuan_data_cb_t data_cb,
+			      void *data_cb_value,
+			      gpgme_assuan_inquire_cb_t inq_cb,
+			      void *inq_cb_value,
+			      gpgme_assuan_status_cb_t status_cb,
+                          void *status_cb_value) _GPGME_DEPRECATED(1,2);
+
+
+
 typedef gpgme_ctx_t GpgmeCtx _GPGME_DEPRECATED(0,4);
 typedef gpgme_data_t GpgmeData _GPGME_DEPRECATED(0,4);
 typedef gpgme_error_t GpgmeError _GPGME_DEPRECATED(0,4);

@@ -112,6 +112,7 @@ public:
     bool canCertify() const;
     bool canAuthenticate() const;
     bool isQualified() const;
+    bool isDeVs() const;
 
     bool hasSecret() const;
     GPGMEPP_DEPRECATED bool isSecret() const
@@ -152,6 +153,17 @@ public:
      * how long the keylisting takes.*/
     void update();
 
+    /**
+     * @brief Add a user id to this key.
+     *
+     * Needs gnupg 2.1.13 and the key needs to be updated
+     * afterwards to see the new uid.
+     *
+     * @param uid should be fully formated and UTF-8 encoded.
+     *
+     * @returns a possible error.
+     **/
+    Error addUid(const char *uid);
 private:
     gpgme_key_t impl() const
     {
@@ -208,6 +220,7 @@ public:
     bool canCertify() const;
     bool canAuthenticate() const;
     bool isQualified() const;
+    bool isDeVs() const;
     bool isCardKey() const;
 
     bool isSecret() const;
@@ -258,6 +271,8 @@ public:
     unsigned int length() const;
 
     const char *cardSerialNumber() const;
+
+    const char *keyGrip() const;
 
 private:
     shared_gpgme_key_t key;
@@ -335,6 +350,13 @@ public:
      * @returns a normalized mail address for this userid
      * or an empty string. */
     std::string addrSpec() const;
+
+    /*! Revoke the user id.
+     *
+     * Key needs update afterwards.
+     *
+     * @returns an error on error.*/
+    Error revoke();
 private:
     shared_gpgme_key_t key;
     gpgme_user_id_t uid;

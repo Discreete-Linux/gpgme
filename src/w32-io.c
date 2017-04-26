@@ -700,7 +700,7 @@ writer (void *arg)
   for (;;)
     {
       LOCK (ctx->mutex);
-      if (ctx->stop_me)
+      if (ctx->stop_me && !ctx->nbytes)
 	{
 	  UNLOCK (ctx->mutex);
 	  break;
@@ -717,7 +717,7 @@ writer (void *arg)
 	  TRACE_LOG ("got data to send");
 	  LOCK (ctx->mutex);
        	}
-      if (ctx->stop_me)
+      if (ctx->stop_me && !ctx->nbytes)
 	{
 	  UNLOCK (ctx->mutex);
 	  break;
@@ -775,6 +775,9 @@ writer (void *arg)
 
   TRACE_LOG ("waiting for close");
   WaitForSingleObject (ctx->close_ev, INFINITE);
+
+  if (ctx->nbytes)
+    TRACE_LOG1 ("still %d bytes in buffer at close time", ctx->nbytes);
 
   CloseHandle (ctx->close_ev);
   CloseHandle (ctx->have_data);
@@ -891,6 +894,9 @@ destroy_writer (struct writer_context_s *ctx)
   if (ctx->have_data)
     SetEvent (ctx->have_data);
   UNLOCK (ctx->mutex);
+
+  /* Give the writer a chance to flush the buffer.  */
+  WaitForSingleObject (ctx->is_empty, INFINITE);
 
 #ifdef HAVE_W32CE_SYSTEM
   /* Scenario: We never create a full pipe, but already started
@@ -1637,11 +1643,11 @@ _gpgme_io_spawn (const char *path, char *const argv[], unsigned int flags,
                             "with your installation.\n"
                             "Please report the problem to your "
                             "distributor of GpgME.\n\n"
-                            "Developers Note: The install dir can be "
+                            "Developer's Note: The install dir can be "
                             "manually set with: gpgme_set_global_flag",
                             _gpgme_get_inst_dir ());
       MessageBoxA (NULL, msg, "GpgME not installed correctly", MB_OK);
-      free (msg);
+      gpgrt_free (msg);
       gpg_err_set_errno (EIO);
       return TRACE_SYSRES (-1);
     }

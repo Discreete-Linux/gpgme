@@ -25,8 +25,9 @@
 #include "gpgme.h"
 
 /* Flags used by the EXTRAFLAGS arg of _gpgme_engine_op_genkey.  */
-#define GENKEY_EXTRAFLAG_ARMOR   1
-#define GENKEY_EXTRAFLAG_REVOKE  2
+#define GENKEY_EXTRAFLAG_ARMOR      1
+#define GENKEY_EXTRAFLAG_REVOKE     2
+#define GENKEY_EXTRAFLAG_SETPRIMARY 4
 
 
 struct engine;
@@ -82,16 +83,12 @@ gpgme_error_t
 _gpgme_engine_set_colon_line_handler (engine_t engine,
 				      engine_colon_line_handler_t fnc,
 				      void *fnc_value);
-gpgme_error_t _gpgme_engine_op_decrypt (engine_t engine, gpgme_data_t ciph,
+gpgme_error_t _gpgme_engine_op_decrypt (engine_t engine,
+                                        gpgme_decrypt_flags_t flags,
+                                        gpgme_data_t ciph,
 					gpgme_data_t plain,
                                         int export_session_key,
                                         const char *override_session_key);
-gpgme_error_t _gpgme_engine_op_decrypt_verify (engine_t engine,
-					       gpgme_data_t ciph,
-					       gpgme_data_t plain,
-                                               int export_session_key,
-                                               const char *override_session_key
-                                               );
 gpgme_error_t _gpgme_engine_op_delete (engine_t engine, gpgme_key_t key,
 				       int allow_secret);
 gpgme_error_t _gpgme_engine_op_edit (engine_t engine, int type,
@@ -148,6 +145,8 @@ gpgme_error_t _gpgme_engine_op_keylist_ext (engine_t engine,
 					    int reserved,
 					    gpgme_keylist_mode_t mode,
 					    int engine_flags);
+gpgme_error_t _gpgme_engine_op_keylist_data (engine_t engine,
+					     gpgme_data_t data);
 gpgme_error_t _gpgme_engine_op_sign (engine_t engine, gpgme_data_t in,
 				     gpgme_data_t out, gpgme_sig_mode_t mode,
 				     int use_armor, int use_textmode,

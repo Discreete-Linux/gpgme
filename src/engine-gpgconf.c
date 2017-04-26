@@ -708,10 +708,13 @@ gpgconf_write (void *engine, const char *arg1, char *arg2, gpgme_data_t conf)
 #define BUFLEN 1024
   char buf[BUFLEN];
   int buflen = 0;
-  char *argv[6];
+  char *argv[7];
   int argc = 0;
-  int rp[2];
-  struct spawn_fd_item_s cfd[] = { {-1, 0 /* STDIN_FILENO */}, {-1, -1} };
+  int rp[2] = { -1, -1 };
+  int errp[2] = { -1, -1 };
+  struct spawn_fd_item_s cfd[] = { {-1, 0 /* STDIN_FILENO */},
+                                   {-1, 2 /* STDERR_FILENO */, -1},
+                                   {-1, -1} };
   int status;
   int nwrite;
 
@@ -724,24 +727,37 @@ gpgconf_write (void *engine, const char *arg1, char *arg2, gpgme_data_t conf)
       argv[argc++] = gpgconf->home_dir;
     }
 
+  argv[argc++] = (char*)"--runtime";
   argv[argc++] = (char*)arg1;
   argv[argc++] = arg2;
   argv[argc] = NULL;
   assert (argc < DIM (argv));
 
   if (_gpgme_io_pipe (rp, 0) < 0)
-    return gpg_error_from_syserror ();
+    {
+      err = gpg_error_from_syserror ();
+      goto leave;
+    }
+
+  if (_gpgme_io_pipe (errp, 1) < 0)
+    {
+      err = gpg_error_from_syserror ();
+      goto leave;
+    }
 
   cfd[0].fd = rp[0];
+  cfd[1].fd = errp[1];
 
   status = _gpgme_io_spawn (gpgconf->file_name, argv,
                             IOSPAWN_FLAG_DETACHED, cfd, NULL, NULL, NULL);
   if (status < 0)
     {
-      _gpgme_io_close (rp[0]);
-      _gpgme_io_close (rp[1]);
-      return gpg_error_from_syserror ();
+      err = gpg_error_from_syserror ();
+      goto leave;
     }
+
+  rp[0] = -1;
+  errp[1] = -1;
 
   for (;;)
     {
@@ -756,14 +772,29 @@ gpgconf_write (void *engine, const char *arg1, char *arg2, gpgme_data_t conf)
 	  if (buflen < 0)
 	    {
 	      err = gpg_error_from_syserror ();
-	      _gpgme_io_close (rp[1]);
-	      return err;
+              goto leave;
 	    }
 	  else if (buflen == 0)
 	    {
 	      /* All is written.  */
 	      _gpgme_io_close (rp[1]);
-	      return 0;
+              rp[1] = -1;
+
+              for (;;)
+                {
+                  do
+                    {
+                      buflen = _gpgme_io_read (errp[0], buf, BUFLEN);
+                    }
+                  while (buflen < 0 && errno == EAGAIN);
+
+                  if (buflen == 0)
+                    {
+                      err = 0;
+                      goto leave;
+                    }
+                  /* XXX: Do something useful with BUF.  */
+                }
 	    }
 	}
 
@@ -781,12 +812,24 @@ gpgconf_write (void *engine, const char *arg1, char *arg2, gpgme_data_t conf)
 	}
       else if (nwrite < 0)
 	{
-	  _gpgme_io_close (rp[1]);
-	  return gpg_error_from_syserror ();
+	  err = gpg_error_from_syserror ();
+          goto leave;
 	}
     }
 
-  return 0;
+  assert (! "reached");
+
+ leave:
+  if (rp[0] != -1)
+    _gpgme_io_close (rp[0]);
+  if (rp[1] != -1)
+  _gpgme_io_close (rp[1]);
+  if (errp[0] != -1)
+    _gpgme_io_close (errp[0]);
+  if (errp[1] != -1)
+  _gpgme_io_close (errp[1]);
+
+  return err;
 }
 
 
@@ -1190,7 +1233,6 @@ struct engine_ops _gpgme_engine_ops_gpgconf =
     NULL,		/* set_locale */
     NULL,		/* set_protocol */
     NULL,		/* decrypt */
-    NULL,		/* decrypt_verify */
     NULL,		/* delete */
     NULL,		/* edit */
     NULL,		/* encrypt */
@@ -1201,6 +1243,7 @@ struct engine_ops _gpgme_engine_ops_gpgconf =
     NULL,		/* import */
     NULL,		/* keylist */
     NULL,		/* keylist_ext */
+    NULL,               /* keylist_data */
     NULL,               /* keysign */
     NULL,               /* tofu_policy */
     NULL,		/* sign */

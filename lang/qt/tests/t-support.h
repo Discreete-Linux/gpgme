@@ -34,6 +34,8 @@
 #include "interfaces/passphraseprovider.h"
 #include <QObject>
 
+#include <gpg-error.h>
+
 namespace GpgME
 {
 class TestPassphraseProvider : public PassphraseProvider
@@ -42,7 +44,9 @@ public:
     char *getPassphrase(const char * /*useridHint*/, const char * /*description*/,
                         bool /*previousWasBad*/, bool &/*canceled*/) Q_DECL_OVERRIDE
     {
-        return strdup("abc");
+        char *ret;
+        gpgrt_asprintf(&ret, "abc");
+        return ret;
     }
 };
 } // namespace GpgME
@@ -59,5 +63,9 @@ public Q_SLOTS:
     void initTestCase();
     void cleanupTestCase();
 };
+
+/* Timeout, in milliseconds, for use with QSignalSpy to wait on
+   signals.  */
+#define QSIGNALSPY_TIMEOUT	60000
 
 #endif // T_SUPPORT_H

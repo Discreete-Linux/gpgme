@@ -46,11 +46,16 @@ py_tests = t-wrapper.py \
 	t-trustlist.py \
 	t-edit.py \
 	t-keylist.py \
+	t-keylist-from-data.py \
 	t-wait.py \
 	t-encrypt-large.py \
 	t-file-name.py \
 	t-idiomatic.py \
-	t-protocol-assuan.py
+	t-protocol-assuan.py \
+	t-quick-key-creation.py \
+	t-quick-subkey-creation.py \
+	t-quick-key-manipulation.py \
+	t-quick-key-signing.py
 
 XTESTS = initial.py $(py_tests) final.py
 EXTRA_DIST = support.py $(XTESTS) encrypt-only.asc sign-only.asc \
@@ -73,7 +78,7 @@ xcheck: ./pubring-stamp
 
 CLEANFILES = secring.gpg pubring.gpg pubring.kbx trustdb.gpg dirmngr.conf \
 	gpg-agent.conf pubring.kbx~ gpg.conf pubring.gpg~ \
-	random_seed .gpg-v21-migrated \
+	random_seed .gpg-v21-migrated tofu.db \
         pubring-stamp private-keys-v1.d/gpg-sample.stamp
 
 private_keys = \
@@ -107,8 +112,9 @@ clean-local:
 ./gpg.conf:
 # This is required for t-sig-notations.
 	echo no-force-v3-sigs > ./gpg.conf
+	echo ignore-invalid-option agent-program >> ./gpg.conf
+	echo "agent-program `which $(GPG_AGENT)`|--debug-quick-random" >> ./gpg.conf
 
 ./gpg-agent.conf:
 # This is required for gpg2, which does not support command fd.
 	echo pinentry-program $(abs_top_srcdir)/tests/gpg/pinentry >$@
-	echo allow-loopback-pinentry >>$@

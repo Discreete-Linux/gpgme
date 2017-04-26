@@ -24,7 +24,7 @@ import os
 import gpg
 import support
 
-support.init_gpgme(gpg.constants.protocol.OpenPGP)
+support.assert_gpg_version()
 
 for passphrase in ("abc", b"abc"):
     c = gpg.Context()
